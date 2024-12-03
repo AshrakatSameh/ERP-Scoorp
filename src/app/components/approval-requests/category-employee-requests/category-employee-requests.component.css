@@ -1,0 +1,343 @@
+/* table {
+    display: grid;
+    border-collapse: collapse;
+    min-width: 100%;
+    grid-template-columns: 
+      minmax(150px, 1fr)
+      minmax(150px, 1.67fr)
+      minmax(150px, 1.67fr)
+      minmax(150px, 1.67fr)
+      minmax(150px, 3.33fr)
+      minmax(150px, 1.67fr)
+      minmax(150px, 3.33fr)
+      minmax(150px, 1.67fr);
+  }
+  
+  thead,
+  tbody,
+  tr {
+    display: contents;
+  }
+  
+  th,
+  td {
+    padding: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  th {
+    position: sticky;
+    top: 0;
+    background: #224273;
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.1rem;
+    color: white;
+  }
+  
+  th:last-child {
+    border: 0;
+  }
+  
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #808080;
+  }
+  
+  tr:nth-child(even) td {
+    background: #f8f6ff;
+  } */
+/* المرفقات */
+.custom-file-upload {
+  border: 2px dashed #ddd;
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+  .page-inner ,.nav-item i , .nav-home i{
+    color:#4875A9;
+  }
+
+  
+  .firstcol th{
+    
+    background-color: #224273; 
+    color:#F7fBFF;
+}
+
+.firstcolleft {
+    border-top-left-radius: 10px; /* Round the top-left corner */
+}
+
+.firstcolright {
+    border-top-right-radius: 10px; 
+
+}
+
+.large-checkbox {
+  width: 15px; /* Adjust width as needed */
+  height: 15px; /* Adjust height as needed */
+  transform: scale(1.5); /* Scale up the checkbox */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  /* Optional: To hide the default checkbox and use a custom design */
+  -webkit-appearance: none; /* Remove default styling */
+  appearance: none; /* Remove default styling */
+  border: 1px solid #667085; /* Add a border */
+  border-radius: 4px; /* Optional: Rounded corners */
+  outline: none; /* Remove outline */
+}
+
+.large-checkbox:checked {
+  background-color: #224273; /* Background color when checked */
+  position: relative; /* For positioning */
+}
+
+/* Custom checkmark styling */
+.large-checkbox:checked::after {
+  content: ''; /* Create a pseudo-element */
+  position: absolute; /* Position it */
+  left: 4px; /* Position checkmark */
+  top: 0px; /* Position checkmark */
+  width: 5px; /* Width of checkmark */
+  height: 10px; /* Height of checkmark */
+  border: solid white; /* Color of checkmark */
+  border-width: 0 2px 2px 0; /* Style of checkmark */
+  transform: rotate(45deg); /* Rotate to form checkmark */
+}
+
+.my-button{
+  background-color: #224273;
+  color:#F7fBFF;
+}
+
+.my-button2{
+  background-color: #E7E7EA;
+  color:#224273;
+  
+}
+
+
+
+.card-body{
+  min-width: 500px;
+}
+
+.search-input {
+  padding-right: 2.5rem; /* Add padding to make space for the icon */
+  /* margin-top: 15px; */
+  border-radius: 12px;
+  width: 350px;
+}
+
+.search-icon {
+  right: 10px; /* Keep the icon on the right side */
+  top: 53%;
+  transform: translateY(-50%);
+  font-size: 1rem !important; /* Force smaller icon size */
+  color: #667085; /* Icon color */
+  pointer-events: none; /* Ensure the icon is non-clickable */
+}
+
+.my-custom-icone{
+  background-color: #ffff;
+  color:#667085 ;
+  border: 1px solid  #E7E7EA;
+  margin-left: 10px;
+  
+
+}
+
+.closebutton{
+  color:#224273;
+  border: 1px solid #224273;
+  background-color:#F7fBFF;
+}
+
+.scroll-buttons-container {
+  display: flex;
+  flex-direction: row-reverse;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px 0;
+}
+
+.scroll-button {
+  flex: 0 0 auto;
+  margin-right: 10px;
+  padding: 10px 20px;
+  background-color: #E7E7EA; /* Your preferred button color */
+  color: #224273;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* .scroll-button:last-child {
+  margin-right: 10px;
+} */
+
+/* Optional: Hide the scrollbar in some browsers */
+.scroll-buttons-container::-webkit-scrollbar {
+  display: none;
+}
+
+
+ 
+.main-panel{
+  width: 98%;
+}
+
+.my-button3{
+  background-color: #224273;
+  color:#F7fBFF;
+  width: 13rem;
+  margin-left: 3%;
+}
+
+
+.closebutton{
+  color:#224273;
+  border: 1px solid #224273;
+  background-color:#F7fBFF;
+  width: 13rem;
+}
+
+  /* font */
+  h2,
+  h3,
+  h5,
+a,
+h4,
+p,
+label,
+input,
+button,
+tr, th, tr {
+    font-family: "Cairo", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+
+}
+
+
+.custom-input {
+  background-color: #E7E7EA;
+  border-radius: 10px;
+}
+ 
+.custom-input:focus {
+  outline: none; /* Removes the default outline */
+  border-color: initial; /* Resets the border color */
+  background-color: initial; /* Resets the background color */
+}
+
+.custom-input:focus {
+  border-color: #E7E7EA; /* Your custom border color */
+  background-color: #ffff; /* Your custom background color */
+}
+
+.attachment-upload-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* Set the max width as needed */
+  margin: 20px auto;
+  text-align: center;
+}
+
+.icons-above {
+  position: absolute;
+  top: -20px;
+  right: 10px;
+}
+
+.icons-right i {
+  font-size: 20px;
+  margin-right: 15px;
+  color: #224273;
+  cursor: pointer;
+}
+
+.attachment-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%; /* You can adjust this if needed */
+ 
+  margin: 20px auto;
+}
+
+.upload-rectangle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 20px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  height: 120px;
+}
+
+.upload-icon {
+  margin-right: 10px;
+  color: #555;
+  
+}
+
+.upload-text {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.overlay {
+  position: fixed; /* Positioning and size */
+
+  background-color: rgba(78, 78, 78, 0.5); /* color */
+  display: none; /* making it hidden by default */
+}
+
+/* Overlay background */
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 300px;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease;
+  z-index: 1050;
+}
+
+.modal-content {
+  text-align: right;
+}
+
+/* Slide down animation */
+@keyframes slideDown {
+  from {
+    top: -100px;
+    opacity: 0;
+  }
+  to {
+    top: 10px;
+    opacity: 1;
+  }
+}

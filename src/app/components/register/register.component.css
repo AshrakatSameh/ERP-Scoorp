@@ -1,0 +1,199 @@
+.login-container {
+    margin-top: 2%;
+    /* margin-bottom: 5%; */
+    border-radius: 3px;
+
+}
+
+.login-form-1 {
+    padding: 5%;
+    box-shadow: 0 5px 8px 0 #E7E7EA, 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+    /* background: #4875A9; */
+    background-image: url('../../../assets/images/Image.png');
+    height: 490;
+    border-radius: 10px 0 0 10px;
+}
+
+.shade {
+    background-color: rgb(231, 231, 234, 0.5);
+    margin-top: 42%;
+    height: 226px;
+    width: 201px;
+    border-radius: 27px;
+    margin-left: 12%;
+}
+
+.blog {
+    padding-top: 12%;
+    text-align: center;
+    height: 226px;
+}
+
+.login-form-2 {
+    padding: 5%;
+    background: #F7FBFF;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+    height: 515px;
+    border-radius: 0 10px 10px 0;
+}
+
+.shad2 {
+    height: 440px;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.1), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.login-form-2 h3 {
+    text-align: center;
+    color: #fff;
+}
+
+.blog-2 {
+    width: 70px;
+    height: 28px;
+    margin-top: 15px;
+    margin-left: 138px;
+}
+
+.blog-3 {
+    color: #667085;
+    font-size: 12px;
+    text-align: right;
+    /* padding-left: 55px; */
+    margin-top: 0px;
+    margin-right: 11px;
+    margin-bottom: 0px;
+
+}
+.blog-3 a{
+    color: #667085;
+}
+.blog-4 {
+    float: right;
+    margin-right: 6px;
+    margin-bottom: 2px;
+}
+
+h2 {
+    text-align: right;
+    padding-right: 1px;
+    text-align: right;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    font-size: 18px;
+}
+
+.login-container form {
+    padding: 10%;
+}
+
+.btnSubmit {
+    width: 50%;
+    border-radius: 1rem;
+    padding: 1.5%;
+    border: none;
+    cursor: pointer;
+}
+
+.login-form-1 .btnSubmit {
+    font-weight: 600;
+    color: #fff;
+    background-color: #0062cc;
+}
+
+.login-form-2 .btnSubmit {
+    font-weight: 600;
+    color: #0062cc;
+    background-color: #fff;
+}
+
+.login-form-2 .ForgetPwd {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-form-1 .ForgetPwd {
+    color: #0062cc;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.input-1 {
+    text-align: right;
+    width: 202px;
+    outline-color: #007bff;
+    border: 2px solid #E7E7EA;
+    border-radius: 6px;
+}
+
+h2,
+a,
+h4,
+p,
+label,
+input,
+button {
+    font-family: "Cairo", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+
+}
+
+button {
+    font-size: 11px;
+}
+
+.shade-roll {
+    width: 161px;
+    height: 36px;
+    margin-left: 60px;
+    margin-top: 7px;
+    border: 1px solid #667085;
+    border-radius: 20px;
+    background-color: #667085
+}
+
+.bttn {
+    /* text-align: center;
+    margin: 3px;
+    background-color: #667085;
+    font-size: 12px;
+    color: white;
+    padding-top: 2px; */
+
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    /* Text color */
+    background-color: #667085;
+    /* Primary background color */
+    border: 1px solid #667085;
+    /* Primary border color */
+    padding: 5px 19px 4px 18px;
+    /* Padding around the text */
+    font-size: 10px;
+    border-radius: 20px;
+    /* Rounded corners */
+    text-align: center;
+    cursor: pointer;
+    /* Cursor pointer on hover */
+    transition: background-color 0.2s, border-color 0.2s;
+    /* Smooth hover transition */
+    text-decoration: none;
+    margin-top: 3px;
+}
+
+.bttn {
+    transition: background-color 0.3s ease;
+}
+
+.bttn:hover {
+    background-color: #224273;
+}
+
+.bttn:active {
+    background-color: #224273;
+}

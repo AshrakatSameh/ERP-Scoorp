@@ -1,0 +1,866 @@
+<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed': ''">
+  <div class="logo-container">
+    <!-- <button class="logo" (click)="toggleCollapseNav()">A</button> -->
+    <img src="../../../assets/images/Frame 1171275298.png" (click)="toggleCollapseNav()"
+      style="background-color: white;">
+
+    <!-- <div class="logo-text" @fadeInOut *ngIf="collapsed">Angular</div> -->
+    <!-- <button class="btn-close" @rotate *ngIf="collapsed" (click)="closeSidenav()">
+          <i class="fal fa-times close-icon"></i>
+      </button> -->
+  </div>
+  <ul class="sidenav-nav">
+    <li class="nav-section">
+
+      <img @fadeInOut *ngIf="collapsed" style="width: 115px;height:50px;
+        margin: 0px 15px 10px 50px;" src="../../../assets/images/ImageW.png">
+
+    </li>
+
+    <hr class="gray-line" />
+
+    <li><input @fadeInOut *ngIf="collapsed" class="form-control text-end search-input" type="search"
+        placeholder="بحث في الكل" aria-label="Search" />
+    </li>
+
+
+
+    <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" (click)="toggleCollapse4('charts')"
+        [attr.aria-expanded]="!isCollapsed4['charts']" aria-controls="charts">
+        <i class="sidenav-link-icon far fa-chart-bar"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المخزون
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+      <div class="collapse" id="charts" [ngClass]="{'show': !isCollapsed4['charts']}" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse p-0">
+          <!-- Submenu items -->
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('warehouseMovementSub')" aria-expanded="!isCollapsed4['warehouseMovementSub']"
+              aria-controls="warehouseMovementSub" class="mx-4">
+              <span class="nav-link ml-4">
+                <span class="toggle-icon">{{ isCollapsed4['warehouseMovementSub'] ? '+' : '-' }}</span>
+                الوحده
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['warehouseMovementSub']}" id="warehouseMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/unitCategory"><span class="nav-link">فئات
+                      الوحدة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/unit"><span class="nav-link">الوحدة</span></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('warehouseManagersSub')" aria-expanded="false"
+              aria-controls="warehouseManagersSub" class="mx-4 ">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed4['warehouseManagersSub'] ? '+' : '-' }}</span>
+
+                الأصناف</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['warehouseManagersSub']}" id="warehouseManagersSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/typeCategory"><span class="nav-link">فئة
+                      الصنف</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/categories"><span class="nav-link">الأصناف</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/brands"><span class="nav-link">الماركات</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/groupCategory"><span class="nav-link">مجموعة
+                      الصنف</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/itemType"><span class="nav-link">نوع الصنف</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">حركة المخزن</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('typeSub')" class="mx-4 " aria-expanded="false" aria-controls="typeSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed4['typeSub'] ? '+' : '-' }}</span>
+
+                المستودعات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['typeSub']}" id="typeSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/storehouseCategory"><span class="nav-link">فئة
+                      المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/storehouse"><span
+                      class="nav-link">المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/storage"><span class="nav-link">أماكن
+                      التخزين</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/transportation"><span class="nav-link">النقل بين
+                      المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">جرد المستودع</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">تقارير المستودعات</span></a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">الأعدادات</span></a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link my-1" (click)="toggleCollapse('type')" [attr.aria-expanded]="!isCollapsed['type']"
+        aria-controls="type">
+        <i class="sidenav-link-icon fas fa-layer-group"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المبيعات
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="type" [ngClass]="{'show': !isCollapsed['type']}" @fadeInOut *ngIf="collapsed">
+        <ul class="nav-collapse" style="list-style-type: none;">
+
+          <!-- Submenu: حركة المبيعات -->
+          <li class="custom-hover nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesMovementSub')"
+              aria-expanded="!isCollapsed['salesMovementSub']" aria-controls="salesMovementSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesMovementSub'] ? '+' : '-' }}</span>
+                حركة المبيعات
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesMovementSub']}" id="salesMovementSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a routerLink="/sales"><span class="nav-link">عروض و طلبات
+                      البيع</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/goodsVoucher"><span class="nav-link">سند تسليم
+                      بضاعة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/salesInvoices"><span class="nav-link">فواتير
+                      المبيعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/receiveVoucher"><span class="nav-link">سند استلام
+                      البضاعة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/returnInvoices"><span class="nav-link">فواتير
+                      المرتجعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/collections"><span
+                      class="nav-link">التحصيلات</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Submenu: مسؤولي المبيعات -->
+          <li class="nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesManagersSub')"
+              aria-expanded="!isCollapsed['salesManagersSub']" aria-controls="salesManagersSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesManagersSub'] ? '+' : '-' }}</span>
+                مسؤولي المبيعات
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesManagersSub']}" id="salesManagersSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a routerLink="/representatives"><span
+                      class="nav-link">المناديب</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">المشرفين والمدراء</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">الفرق</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/boxAndCommitment"><span
+                      class="nav-link">العهدوالصندوق</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Submenu: العملاء -->
+          <li class="nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('clientsSub')"
+              aria-expanded="!isCollapsed['clientsSub']" aria-controls="clientsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['clientsSub'] ? '+' : '-' }}</span>
+                العملاء
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['clientsSub']}" id="clientsSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a routerLink="/contacts"><span class="nav-link">جهات
+                      الإتصال</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/clients"><span class="nav-link">العملاء</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/priceLists"><span class="nav-link">قوائم
+                      الأسعار</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/Tag"><span class="nav-link">الوسم</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/branchesAndLocationsOfClients"><span
+                      class="nav-link">مواقع وفروع العملاء</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/repaymentPeriod"><span class="nav-link">فترة
+                      السداد</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/repaymentWay"><span class="nav-link">طريقة
+                      السداد</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Submenu: تقارير المبيعات -->
+          <li class="nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesReportsSub')"
+              aria-expanded="!isCollapsed['salesReportsSub']" aria-controls="salesReportsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesReportsSub'] ? '+' : '-' }}</span>
+                تقارير المبيعات
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesReportsSub']}" id="salesReportsSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a><span class="nav-link">التقارير الربعية</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">النقارير السنوية</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Submenu: إعدادات -->
+          <li class="nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('settingsSub')"
+              aria-expanded="!isCollapsed['settingsSub']" aria-controls="settingsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['settingsSub'] ? '+' : '-' }}</span>
+                إعدادات
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['settingsSub']}" id="settingsSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a><span class="nav-link">إعدادات عامة</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">إعدادات الخصوصية</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+        </ul>
+      </div>
+    </li>
+
+    <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" (click)="toggleCollapse('sidebarLayouts')"
+        [attr.aria-expanded]="!isCollapsed['sidebarLayouts']" aria-controls="sidebarLayouts">
+        <i class="sidenav-link-icon fas fa-th-list"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          الموظفين
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="sidebarLayouts" [ngClass]="{'show': !isCollapsed['sidebarLayouts']}" @fadeInOut
+        *ngIf="collapsed">
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item">
+            <a routerLink="/staff">
+              <span class="nav-link">الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/covenant">
+              <span class="nav-link">العهد المستلمة</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/sections">
+              <span class="nav-link">الاقسام</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/description">
+              <span class="nav-link">الوصف الوظيفي</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+
+    <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" (click)="toggleCollapse3('mainMenu')"
+        [attr.aria-expanded]="!isCollapsed3['mainMenu']" aria-controls="mainMenu">
+        <i class="sidenav-link-icon fas fa-map-marker-alt"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المشاريع و العقود
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="mainMenu" [ngClass]="{'show': !isCollapsed3['mainMenu']}" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse sub-nav">
+          <!-- Projects Submenu -->
+          <li class="collapsed-item hover-custom nav-item">
+            <a (click)="toggleCollapse3('projectsMovementSub')" aria-expanded="false"
+              aria-controls="projectsMovementSub" class="mx-4 custom-class">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed3['projectsMovementSub'] ? '+' : '-' }}</span>
+                المشاريع
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed3['projectsMovementSub']}" id="projectsMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item">
+                  <a routerLink="/projects">
+                    <span class="nav-link">المشاريع</span>
+                  </a>
+                </li>
+                <li class="hover-custom nav-item">
+                  <a routerLink="/projectType">
+                    <span class="nav-link">نوع المشاريع</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Contracts Submenu -->
+          <li class="collapsed-item hover-custom nav-item">
+            <a (click)="toggleCollapse3('contractsMovementSub')" aria-expanded="false"
+              aria-controls="contractsMovementSub" class="mx-4 custom-class">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed3['contractsMovementSub'] ? '+' : '-' }}</span>
+                العقود
+              </span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed3['contractsMovementSub']}" id="contractsMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item">
+                  <a routerLink="/contracts">
+                    <span class="nav-link">العقود</span>
+                  </a>
+                </li>
+                <li class="hover-custom nav-item">
+                  <a routerLink="/contractsType">
+                    <span class="nav-link">نوع العقود</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Other Links -->
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">المهام</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">الموقع وجهات الإتصال</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">المعدات</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">تقارير المشاريع والعقود</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">اعدادات المشاريع والعقود</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+
+    <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" (click)="toggleCollapse4('forms')" [attr.aria-expanded]="!isCollapsed4['forms']"
+        aria-controls="forms">
+        <i class="sidenav-link-icon fas fa-pen-square"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          خدمات الأعمال
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="forms" [ngClass]="{'show': !isCollapsed4['forms']}" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesrequests">
+              <span class="nav-link">طلبات خدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">أمر العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesSections">
+              <span class="nav-link">أقسام خدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesType">
+              <span class="nav-link">نوع خدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesCategory">
+              <span class="nav-link">فئة خدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">الموافقات لخدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/documentOperations">
+              <span class="nav-link">توثيق العمليات</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">تقارير خدمات العمل</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a>
+              <span class="nav-link">اعدادات خدمات العمل</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+
+    <li class="sidenav-nav-item">
+      <a
+        class="sidenav-nav-link mb-2"
+        (click)="toggleCollapse4('tables')"
+        [attr.aria-expanded]="!isCollapsed4['tables']"
+        aria-controls="tables"
+      > 
+        <i class="sidenav-link-icon fas fa-table"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          طلبات الموافقة
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+    
+      <div
+        class="collapse"
+        id="tables"
+        [ngClass]="{'show': !isCollapsed4['tables']}"
+        @fadeInOut
+        *ngIf="collapsed"
+      >
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item">
+            <a routerLink="/approval">
+              <span class="nav-link">طلبات الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/typeRequest">
+              <span class="nav-link">نوع طلبات الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/categoryResquest">
+              <span class="nav-link">فئه طلبات الموظفين</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#charts">
+        <i class="sidenav-link-icon far fa-chart-bar"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المخزون
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+      <div class="collapse" id="charts" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse p-0">
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('warehouseMovementSub')" aria-expanded="false"
+              aria-controls="warehouseMovementSub" class="mx-4 ">
+              <span class="nav-link ml-4">
+                <span class="toggle-icon">{{ isCollapsed4['warehouseMovementSub'] ? '+' : '-' }}</span>
+                الوحده</span>
+
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['warehouseMovementSub']}" id="warehouseMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/unitCategory"><span class="nav-link">فئات
+                      الوحدة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/unit"><span class="nav-link">الوحدة</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('warehouseManagersSub')" aria-expanded="false"
+              aria-controls="warehouseManagersSub" class="mx-4 ">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed4['warehouseManagersSub'] ? '+' : '-' }}</span>
+
+                الأصناف</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['warehouseManagersSub']}" id="warehouseManagersSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/typeCategory"><span class="nav-link">فئة
+                      الصنف</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/categories"><span class="nav-link">الأصناف</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/brands"><span class="nav-link">الماركات</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/groupCategory"><span class="nav-link">مجموعة
+                      الصنف</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/itemType"><span class="nav-link">نوع الصنف</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">حركة المخزن</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class="collapsed-item nav-item">
+            <a (click)="toggleCollapse4('typeSub')" class="mx-4 " aria-expanded="false" aria-controls="typeSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed4['typeSub'] ? '+' : '-' }}</span>
+
+                المستودعات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed4['typeSub']}" id="typeSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/storehouseCategory"><span class="nav-link">فئة
+                      المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/storehouse"><span
+                      class="nav-link">المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/storage"><span class="nav-link">أماكن
+                      التخزين</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/transportation"><span class="nav-link">النقل بين
+                      المستودعات</span></a></li>
+                <li class="hover-custom nav-item"><a ><span class="nav-link">جرد المستودع</span></a></li>
+                <li class="hover-custom nav-item"><a ><span class="nav-link">تقارير المستودعات</span></a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">الأعدادات</span></a>
+          </li>
+        </ul>
+      </div>
+    </li> -->
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link my-1" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#type">
+        <i class="sidenav-link-icon fas fa-layer-group"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المبيعات
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="type" @fadeInOut *ngIf="collapsed">
+        <ul class=" nav-collapse " style="list-style-type: none;">
+
+
+          <li class=" custom-hover nav-item ">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesMovementSub')" aria-expanded="false"
+              aria-controls="salesMovementSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesMovementSub'] ? '+' : '-' }}</span>
+
+                حركة المبيعات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesMovementSub']}" id="salesMovementSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav ">
+                <li class="hover-custom nav-item"><a routerLink="/sales">
+                    <span class="nav-link">عروض و طلبات البيع</span>
+                  </a></li>
+                <li class="hover-custom nav-item"><a routerLink="/goodsVoucher"><span class="nav-link">سند تسليم
+                      بضاعة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/salesInvoices"><span class="nav-link">فواتير
+                      المبيعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/receiveVoucher"><span class="nav-link">سند استلام
+                      البضاعة</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/returnInvoices"><span class="nav-link">فواتير
+                      المرتجعات</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/collections"><span
+                      class="nav-link">التحصيلات</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class=" nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesManagersSub')" aria-expanded="false"
+              aria-controls="salesManagersSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesManagersSub'] ? '+' : '-' }}</span>
+
+                مسؤولي المبيعات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesManagersSub']}" id="salesManagersSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a routerLink="/representatives"><span
+                      class="nav-link">المناديب</span></a></li>
+                <li class="hover-custom nav-item"><a ><span class="nav-link">المشرفين والمدراء</span></a></li>
+                <li class="hover-custom nav-item"><a ><span class="nav-link">الفرق</span></a></li>
+                <li class="hover-custom nav-item"><a routerLink="/boxAndCommitment"><span
+                      class="nav-link">العهدوالصندوق</span></a></li>
+
+              </ul>
+            </div>
+          </li>
+
+
+          <li class=" nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('clientsSub')" aria-expanded="false"
+              aria-controls="clientsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['clientsSub'] ? '+' : '-' }}</span>
+
+                العملاء</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['clientsSub']}" id="clientsSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item "><a routerLink="/contacts"><span class="nav-link">جهات
+                      الإتصال</span></a></li>
+                <li class="hover-custom nav-item "><a routerLink="/clients"><span class="nav-link">العملاء</span></a>
+                </li>
+                <li class="hover-custom nav-item "><a routerLink="/priceLists"><span class="nav-link">قوائم
+                      الأسعار</span></a></li>
+                <li class="hover-custom nav-item "><a routerLink="/Tag"><span class="nav-link">الوسم</span></a></li>
+                <li class="hover-custom nav-item "><a routerLink="/branchesAndLocationsOfClients"><span
+                      class="nav-link">مواقع وفروع
+                      العملاء</span></a></li>
+                <li class="hover-custom nav-item "><a routerLink="/repaymentPeriod"><span class="nav-link">فترة
+                      السداد</span></a></li>
+                <li class="hover-custom nav-item "><a routerLink="/repaymentWay"><span class="nav-link">طريقة
+                      السداد</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class=" nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('salesReportsSub')" aria-expanded="false"
+              aria-controls="salesReportsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['salesReportsSub'] ? '+' : '-' }}</span>
+
+                تقارير المبيعات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['salesReportsSub']}" id="salesReportsSub">
+              <ul class="nav nav-collapse sub-nav sidebar-nav">
+                <li class="hover-custom nav-item"><a><span class="nav-link">التقارير الربعية</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">النقارير السنوية</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class=" nav-item">
+            <a class="mx-4 custom-class" (click)="toggleCollapse('settingsSub')" aria-expanded="false"
+              aria-controls="settingsSub">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed['settingsSub'] ? '+' : '-' }}</span>
+
+                اعدادات</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed['settingsSub']}" id="settingsSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a><span class="nav-link">اعدادات عامة</span></a></li>
+                <li class="hover-custom nav-item"><a><span class="nav-link">اعدادات الخصوصية</span></a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </li> -->
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#sidebarLayouts">
+        <i class="sidenav-link-icon fas fa-th-list"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          الموظفين
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+
+      <div class="collapse" id="sidebarLayouts" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item ">
+            <a routerLink="/staff">
+              <span class="nav-link">الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/covenant">
+              <span class="nav-link">العهد المستلمة</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/sections">
+              <span class="nav-link"> الاقسام</span>
+            </a>
+          </li>
+
+          <li class="hover-custom nav-item">
+            <a routerLink="/description">
+              <span class="nav-link"> الوصف الوظيفي</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li> -->
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#mainMenu">
+        <i class="sidenav-link-icon fas fa-map-marker-alt"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          المشاريع و العقود
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+      <div class="collapse" id="mainMenu" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse sub-nav">
+          <li class="collapsed-item hover-custom nav-item">
+            <a (click)="toggleCollapse3('projectsMovementSub')" aria-expanded="false"
+              aria-controls="projectsMovementSub" class="mx-4 custom-class">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed3['projectsMovementSub'] ? '+' : '-' }}</span>
+
+                المشاريع</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed3['projectsMovementSub']}" id="projectsMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/projects"><span class="nav-link">المشاريع</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/projectType"><span class="nav-link">نوع
+                      المشاريع</span></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="collapsed-item hover-custom nav-item">
+            <a (click)="toggleCollapse3('contractsMovementSub')" aria-expanded="false"
+              aria-controls="contractsMovementSub" class="mx-4 custom-class">
+              <span class="nav-link">
+                <span class="toggle-icon">{{ isCollapsed3['contractsMovementSub'] ? '+' : '-' }}</span>
+
+                العقود</span>
+            </a>
+            <div [ngClass]="{'collapse': isCollapsed3['contractsMovementSub']}" id="contractsMovementSub">
+              <ul class="nav nav-collapse sub-nav">
+                <li class="hover-custom nav-item"><a routerLink="/contracts"><span class="nav-link">العقود</span></a>
+                </li>
+                <li class="hover-custom nav-item"><a routerLink="/contractsType"><span class="nav-link">نوع
+                      العقود</span></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">المهام</span></a>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">الموقع وجهات الإتصال</span></a>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">المعدات</span></a>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">تقارير المشاريع والعقود</span></a>
+          </li>
+          <li class="hover-custom nav-item"><a>
+              <span class="nav-link">اعدادات المشاريع والعقود</span></a>
+          </li>
+        </ul>
+      </div>
+    </li> -->
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#forms">
+        <i class="sidenav-link-icon fas fa-pen-square"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          خدمات الأعمال
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+      <div class="collapse" id="forms" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesrequests"><span class="nav-link">طلبات خدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a><span class="nav-link">أمر العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesSections"><span class="nav-link">أقسام خدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesType"><span class="nav-link">نوع خدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/workServicesCategory"><span class="nav-link">فئة خدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a><span class="nav-link">الموافقات لخدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/documentOperations"><span class="nav-link">توثيق العمليات</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a><span class="nav-link">تقارير خدمات العمل</span></a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a><span class="nav-link">اعدادات خدمات العمل</span></a>
+          </li>
+        </ul>
+      </div>
+    </li> -->
+
+    <!-- <li class="sidenav-nav-item">
+      <a class="sidenav-nav-link mb-2" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+        data-bs-toggle="collapse" href="#tables">
+        <i class="sidenav-link-icon fas fa-table"></i>
+        <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
+          طلبات الموافقة
+        </span>
+        <span class="caret" *ngIf="collapsed"></span>
+      </a>
+      <div class="collapse" id="tables" @fadeInOut *ngIf="collapsed">
+        <ul class="nav nav-collapse">
+          <li class="hover-custom nav-item">
+            <a routerLink="/approval">
+              <span class="nav-link">طلبات الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/typeRequest">
+              <span class="nav-link">نوع طلبات الموظفين</span>
+            </a>
+          </li>
+          <li class="hover-custom nav-item">
+            <a routerLink="/categoryResquest">
+              <span class="nav-link">فئه طلبات الموظفين</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+ -->
+
+
+  </ul>
+</div>

@@ -1,0 +1,2376 @@
+<div class="wrapper">
+  <!-- Sidebar component on the left -->
+
+  <div class="main-panel">
+    <!-- Main content section -->
+    <div class="container">
+      <div class="page-inner">
+        <div
+          class="page-header d-flex justify-content-between align-items-center flex-row-reverse"
+        >
+          <h3 class="fw-bold mb-3 text-end">العقود</h3>
+          <ul class="breadcrumbs mb-3">
+            <li class="nav-item dropdown">
+              <button
+                class="btn d-flex justify-content-start align-items-center"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Admin
+                <!-- Placeholder for the dropdown arrow -->
+                <i class="fa-solid fa-caret-down"></i>
+              </button>
+            </li>
+            <li class="nav-home">
+              <a href="#">
+                <i class="fa-solid fa-search"></i>
+              </a>
+            </li>
+            <li class="separator">
+              <!-- <i class="icon-arrow-right"></i> -->
+            </li>
+            <li class="nav-item">
+              <a href="#">
+                <i class="fa-solid fa-bell"></i>
+              </a>
+            </li>
+            <li class="separator">
+              <!-- <i class="icon-arrow-right"></i> -->
+            </li>
+            <li class="nav-item">
+              <i class="fa-solid fa-gear"></i>
+            </li>
+          </ul>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div
+                class="card-header d-flex justify-content-between align-items-center flex-row-reverse"
+              >
+                <h4 class="card-title text-end">العقود</h4>
+                <div class="button-group d-flex justify-content-start">
+                  <button
+                    type="button"
+                    class="btn my-button" data-bs-toggle="modal" data-bs-target="#myModal"
+                  >
+                    انشاء عقد جديد
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                  <button type="button" class="btn ms-3 my-button2">
+                    <i class="fa-solid fa-print"></i>
+                    طباعه
+                  </button>
+                  <div class="dropdown">
+                    <button type="button" class="btn ms-3 my-button2" (click)="toggleDropdownOptions()">
+                      <i class="fa-solid fa-gear"></i> الاجراءات
+                    </button>
+                  
+                    <div class="dropdown-menu" *ngIf="isDropdownOpen2" style="cursor: default">
+                      <a class="dropdown-item" (click)="openModalForSelected()">تعديل</a>
+                      <a class="dropdown-item" (click)="openConfirmationModal()">حذف</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="d-flex flex-row align-items-center mt-3 d-flex justify-content-between align-items-center flex-row-reverse"
+              >
+                <div class="mb-2 me-2" style="width: 100px">
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                  >
+                    <option selected disabled>الاحدث</option>
+                    <option value="1">الاقدم</option>
+                    <option value="2">الاحدث</option>
+                    <option value="3">ترتيب ابجدي</option>
+                  </select>
+                </div>
+
+                <div class="d-flex align-items-center flex-row-reverse">
+                  <!-- Button with icon -->
+                  <button class="btn my-custom-icone me-2">
+                    <span class="btn-label">
+                      <i class="fa-solid fa-sliders"></i>
+                    </span>
+                  </button>
+
+                  <!-- Search form -->
+                  <div class="d-flex position-relative">
+                    <input class="form-control text-end search-input" type="search" placeholder="بحث في الكل"
+                      aria-label="Search" [(ngModel)]="searchQuery" (input)="onSearchInputChange($event)" />
+                    <i class="fs-4 bi-search position-absolute search-icon"></i>
+                      </div>
+                </div>
+
+                <div class="icon-group d-flex align-items-center">
+                  <button
+                    class="btn my-custom-icone"
+                    [ngClass]="{ 'clicked-button': isFirstButtonClicked }"
+                    (click)="toggleFirstButtonClick()"
+                  >
+                    <span class="btn-label">
+                      <i class="fa-solid fa-table-cells-large"></i>
+                    </span>
+                  </button>
+
+                  <button
+                    class="btn my-custom-icone"
+                    [ngClass]="{ 'clicked-button': isSecondButtonClicked }"
+                    (click)="toggleSecondButtonClick()"
+                  >
+                    <span class="btn-label">
+                      <i class="fa-solid fa-list-ul"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body" *ngIf="istableview">
+                <div class="table-responsive">
+                  <table
+                    id="basic-datatables"
+                    class="display table table-striped table-hover"
+                  >
+                    <thead>
+                      <tr class="firstcol">
+                        <th class="firstcolleft position-relative">
+                          <div >
+                            <!-- Icon to trigger dropdown -->
+                            <i class="fa-solid fa-right-left" style="cursor: pointer" (click)="toggleDropdownCols()"></i>
+                          
+                            <!-- Dropdown menu for selecting columns -->
+                            <ul *ngIf="showDropdownCols" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
+                            border-radius: 15px;">
+                              <li *ngFor="let column of columns">
+                                <a class="dropdown-item">
+                                  <div class="d-flex justify-content-end align-items-center">
+                                    {{ column.displayName }}
+                                    <input class="mx-2" type="checkbox" [(ngModel)]="column.visible" />
+                                  </div>
+                               
+                                </a>
+                               
+                              </li>
+                            </ul>
+                          </div>
+                      
+                        </th>
+
+                        <!-- <th>الفرق</th>
+                        <th>موكل الي</th>
+                        <th>العميل</th>
+                        <th>موقع العقد</th>
+                        <th>اسم العقد باللغه المحليه</th>
+                        <th>اسم العقد</th> -->
+                        <th *ngIf="isColumnVisible('teamName')">الفريق</th>
+                        <th *ngIf="isColumnVisible('assignedToName')">موقع العقد</th>
+                        <th *ngIf="isColumnVisible('endDate')">تاريخ الإنتهاء</th>
+                        <th *ngIf="isColumnVisible('startDate')">تاريخ البدء</th>
+                        <th *ngIf="isColumnVisible('code')">كود المشروع</th>
+                        <th *ngIf="isColumnVisible('clientName')">اسم العميل</th>
+                        <th *ngIf="isColumnVisible('localName')">اسم العقد باللغه المحليه</th>
+                        <th *ngIf="isColumnVisible('name')">اسم العقد</th>
+                        <th>المسلسل</th>
+                        <th class="firstcolright">
+                          <span 
+                            *ngIf="true" 
+                            [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                            style="display: inline-block; width: 1.5rem; text-align: center;"
+                          >
+                            {{ selectedCount }}
+                          </span>
+                          <input 
+                            type="checkbox" 
+                            [(ngModel)]="selectAll" 
+                            (change)="toggleAllCheckboxes()" 
+                            class="large-checkbox mx-1" 
+                          />                      </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of filteredContract, let i=index">
+                        <td></td>
+                        <td *ngIf="isColumnVisible('endDate')">{{ item.endDate |date: 'dd/MM/yy' }}</td>
+                        <td *ngIf="isColumnVisible('startDate')">{{ item.startDate | date: 'dd/MM/yy' }}</td>
+                        <td *ngIf="isColumnVisible('assignedToName')">{{ item.assignedToName }}</td>
+                        <td *ngIf="isColumnVisible('teamName')">{{ item.teamName }}</td>
+                        <td *ngIf="isColumnVisible('clientName')">{{ item.clientName }}</td>
+                        <td *ngIf="isColumnVisible('code')">{{ item.code }}</td>
+                        <td *ngIf="isColumnVisible('localName')">{{ item.localName }}</td>
+                        <td *ngIf="isColumnVisible('name')">{{ item.name }}</td>
+                
+                        <td>{{i+1}}</td>
+                        <td class="firstcolright">
+                          <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item)" class="large-checkbox " />
+                        </td>
+                      </tr>
+                  
+                    </tbody>
+                  </table>
+                    <!-- paging -->
+                <nav *ngIf="!searchQuery" aria-label="Page navigation">
+                  <ul class="pagination justify-content-end">
+                    <!-- Previous Button -->
+                    <li class="page-item" [class.disabled]="pageNumber === 1">
+                      <a class="page-link"  (click)="changePage(pageNumber - 1)" tabindex="-1"
+                        [attr.aria-disabled]="pageNumber === 1 ? true : null">&laquo;</a>
+                    </li>
+                
+                    <!-- Dynamically Render Page Numbers -->
+                    <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+                      <li class="page-item" [class.active]="pageNumber === (i + 1)">
+                        <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+                      </li>
+                    </ng-container>
+                
+                    <!-- Next Button -->
+                    <li class="page-item" [class.disabled]="pageNumber === totalPages">
+                      <a class="page-link"  (click)="changePage(pageNumber + 1)" 
+                        [attr.aria-disabled]="pageNumber === totalPages ? true : null">&raquo;</a>
+                    </li>
+                  </ul>
+                </nav>
+                </div>
+              </div>
+
+              <div class="card-body" *ngIf="iscardsview">
+                <div class="container-fluid mt-4">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h6 class="small-header">Card 1</h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text">Some text inside card 1.</p>
+                        </div>
+                        <div class="card-footer text-end">
+                          <button class="btn btn-primary">عرض سعر</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h6 class="small-header">Card 2</h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text">Some text inside card 2.</p>
+                        </div>
+                        <div class="card-footer text-end">
+                          <button class="btn btn-primary">عرض سعر</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h6 class="small-header">Card 3</h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text">Some text inside card 3.</p>
+                        </div>
+                        <div class="card-footer text-end">
+                          <button class="btn btn-primary">عرض سعر</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h6 class="small-header">Card 4</h6>
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text">Some text inside card 4.</p>
+                        </div>
+                        <div class="card-footer text-end">
+                          <button class="btn btn-primary">عرض سعر</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title text-end flex-row-reverse"
+          id="staticBackdropLabel"
+        >
+          انشاء عقد
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="contractForm" (ngSubmit)="onSubmit()">
+          <div class="container">
+            <!-- Row with two fields -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for=" text-end"> اسم العقد</label>
+                  <input
+                    type="text"
+                    id="name" name="name" formControlName="name" 
+                    class="form-control custom-input"
+                    placeholder="اسم العقد"
+                    name="name"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">اسم العقد باللغه المحليه </label>
+                  <input
+                    type="text"
+                    id="localName" name="localName" formControlName="localName" 
+                    class="form-control custom-input"
+                    placeholder="Contract Name"
+                    
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="clientId">العميل</label>
+                  <select id="clientId" name="clientId" formControlName="clientId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار العميل</option>
+                    <option *ngFor="let item of clients" [value]="item.id">{{item.name}}</option>
+                  </select>
+                  <!-- <select formControlName="userIds" multiple>
+                    <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                  </select> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="assignedToId">موكل الى </label>
+                  <select id="assignedToId" name="assignedToId" formControlName="assignedToId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار موكل الى </option>
+                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="teamId">الفريق </label>
+                  <select id="teamId" name="teamId" formControlName="teamId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار الفريق </option>
+                    <option *ngFor="let item of teams" [value]="item.id">{{item.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="userIds">المستخدمين </label>
+                  <select id="userIds" name="userIds" formControlName="userIds" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار المستخدمين </option>
+                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="startDate text-end">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    id="startDate" name="startDate" formControlName="startDate"
+                    class="form-control custom-input"
+                    placeholder="قم باختيار التاريخ"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="endDate text-end"> تاريخ الانتهاء </label>
+                  <input
+                    type="date"
+                    id="endDate" name="endDate" formControlName="endDate"
+                    class="form-control custom-input"
+                    placeholder="قم باختيار التاريخ"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="code text-end">رقم العقد</label>
+                  <input
+                    type="text"
+                    id="code" name="code" formControlName="code"
+                    class="form-control custom-input"
+                    placeholder="قم باختبار رقم العقد"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">حاله العقد </label>
+                  <input
+                    type="text"
+                    id="field2"
+                    disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار حاله العقد"
+                  />
+                </div>
+              </div>
+            </div>
+
+
+            <div class="scroll-buttons-container">
+              <button
+                *ngFor="let btn of buttons; let i = index"
+                [id]="'button-' + i"
+                class="scroll-button"
+                type="button"
+                (click)="showContent(i)"
+              >
+                {{ btn }}
+              </button>
+            </div>
+
+            <!-- Show Details -->
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 0">
+                <div class="container mt-5">
+                  <h5 class="mb-3">المرفقات</h5>
+                  <button class="btn btn-link text-muted p-1">
+                    <i class="fa fa-microphone"></i>
+                  </button>
+
+                  <button class="btn btn-link text-muted p-1">
+                    <i class="fa fa-paperclip"></i>
+                  </button>
+
+                  <div class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
+                    <small class="text-muted"
+                      >JPG, PNG or PDF; file size no more than 10MB</small
+                    >
+                  </div>
+                </div>
+
+                <div class="row align-items-center">
+                  <div class="col-md-9">
+                    <!-- <label for="location" class="form-label">الموقع</label>
+                    <div class="input-group">
+                        <select class="form-select" id="location"  name="code" ngModel required>
+                            <option selected>قم بإختيار الموقع</option>
+                            <option *ngFor="let item of locations" [value]="item.id">{{item.locationName}},{{item.locationAddress}},{{item.latitude}},{{item.longitude}}</option>
+                           
+                        </select>
+                    </div> -->
+                    <label for="locationLinks" class="form-label">Location Links:</label>
+                    <div *ngFor="let location of locationLinks; let i = index" class="input-group mb-2">
+                      <select 
+                        class="form-select form-control custom-input"
+                        name="locationLink{{i}}" 
+                        required
+                      >
+                      <!-- formArrayName="locationLinks[i]"  -->
+
+                        <option value="" disabled selected>قم بلإختيار المواقع</option>
+                        <option *ngFor="let link of locations" [value]="link.id">{{ link.locationName }}</option>
+                      </select>
+                      <button type="button" class="btn btn-danger" (click)="removeLocationLink(i)">Remove</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary" (click)="addLocationLink()">Add Location</button>
+                  
+                </div>
+                  <div
+                    class="col-md-3 d-flex justify-content-start mt-3 mt-md-0"
+                  >
+                    <button
+                      class="btn btn-primary locationButton"
+                      type="button"
+                      (click)="toggleMap()"
+                    >
+                      <i class="fas fa-map-marker-alt"></i> أضف موقع
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Map Viewing -->
+
+               
+          <!-- <form>
+                <div *ngIf="isMapView">
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                      <label for="location" class="form-label">عرض الخريطه</label>
+                     
+                    </div>
+                    <div
+                      class="col-md-3 d-flex justify-content-start mt-3 mt-md-0"
+                    >
+                    <button (click)="toggleMapClose()" class="btn btn-outline-primary m-2">الغاء</button>
+                    <button class="btn btn-primary m-2">حفظ</button>
+                    </div>
+                  </div>
+
+              
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="siteName" class="form-label">اسم الموقع</label>
+                        <input type="text" class="form-control" id="siteName"
+                            placeholder="قم بكتابة اسم الموقع">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line1" class="form-label">خط الطول</label>
+                        <input type="text" class="form-control" id="line1" placeholder="قم بكتابة خط الطول">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line2" class="form-label">خط العرض</label>
+                        <input type="text" class="form-control" id="line2" placeholder="قم بكتابة خط العرض">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line3" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="line3" placeholder="قم بكتابة خط العرض">
+                    </div>
+                </div>
+
+                
+                <div class="row mb-4">
+                    <div class="col-md-12 text-center">
+                        <h5 class="mb-4">عرض الخريطة</h5>
+                        <div class="map-container"
+                            style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <iframe
+                                src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                                width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                                aria-hidden="false" tabindex="0">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+          </form> -->
+
+
+          <!-- try map input -->
+          <form (ngSubmit)="onSubmitLocation(locationForm)" #locationForm="ngForm">
+            <div *ngIf="isMapView">
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                        <label for="location" class="form-label">عرض الخريطه</label>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                        <button (click)="toggleMapClose()" class="btn btn-outline-primary m-2">الغاء</button>
+                        <button type="submit" class="btn btn-primary m-2">حفظ</button>
+                    </div>
+                </div>
+        
+                <!-- Input Fields for Site Information -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="siteName" class="form-label">اسم الموقع</label>
+                        <input type="text" class="form-control" id="locationName" name="locationName" ngModel placeholder="قم بكتابة اسم الموقع" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line1" class="form-label">خط الطول</label>
+                        <input type="text" class="form-control" id="longitude" name="longitude" [(ngModel)]="longitude" placeholder="قم بكتابة خط الطول" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line2" class="form-label">خط العرض</label>
+                        <input type="text" class="form-control" id="latitude" name="latitude" [(ngModel)]="latitude" placeholder="قم بكتابة خط العرض" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line3" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="locationAddress" name="locationAddress" ngModel placeholder="قم بكتابة العنوان" required>
+                    </div>
+                </div>
+        
+                <!-- Map Display Section -->
+                <div class="row mb-4">
+                  <div class="col-md-12 text-center">
+                      <h5 class="mb-4">عرض الخريطة</h5>
+                      <div class="map-container"
+                          style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                          <iframe
+                              src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                              width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                              aria-hidden="false" tabindex="0">
+                          </iframe>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </form>
+        
+
+
+                <!-- End MApping View -->
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field1 text-end">نوع العقد</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختبار النوع"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field2 text-end">مركز التكلفه </label>
+                      <input
+                        type="text"
+                        id="field2"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختيار التكلفه"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="field1 text-end">وصف العقد</label>
+                      <textarea
+                        class="form-control custom-input"
+                        id="Textarea1"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="field1 text-end"> التجديد التلقائي</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="نعم ام لا "
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field1 text-end">المشروع</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختبار المشروع"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field2 text-end">المعدات </label>
+                      <input
+                        type="text"
+                        id="field2"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختيارالمعدات"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row align-items-center mb-4">
+                  <div class="col-md-9">
+                    <label for="location" class="form-label">جهه الاتصال</label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        id="field3"
+                        
+                        class="form-control custom-input"
+                        placeholder="قم باختيار جهه الاتصال"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-3 d-flex justify-content-start mt-4"
+                  >
+                    <button
+                      class="btn btn-primary locationButton"
+                      type="button"
+                    >
+                      <i class="fa-solid fa-address-book"></i>أضف جهه الاتصال
+                    </button>
+                  </div>
+                </div>
+
+                <h5>اظهار الانشطه</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                  <div class="container mt-4">
+                    <div class="card chat-card">
+                      <div class="card-body p-3">
+                        <div class="d-flex align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
+                          <span class="chat-time"> 01 Oct 2024</span>
+                        </div>
+                        <p class="chat-message mt-2">
+                          I'm good, thanks for asking! What about you?
+                        </p>
+                      </div>
+                    </div>
+                    
+                      <div class="card chat-card">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center">
+                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
+                            <span class="chat-time"> 01 Oct 2024</span>
+                          </div>
+                          <p class="chat-message mt-2">
+                            I'm good, thanks for asking! What about you?
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+  
+                  </div>
+                    
+                    
+                </div>
+                  
+                  
+
+              </div>
+            </div>
+
+            <!-- Show assignments  -->
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 1">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">المهام</h5>
+                  <div class="button-group d-flex justify-content-start">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#Addmession">+ إضافة مهمه</button>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >الاسم</th>
+
+                            <th>الحاله</th>
+                            <th>التاريخ</th>
+                            <th>الاولويه</th>
+
+                            <th >موكل الي</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                            <td>Tokyo</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- show Surveys -->
+
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 2">
+            <div class="row">
+              <div class="col-md-9">
+                  <div class="form-group">
+                      <label for="field7 text-end">النماذج
+                      </label>
+                      <input type="text" id="field7"
+                          class="form-control" placeholder="مؤشر الأداء الرئيسي 1" />
+                  </div>
+              </div>
+              <div class="col-md-3 mb-3 customButton">
+                  <div class="col-md-12 text-start">
+                      <button class="btn btn-outline-primary me-3">الغاء</button>
+                      <button class="btn btn-primary m-2">حفظ</button>
+                  </div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <input type="text" id="field7"
+                        class="form-control" placeholder="مؤشر الأداء الرئيسي 2" />
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 mt-1">
+                <div class="col-md-12 text-start">
+                    <button class="btn btn-outline-primary me-3">الغاء</button>
+                    <button class="btn btn-primary m-2">حفظ</button>
+                </div>
+            </div>
+        </div>
+          </div>
+          </div>
+
+            <!-- show comments -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 3">
+                    <div class="container comment-section mt-5">
+                        <div class="card p-3">
+                          <!-- Add Comment Section -->
+                          <div class="container add-comment-section mt-3">
+                            <div class="card p-3 d-flex align-items-center">
+                              <div class="d-flex align-items-center w-100">
+                                <!-- User Avatar -->
+                                <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                                
+                                <!-- Comment Input Section -->
+                                <div class="flex-grow-1">
+                                  <input type="text" class="form-control" placeholder="أضف تعليقاً">
+                                </div>
+                          
+                                <!-- Icons and Post Button -->
+                                <div class="d-flex align-items-center ms-2">
+                                  <!-- Voice Icon -->
+                                  <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+                          
+                                  <!-- Attachment Icon -->
+                                  <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+                          
+                                  <!-- Post Button -->
+                                  <button class="btn btn-primary ms-2 px-4">نشر</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                      
+                          <!-- Comments List -->
+                          <div class="comments-list mt-4">
+                            <div class="comment-item p-3 mb-3">
+                              <div class="d-flex align-items-start">
+                                <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                                <div class="ms-3 w-100">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">خالد ابراهيم</h6>
+                                    <span class="text-muted small">Aug 19, 2021</span>
+                                  </div>
+                                  <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
+                                  <div class="comment-actions d-flex">
+                                    <button class="btn btn-link p-0"><i class="fa fa-heart"></i> 5</button>
+                                    <button class="btn btn-link p-0 ms-3"><i class="fa fa-comment"></i> 3</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                      
+                            <!-- Nested Reply Comment -->
+                            <div class="comment-item p-3 mb-3 ms-5">
+                              <div class="d-flex align-items-start">
+                                <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                                <div class="ms-3 w-100">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">خالد ابراهيم</h6>
+                                    <span class="text-muted small">Aug 19, 2021</span>
+                                  </div>
+                                  <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      
+                          <!-- View More Comments Link -->
+                          <div class="text-center">
+                            <a href="#" class="text-primary">باقي التعليقات</a>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+
+            <!-- contract's Money -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 4">
+
+
+                    <div class="container  mt-4">
+                        <div class="row">
+                          <div class="col-md-2 col-box white-bg">
+                            قيمه العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            100.000.00
+                          </div>
+                          <div class="col-md-2 col-box white-bg">
+                            المستلم من العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            45.000.00
+                          </div>
+                          <div class="col-md-2 col-box white-bg">
+                           الباقي من العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            55.000.00
+                          </div>
+                        </div>
+                      </div>
+                      
+
+                    <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">بيانات مصروفات المشروع</h5>
+                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >مسلسل</th>
+
+                            <th>اسم المصروف</th>
+                            <th>تاريخ المصروف</th>
+                            <th>قيمه المصروف</th>
+
+                       
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                      
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                  
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">بيانات اقساط العقد</h5>
+                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >مسلسل</th>
+
+                            <th> رقم القسط</th>
+                            <th>تاريخ القسط</th>
+                            <th>قيمه القسط</th>
+
+                       
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                      
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                  
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                </div>
+            </div>
+
+
+            <!-- contract's section -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 5">
+
+                    <div class="row m-3">
+                    <div
+                    class="card-header d-flex justify-content-between align-items-center col-md-12"
+                  >
+                    <h5 class="card-title text-end"> اقساط العقد</h5>
+                    
+                    <div class="button-group ">
+                        <button type="button" class="btn btn-primary ms-3" data-bs-toggle="modal"
+                        data-bs-target="#AddPayment">+ اضف دفعات متعدده</button>
+
+                        <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+                        data-bs-target="#AddMultiMoney">+ اضف دفعه</button>
+                      </div>
+
+                  </div>
+                  </div>
+
+                  
+                  <div class="row m-3">
+                    <div class="col-md-6"></div>
+                    <div class="d-flex align-items-center flex-row-reverse">
+                        <!-- Button with icon -->
+                     
+      
+                        <!-- Search form -->
+                        <form class="d-flex position-relative">
+                            <i class="fs-4 bi-search position-absolute search-icon"></i>
+                          <input
+                            class="form-control text-end search-input"
+                            type="search"
+                            placeholder="بحث "
+                            aria-label="Search"
+                            style="width: 200px;"
+                          />
+                        
+                        </form>
+                        <button class="btn my-custom-icone me-2">
+                            <span class="btn-label">
+                              <i class="fa-solid fa-sliders"></i>
+                            </span>
+                          </button>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr class="firstcol">
+  
+                              <th> رقم القسط</th>  
+                              <th>قيمه القسط</th>
+                              <th>تاريخ القسط</th>
+                              <th>حاله القسط</th>                     
+                              <th> </th>
+
+
+
+                              
+  
+                         
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Fiona Green</td>
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>San Francisco</td>
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>
+                                
+                                <i class="fa-solid fa-link d-inline p-1"></i>
+                                <i class="fa-solid fa-pencil d-inline p-1"></i>
+                                <i class="fa-solid fa-trash-can d-inline p-1"></i>
+                              </td>
+                              
+                        
+                            </tr>
+                            <tr>
+                              <td>Shou Itou</td>
+                              <td>Regional Marketing</td>
+                    
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>San Francisco</td>
+                              <td>
+                                
+                                <i class="fa-solid fa-link d-inline p-1"></i>
+                                <i class="fa-solid fa-pencil d-inline p-1"></i>
+                                <i class="fa-solid fa-trash-can d-inline p-1"></i>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+            </div>
+
+            <div class="col-md-6 mx-auto ">
+              <button type="submit" class="btn my-button3">
+                اضافه
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+                الغاء
+              </button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Assigment Modal -->
+
+<div class="modal fade" id="Addmession" tabindex="-1" aria-labelledby="AddmessionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="AddmessionLabel">إضافة مهمه</h5>
+        </div>
+        <div class="modal-body">
+          <!-- Form or content for the second modal -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField">اسم المهمه</label>
+                <input type="text" id="taskField" class="form-control custom-input" placeholder="أدخل اسم المهمه">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField2">اسم المهمه باللغه المحليه</label>
+                <input type="text" id="taskField2" class="form-control custom-input" placeholder="أدخل اسم المهمه">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField3">الحالة</label>
+                <select id="taskField" class="form-control custom-input">
+                  <option value="" disabled selected>قم باختيار الحالة</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField4">النوع</label>
+                <select id="taskField4" class="form-control custom-input">
+                  <option value="" disabled selected>قم باختيار النوع</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField5">الأولوية</label>
+                <select id="taskField5" class="form-control custom-input">
+                  <option value="" disabled selected>قم باختيار الأولوية</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField6">موكل الى</label>
+                <select id="taskField6" class="form-control custom-input">
+                  <option value="" disabled selected>قم باختيار المستخدم</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="Textarea1">وصف المهمه</label>
+              <textarea class="form-control custom-input" id="Textarea1" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="dateInput">تاريخ البدء</label>
+              <input type="date" id="dateInput" class="form-control custom-input" placeholder="قم باختيار التاريخ">
+            </div>
+            <div class="col-md-6">
+              <label for="dateInput2">تاريخ الإنتهاء</label>
+              <input type="date" id="dateInput2" class="form-control custom-input" placeholder="قم باختيار التاريخ">
+            </div>
+          </div>
+  
+        </div>
+        <div class="modal-footer">
+            <button type="button my-button3" class="btn my-button3">
+                <i class="fa-solid fa-plus"></i>اضافه
+              </button>
+            <button
+            type="button"
+            class="btn closebutton"
+            data-bs-dismiss="modal"
+            
+          >
+            الغاء
+          </button>          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Multi Money -->
+
+
+  <div class="modal fade overlay" style="z-index: 2000 !important;" id="AddMultiMoney" tabindex="-1" aria-labelledby="AddmessionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="AddmessionLabel">إضافة دفعه</h5>
+        </div>
+        <form [formGroup]="paymentForm" (ngSubmit)="submitInstallment()">
+        <div class="modal-body">
+          <!-- Form or content for the second modal -->
+           
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="taskField"> قيمه الدفعه</label>
+                <input type="text" id="amount" formControlName="amount"  class="form-control custom-input" placeholder="قم بكتابه قيمه الدفعه">
+              </div>
+            </div>
+       
+          </div>
+        
+  
+      
+          <div class="row">
+            <div class="col-md-12">
+              <label for="dateInput">تاريخ الاستحقاق</label>
+              <input type="date" id="dueDate" formControlName="dueDate" class="form-control custom-input" placeholder="قم باختيار التاريخ">
+            </div>
+            
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="dateInput">مدفوعة</label>
+              <select class="form-select form-control">
+                <option value="true">نعم</option>
+                <option value="false">لا</option>
+              </select>
+            </div>
+            
+          </div>
+
+          <div class="container mt-5">
+            <h5 class="mb-3">المرفقات</h5>
+            <button class="btn btn-link text-muted p-1">
+              <i class="fa fa-microphone"></i>
+            </button>
+
+            <button class="btn btn-link text-muted p-1">
+              <i class="fa fa-paperclip"></i>
+            </button>
+
+            <div class="custom-file-upload">
+              <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+              <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
+              <small class="text-muted"
+                >JPG, PNG or PDF; file size no more than 10MB</small
+              >
+            </div>
+          </div>
+
+             
+  
+      
+      
+  
+        </div>
+        <div class="modal-footer col-md-12 mx-auto ">
+            <button type="submit" class="btn my-button3">
+                <i class="fa-solid fa-plus"></i>اضافه
+              </button>
+            <button
+            type="button"
+            class="btn closebutton"
+            data-bs-dismiss="modal"
+          >
+            الغاء
+          </button> 
+                   
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- add payment -->
+
+  <div class="modal fade" id="AddPayment" tabindex="-1" aria-labelledby="AddmessionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="AddmessionLabel">إضافة دفعات متعدده</h5>
+        </div>
+        <div class="modal-body">
+          <!-- Form or content for the second modal -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="taskField"> العدد</label>
+                <input type="text" id="taskField" class="form-control custom-input" placeholder="قم باختيار العدد">
+              </div>
+            </div>
+       
+          </div>
+        
+  
+      
+          <div class="row">
+            <div class="col-md-6">
+              <label for="dateInput">تاريخ استحقاق الجزء الاول</label>
+              <input type="date" id="dateInput" class="form-control custom-input" placeholder="قم باختيار التاريخ">
+            </div>
+            <div class="col-md-6">
+              <label for="dateInput2">تاريخ استحقاق الجزء الثاني</label>
+              <input type="date" id="dateInput2" class="form-control custom-input" placeholder="قم باختيار التاريخ">
+            </div>
+          </div>
+
+             
+  
+      
+          <div class="row">
+            <div class="col-md-12">
+              <label for="dateInput"> قيمه الدفعه</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="قم بكتابه قيمه الدفعه">
+            </div>
+         
+          </div>
+  
+        </div>
+        <div class="col-md-6 mx-auto ">
+          <button type="submit" class="btn my-button3">
+            اضافه
+            <i class="fa-solid fa-plus"></i>
+          </button>
+          <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+            الغاء
+          </button></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Update -->
+  <div
+  class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;" *ngIf="isModalOpen"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title text-end flex-row-reverse"
+          id="staticBackdropLabel"
+        >
+          تعديل عقد
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="contractForm" (ngSubmit)="updateCategory()">
+          <div class="container">
+            <!-- Row with two fields -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for=" text-end"> اسم العقد</label>
+                  <input
+                    type="text"
+                    id="name" name="name" formControlName="name" 
+                    class="form-control custom-input"
+                    placeholder="اسم العقد"
+                    name="name"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">اسم العقد باللغه المحليه </label>
+                  <input
+                    type="text"
+                    id="localName" name="localName" formControlName="localName" 
+                    class="form-control custom-input"
+                    placeholder="Contract Name"
+                    
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="clientId">العميل</label>
+                  <select id="clientId" name="clientId" formControlName="clientId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار العميل</option>
+                    <option *ngFor="let item of clients" [value]="item.id">{{item.name}}</option>
+                  </select>
+                  <!-- <select formControlName="userIds" multiple>
+                    <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+                  </select> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="assignedToId">موكل الى </label>
+                  <select id="assignedToId" name="assignedToId" formControlName="assignedToId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار موكل الى </option>
+                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="teamId">الفريق </label>
+                  <select id="teamId" name="teamId" formControlName="teamId" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار الفريق </option>
+                    <option *ngFor="let item of teams" [value]="item.id">{{item.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="userIds">المستخدمين </label>
+                  <select id="userIds" name="userIds" formControlName="userIds" class="form-select form-control">
+                    <option  value=""  disabled selected>قم باختيار المستخدمين </option>
+                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="startDate text-end">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    id="startDate" name="startDate" formControlName="startDate"
+                    class="form-control custom-input"
+                    placeholder="قم باختيار التاريخ"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="endDate text-end"> تاريخ الانتهاء </label>
+                  <input
+                    type="date"
+                    id="endDate" name="endDate" formControlName="endDate"
+                    class="form-control custom-input"
+                    placeholder="قم باختيار التاريخ"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="code text-end">رقم العقد</label>
+                  <input
+                    type="text"
+                    id="code" name="code" formControlName="code"
+                    class="form-control custom-input"
+                    placeholder="قم باختبار رقم العقد"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">حاله العقد </label>
+                  <input
+                    type="text"
+                    id="field2"
+                    disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار حاله العقد"
+                  />
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="scroll-buttons-container">
+              <button
+                *ngFor="let btn of buttons; let i = index"
+                [id]="'button-' + i"
+                class="scroll-button"
+                type="button"
+                (click)="showContent(i)"
+              >
+                {{ btn }}
+              </button>
+            </div>
+
+            <!-- Show Details -->
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 0">
+                <div class="container mt-5">
+                  <h5 class="mb-3">المرفقات</h5>
+                  <button class="btn btn-link text-muted p-1">
+                    <i class="fa fa-microphone"></i>
+                  </button>
+
+                  <button class="btn btn-link text-muted p-1">
+                    <i class="fa fa-paperclip"></i>
+                  </button>
+
+                  <div class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
+                    <small class="text-muted"
+                      >JPG, PNG or PDF; file size no more than 10MB</small
+                    >
+                  </div>
+                </div>
+
+                <div class="row align-items-center">
+                  <div class="col-md-9">
+                    <!-- <label for="location" class="form-label">الموقع</label>
+                    <div class="input-group">
+                        <select class="form-select" id="location"  name="code" ngModel required>
+                            <option selected>قم بإختيار الموقع</option>
+                            <option *ngFor="let item of locations" [value]="item.id">{{item.locationName}},{{item.locationAddress}},{{item.latitude}},{{item.longitude}}</option>
+                           
+                        </select>
+                    </div> -->
+                    <label for="locationLinks" class="form-label">Location Links:</label>
+                    <div *ngFor="let location of locationLinks; let i = index" class="input-group mb-2">
+                      <select 
+                        class="form-select form-control custom-input"
+                        name="locationLink{{i}}" 
+                        required
+                      >
+                      <!-- formArrayName="locationLinks[i]"  -->
+
+                        <option value="" disabled selected>قم بلإختيار المواقع</option>
+                        <option *ngFor="let link of locations" [value]="link.id">{{ link.locationName }}</option>
+                      </select>
+                      <button type="button" class="btn btn-danger" (click)="removeLocationLink(i)">Remove</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary" (click)="addLocationLink()">Add Location</button>
+                  
+                </div>
+                  <div
+                    class="col-md-3 d-flex justify-content-start mt-3 mt-md-0"
+                  >
+                    <button
+                      class="btn btn-primary locationButton"
+                      type="button"
+                      (click)="toggleMap()"
+                    >
+                      <i class="fas fa-map-marker-alt"></i> أضف موقع
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Map Viewing -->
+
+               
+          <!-- <form>
+                <div *ngIf="isMapView">
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                      <label for="location" class="form-label">عرض الخريطه</label>
+                     
+                    </div>
+                    <div
+                      class="col-md-3 d-flex justify-content-start mt-3 mt-md-0"
+                    >
+                    <button (click)="toggleMapClose()" class="btn btn-outline-primary m-2">الغاء</button>
+                    <button class="btn btn-primary m-2">حفظ</button>
+                    </div>
+                  </div>
+
+              
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="siteName" class="form-label">اسم الموقع</label>
+                        <input type="text" class="form-control" id="siteName"
+                            placeholder="قم بكتابة اسم الموقع">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line1" class="form-label">خط الطول</label>
+                        <input type="text" class="form-control" id="line1" placeholder="قم بكتابة خط الطول">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line2" class="form-label">خط العرض</label>
+                        <input type="text" class="form-control" id="line2" placeholder="قم بكتابة خط العرض">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line3" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="line3" placeholder="قم بكتابة خط العرض">
+                    </div>
+                </div>
+
+                
+                <div class="row mb-4">
+                    <div class="col-md-12 text-center">
+                        <h5 class="mb-4">عرض الخريطة</h5>
+                        <div class="map-container"
+                            style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <iframe
+                                src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                                width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                                aria-hidden="false" tabindex="0">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+          </form> -->
+
+
+          <!-- try map input -->
+          <form (ngSubmit)="onSubmitLocation(locationForm)" #locationForm="ngForm">
+            <div *ngIf="isMapView">
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                        <label for="location" class="form-label">عرض الخريطه</label>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                        <button (click)="toggleMapClose()" class="btn btn-outline-primary m-2">الغاء</button>
+                        <button type="submit" class="btn btn-primary m-2">حفظ</button>
+                    </div>
+                </div>
+        
+                <!-- Input Fields for Site Information -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="siteName" class="form-label">اسم الموقع</label>
+                        <input type="text" class="form-control" id="locationName" name="locationName" ngModel placeholder="قم بكتابة اسم الموقع" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line1" class="form-label">خط الطول</label>
+                        <input type="text" class="form-control" id="longitude" name="longitude" [(ngModel)]="longitude" placeholder="قم بكتابة خط الطول" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line2" class="form-label">خط العرض</label>
+                        <input type="text" class="form-control" id="latitude" name="latitude" [(ngModel)]="latitude" placeholder="قم بكتابة خط العرض" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line3" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="locationAddress" name="locationAddress" ngModel placeholder="قم بكتابة العنوان" required>
+                    </div>
+                </div>
+        
+                <!-- Map Display Section -->
+                <div class="row mb-4">
+                  <div class="col-md-12 text-center">
+                      <h5 class="mb-4">عرض الخريطة</h5>
+                      <div class="map-container"
+                          style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                          <iframe
+                              src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                              width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                              aria-hidden="false" tabindex="0">
+                          </iframe>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </form>
+        
+
+
+                <!-- End MApping View -->
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field1 text-end">نوع العقد</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختبار النوع"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field2 text-end">مركز التكلفه </label>
+                      <input
+                        type="text"
+                        id="field2"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختيار التكلفه"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="field1 text-end">وصف العقد</label>
+                      <textarea
+                        class="form-control custom-input"
+                        id="Textarea1"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="field1 text-end"> التجديد التلقائي</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="نعم ام لا "
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field1 text-end">المشروع</label>
+                      <input
+                        type="text"
+                        id="field1"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختبار المشروع"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="field2 text-end">المعدات </label>
+                      <input
+                        type="text"
+                        id="field2"
+                       
+                        class="form-control custom-input"
+                        placeholder="قم باختيارالمعدات"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row align-items-center mb-4">
+                  <div class="col-md-9">
+                    <label for="location" class="form-label">جهه الاتصال</label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        id="field3"
+                        
+                        class="form-control custom-input"
+                        placeholder="قم باختيار جهه الاتصال"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-md-3 d-flex justify-content-start mt-4"
+                  >
+                    <button
+                      class="btn btn-primary locationButton"
+                      type="button"
+                    >
+                      <i class="fa-solid fa-address-book"></i>أضف جهه الاتصال
+                    </button>
+                  </div>
+                </div>
+
+                <h5>اظهار الانشطه</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                  <div class="container mt-4">
+                    <div class="card chat-card">
+                      <div class="card-body p-3">
+                        <div class="d-flex align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
+                          <span class="chat-time"> 01 Oct 2024</span>
+                        </div>
+                        <p class="chat-message mt-2">
+                          I'm good, thanks for asking! What about you?
+                        </p>
+                      </div>
+                    </div>
+                    
+                      <div class="card chat-card">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center">
+                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
+                            <span class="chat-time"> 01 Oct 2024</span>
+                          </div>
+                          <p class="chat-message mt-2">
+                            I'm good, thanks for asking! What about you?
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+  
+                  </div>
+                    
+                    
+                </div>
+                  
+                  
+
+              </div>
+            </div>
+
+            <!-- Show assignments  -->
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 1">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">المهام</h5>
+                  <div class="button-group d-flex justify-content-start">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#Addmession">+ إضافة مهمه</button>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >الاسم</th>
+
+                            <th>الحاله</th>
+                            <th>التاريخ</th>
+                            <th>الاولويه</th>
+
+                            <th >موكل الي</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                            <td>Tokyo</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- show Surveys -->
+
+
+            <div *ngIf="selectedButton !== null">
+              <div *ngIf="selectedButton === 2">
+            <div class="row">
+              <div class="col-md-9">
+                  <div class="form-group">
+                      <label for="field7 text-end">النماذج
+                      </label>
+                      <input type="text" id="field7"
+                          class="form-control" placeholder="مؤشر الأداء الرئيسي 1" />
+                  </div>
+              </div>
+              <div class="col-md-3 mb-3 customButton">
+                  <div class="col-md-12 text-start">
+                      <button class="btn btn-outline-primary me-3">الغاء</button>
+                      <button class="btn btn-primary m-2">حفظ</button>
+                  </div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <input type="text" id="field7"
+                        class="form-control" placeholder="مؤشر الأداء الرئيسي 2" />
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 mt-1">
+                <div class="col-md-12 text-start">
+                    <button class="btn btn-outline-primary me-3">الغاء</button>
+                    <button class="btn btn-primary m-2">حفظ</button>
+                </div>
+            </div>
+        </div>
+          </div>
+          </div>
+
+            <!-- show comments -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 3">
+                    <div class="container comment-section mt-5">
+                        <div class="card p-3">
+                          <!-- Add Comment Section -->
+                          <div class="container add-comment-section mt-3">
+                            <div class="card p-3 d-flex align-items-center">
+                              <div class="d-flex align-items-center w-100">
+                                <!-- User Avatar -->
+                                <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                                
+                                <!-- Comment Input Section -->
+                                <div class="flex-grow-1">
+                                  <input type="text" class="form-control" placeholder="أضف تعليقاً">
+                                </div>
+                          
+                                <!-- Icons and Post Button -->
+                                <div class="d-flex align-items-center ms-2">
+                                  <!-- Voice Icon -->
+                                  <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+                          
+                                  <!-- Attachment Icon -->
+                                  <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+                          
+                                  <!-- Post Button -->
+                                  <button class="btn btn-primary ms-2 px-4">نشر</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                      
+                          <!-- Comments List -->
+                          <div class="comments-list mt-4">
+                            <div class="comment-item p-3 mb-3">
+                              <div class="d-flex align-items-start">
+                                <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                                <div class="ms-3 w-100">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">خالد ابراهيم</h6>
+                                    <span class="text-muted small">Aug 19, 2021</span>
+                                  </div>
+                                  <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
+                                  <div class="comment-actions d-flex">
+                                    <button class="btn btn-link p-0"><i class="fa fa-heart"></i> 5</button>
+                                    <button class="btn btn-link p-0 ms-3"><i class="fa fa-comment"></i> 3</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                      
+                            <!-- Nested Reply Comment -->
+                            <div class="comment-item p-3 mb-3 ms-5">
+                              <div class="d-flex align-items-start">
+                                <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                                <div class="ms-3 w-100">
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">خالد ابراهيم</h6>
+                                    <span class="text-muted small">Aug 19, 2021</span>
+                                  </div>
+                                  <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      
+                          <!-- View More Comments Link -->
+                          <div class="text-center">
+                            <a href="#" class="text-primary">باقي التعليقات</a>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+
+            <!-- contract's Money -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 4">
+
+
+                    <div class="container  mt-4">
+                        <div class="row">
+                          <div class="col-md-2 col-box white-bg">
+                            قيمه العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            100.000.00
+                          </div>
+                          <div class="col-md-2 col-box white-bg">
+                            المستلم من العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            45.000.00
+                          </div>
+                          <div class="col-md-2 col-box white-bg">
+                           الباقي من العقد
+                          </div>
+                          <div class="col-md-2 col-box gray-bg">
+                            55.000.00
+                          </div>
+                        </div>
+                      </div>
+                      
+
+                    <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">بيانات مصروفات المشروع</h5>
+                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >مسلسل</th>
+
+                            <th>اسم المصروف</th>
+                            <th>تاريخ المصروف</th>
+                            <th>قيمه المصروف</th>
+
+                       
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                      
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                  
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="card-title text-end">بيانات اقساط العقد</h5>
+                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <table
+                        id="basic-datatables"
+                        class="display table table-striped table-hover"
+                      >
+                        <thead>
+                          <tr class="firstcol">
+                            <th >مسلسل</th>
+
+                            <th> رقم القسط</th>
+                            <th>تاريخ القسط</th>
+                            <th>قيمه القسط</th>
+
+                       
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Fiona Green</td>
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                            <td>Chief Operating Officer (COO)</td>
+                      
+                          </tr>
+                          <tr>
+                            <td>Shou Itou</td>
+                            <td>Regional Marketing</td>
+                  
+                            <td>Chief Operating Officer (COO)</td>
+                            <td>San Francisco</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                </div>
+            </div>
+
+
+            <!-- contract's section -->
+
+            <div *ngIf="selectedButton !== null">
+                <div *ngIf="selectedButton === 5">
+
+                    <div class="row m-3">
+                    <div
+                    class="card-header d-flex justify-content-between align-items-center col-md-12"
+                  >
+                    <h5 class="card-title text-end"> اقساط العقد</h5>
+                    
+                    <div class="button-group ">
+                        <button type="button" class="btn btn-primary ms-3" data-bs-toggle="modal"
+                        data-bs-target="#AddPayment">+ اضف دفعات متعدده</button>
+
+                        <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+                        data-bs-target="#AddMultiMoney">+ اضف دفعه</button>
+                      </div>
+
+                  </div>
+                  </div>
+
+                  
+                  <div class="row m-3">
+                    <div class="col-md-6"></div>
+                    <div class="d-flex align-items-center flex-row-reverse">
+                        <!-- Button with icon -->
+                     
+      
+                        <!-- Search form -->
+                        <form class="d-flex position-relative">
+                            <i class="fs-4 bi-search position-absolute search-icon"></i>
+                          <input
+                            class="form-control text-end search-input"
+                            type="search"
+                            placeholder="بحث "
+                            aria-label="Search"
+                            style="width: 200px;"
+                          />
+                        
+                        </form>
+                        <button class="btn my-custom-icone me-2">
+                            <span class="btn-label">
+                              <i class="fa-solid fa-sliders"></i>
+                            </span>
+                          </button>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <table
+                          id="basic-datatables"
+                          class="display table table-striped table-hover"
+                        >
+                          <thead>
+                            <tr class="firstcol">
+  
+                              <th> رقم القسط</th>  
+                              <th>قيمه القسط</th>
+                              <th>تاريخ القسط</th>
+                              <th>حاله القسط</th>                     
+                              <th> </th>
+
+
+
+                              
+  
+                         
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Fiona Green</td>
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>San Francisco</td>
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>
+                                
+                                <i class="fa-solid fa-link d-inline p-1"></i>
+                                <i class="fa-solid fa-pencil d-inline p-1"></i>
+                                <i class="fa-solid fa-trash-can d-inline p-1"></i>
+                              </td>
+                              
+                        
+                            </tr>
+                            <tr>
+                              <td>Shou Itou</td>
+                              <td>Regional Marketing</td>
+                    
+                              <td>Chief Operating Officer (COO)</td>
+                              <td>San Francisco</td>
+                              <td>
+                                
+                                <i class="fa-solid fa-link d-inline p-1"></i>
+                                <i class="fa-solid fa-pencil d-inline p-1"></i>
+                                <i class="fa-solid fa-trash-can d-inline p-1"></i>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+            </div>
+
+            <div class="col-md-6 mx-auto ">
+              <button type="submit" class="btn my-button3">
+                تعديل
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button type="button" (click)="closeModal()"   class="btn closebutton " data-bs-dismiss="modal">
+                الغاء
+              </button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Confirmation Modal -->
+<div *ngIf="showConfirmationModal" class="confirmation-modal">
+  <div class="modal-content">
+    <p>هل أنت متأكد؟</p>
+   <div class="col-md-12 mx-auto">
+    <button (click)="deleteItemType()" class="btn btn-danger">نعم</button>
+
+    <button (click)="closeConfirmationModal()" class="btn btn-primary">إلغاء</button>
+
+   </div>
+  </div>
+</div>

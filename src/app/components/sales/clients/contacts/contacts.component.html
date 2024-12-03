@@ -1,0 +1,635 @@
+<div class="main-panel">
+    <div class="container">
+        <div class="page-inner">
+            <div class="page-header d-flex justify-content-between align-items-center flex-row-reverse">
+                <h3 class="fw-bold mb-3 text-end">المبيعات</h3>
+                <ul class="breadcrumbs mb-3 ">
+                    <li class="nav-item dropdown">
+                        <button class="btn d-flex justify-content-start align-items-center" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Admin
+                            <!-- Placeholder for the dropdown arrow -->
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+
+                    </li>
+
+                    <li class="nav-home">
+                        <a href="#">
+                            <i class="fa-solid fa-search mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fa-solid fa-bell mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <i class="fa-solid fa-gear mx-2"></i>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-row-reverse">
+                            <h4 class="card-title text-end">جهات الإتصال</h4>
+                            <div class="button-group d-flex justify-content-start">
+                                <button type="button" class="btn my-button" data-bs-toggle="modal" data-bs-target="#myModal">
+                                    اضف جهه إتصال
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn ms-3 my-button">
+                                    <i class="fa-solid fa-print"></i>
+                                    طباعه
+                                </button>
+                                <div class="dropdown" [class.show]="isDropdownOpen">
+                                    <button type="button" class="btn ms-3 my-button2" (click)="toggleDropdownOptions()">
+                                      <i class="fa-solid fa-gear"></i> الاجراءات
+                                    </button>
+                                  
+                                    <div class="dropdown-menu" [class.show]="isDropdownOpen" style="cursor:default;">
+                                      <a class="dropdown-item" (click)="openModalForSelected()">تعديل</a>
+                                      <a class="dropdown-item" (click)="openConfirmationModal()">حذف</a>
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div
+                            class="d-flex flex-row align-items-center mt-3 d-flex justify-content-between align-items-center flex-row-reverse">
+                            <div class="mb-2 me-2 " style="width:100px">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected> الاحدث</option>
+                                    <option value="1">خيار 1</option>
+                                    <option value="2">خيار 2</option>
+                                    <option value="3">خيار 3</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center flex-row-reverse">
+                                <!-- Button with icon -->
+                                <button class="btn my-custom-icone me-2">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-sliders"></i>
+                                    </span>
+                                </button>
+
+                                <!-- Search form -->
+                                <div class="d-flex position-relative">
+                                    <input class="form-control text-end search-input" type="search"
+                                        placeholder="بحث في الكل" aria-label="Search" [(ngModel)]="searchQuery"
+                                        (input)="onSearchInputChange($event)" />
+                                    <i class="fs-4 bi-search position-absolute search-icon"></i>
+                                </div>
+                            </div>
+                            <div class="icon-group d-flex align-items-center">
+
+                                <button class="btn  my-custom-icone">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-table-cells-large"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone" style="background-color: #224273; color:#E7E7EA">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone ">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-bag-shopping my-icone "></i>
+                                    </span>
+
+                                </button>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="basic-datatables" class="display table table-striped table-hover">
+                                    <thead>
+                                        <tr class="firstcol">
+
+                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th>
+                                            <th>الإيميل</th>
+                                            <th>رقم الهاتف 2</th>
+                                            <th>رقم الهاتف1 </th>
+                                            <th>اسم جهه الإتصال باللغة المحلية</th>
+                                            <th>اسم جهه الإتصال</th>
+                                            <th>مسلسل</th>
+                                            <th class="firstcolright">
+                                                <span *ngIf="true"
+                                                    [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                                                    style="display: inline-block; width: 1.5rem; text-align: center;">
+                                                    {{ selectedCount }}
+                                                </span>
+                                                <input type="checkbox" [(ngModel)]="selectAll"
+                                                    (change)="toggleAllCheckboxes()" class="large-checkbox mx-1" />
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of filteredContacts, let i = index">
+
+                                            <td> </td>
+                                            <td>{{item.email}}</td>
+                                            <td>{{item.phoneNumber2}}</td>
+                                            <td>{{item.phoneNumber1}}</td>
+                                            <td>{{item.localName}}</td>
+                                            <td>{{item.name}}</td>
+                                            <td>{{ i+1 }}</td>
+                                            <td>
+                                                <input type="checkbox" [(ngModel)]="item.checked"
+                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                                <!-- paging -->
+                                <nav *ngIf="!searchQuery" aria-label="Page navigation">
+                                    <ul class="pagination justify-content-end">
+                                        <!-- Previous Button -->
+                                        <li class="page-item" [class.disabled]="pageNumber === 1">
+                                            <a class="page-link" (click)="changePage(pageNumber - 1)" tabindex="-1"
+                                                [attr.aria-disabled]="pageNumber === 1 ? true : null">&laquo;</a>
+                                        </li>
+
+                                        <!-- Dynamically Render Page Numbers -->
+                                        <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+                                            <li class="page-item" [class.active]="pageNumber === (i + 1)">
+                                                <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+                                            </li>
+                                        </ng-container>
+
+                                        <!-- Next Button -->
+                                        <li class="page-item" [class.disabled]="pageNumber === totalPages">
+                                            <a class="page-link" (click)="changePage(pageNumber + 1)"
+                                                [attr.aria-disabled]="pageNumber === totalPages ? true : null">&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+                    اضافه جهه اتصال
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+                    <div class="container">
+                        <!-- Row with two fields -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end"> اسم جهه الإتصال</label>
+                                    <input type="text" id="name" name="name" formControlName="name"
+                                        class="form-control custom-input" placeholder="اسم المنشأ" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">اسم جهه الإتصال باللغة المحلية
+                                    </label>
+                                    <input type="text" id="localName" name="localName" formControlName="localName"
+                                        class="form-control custom-input" placeholder="contact Name  " />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field4 text-end">رقم جوال 1 لجهه الإتصال</label>
+                                    <input type="text" id="phoneNumber1" name="phoneNumber1"
+                                        formControlName="phoneNumber1" class="form-control custom-input"
+                                        placeholder="رقم الجوال 1" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">رقم الجوال 2 لجهه الإتصال
+                                    </label>
+                                    <input type="text" id="phoneNumber2" name="phoneNumber2"
+                                        formControlName="phoneNumber2" class="form-control custom-input"
+                                        placeholder="رقم الجوال 2" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end"> وظيفة جهه التواصل</label>
+                                    <input type="text" id="jobTitle" name="jobTitle" formControlName="jobTitle"
+                                        class="form-control custom-input" placeholder="وظيفة جهه التواصل" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">ايميل جهه التواصل
+                                    </label>
+                                    <input type="text" id="email" name="email" ngModel formControlName="email"
+                                        class="form-control custom-input" placeholder="ايميل جهه التواصل" />
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!--  -->
+                        <!-- Location Section -->
+                        <div class="row align-items-center">
+                            <div class="col-md-9">
+                                <label for="location" class="form-label">موقع جهه التواصل</label>
+                                <div class="input-group">
+                                    <select class="form-select custom-input" formControlName="locationLinks"
+                                        name="locationLinks">
+                                        <option selected disabled>قم بإختيار الموقع</option>
+                                        <option *ngFor="let item of location" [value]="item.id">{{item.locationName}}
+                                        </option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                                <button class="btn btn-primary locationButton" type="button">
+                                    <i class="fas fa-map-marker-alt"></i> أضف موقع
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="taskField4">جنسية جهه التواصل</label>
+                                    <select id="taskField4" name="nationality" formControlName="nationality"
+                                        class="form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار جنسية جهه التواصل</option>
+                                        <option *ngFor="let item of nationalities, index as i " [value]="i">{{item}}
+                                        </option>
+
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="taskField3">العميل</label>
+                                    <select id="taskField" name="clientId" formControlName="clientId"
+                                        class="form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار العميل</option>
+                                        <option *ngFor="let item of clients" [value]="item.id">{{item.name}}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="taskField4">المورد</label>
+                                    <select id="taskField4" name="supplier" formControlName="supplier"
+                                        class="form-select form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار المورد</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="taskField4">المستخدم</label>
+                                    <select id="taskField4" class="form-control">
+                                        <option value="" disabled selected>قم باختيار المستخدم</option>
+                                        <option value="option1">الخيار الأول</option>
+                                        <option value="option2">الخيار الثاني</option>
+                                        <option value="option3">الخيار الثالث</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="Textarea1">وصف جهه الإتصال</label>
+                                <textarea class="form-control" name="description" formControlName="description"
+                                    id="Textarea1" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Buttons for actions -->
+                        <div class="row mb-4">
+                            <div class="col-md-12 text-start">
+                                <button class="btn btn-outline-primary me-3">الغاء</button>
+                                <button type="submit" class="btn btn-primary m-2">حفظ</button>
+                            </div>
+                        </div>
+
+
+                        <div class="container mt-3 mb-3">
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-between align-items-center flex-row-reverse">
+                                    <div class="container mt-5">
+                                        <div class="mb-3 text-center">
+                                          <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+                                            <i class="fa fa-paperclip"></i> أضف صورة
+                                          </button>
+                                          <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                                        </div>
+                                        <ul class="list-group mt-3 mb-3">
+                                          <li *ngFor="let attachment of attachments.controls; let i = index"
+                                            class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                              <img src="../../../../../assets/images/mingcute_pdf-fill.png"
+                                                style="width: 35px;" />
+                                              <span>{{ attachment.value?.name || 'Unnamed File' }}</span>
+                                            </div>
+                                            <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                                              <i class="fa fa-trash"></i> حذف
+                                            </button>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    <div class="profile-picture ml-3">
+                                        <img src="../../../../../assets/images/images.jpg" alt="صوره شخصيه"
+                                            class="rounded-circle" />
+                                        <p class="text-center mt-2">صوره شخصيه</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- There was code here -->
+
+                        <div class="col-md-6 mx-auto ">
+                            <button type="submit" class="btn my-button3">
+                                اضافه
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+                                الغاء
+                            </button>
+
+                        </div>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Update modal -->
+<div class="modal" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;"
+    *ngIf="isModalOpen">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+                    تعديل جهه اتصال
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="contactForm" (ngSubmit)="updateCategory()">
+                    <div class="container">
+                        <!-- Row with two fields -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end"> اسم جهه الإتصال</label>
+                                    <input type="text" id="name" name="name" formControlName="name"
+                                        class="form-control custom-input" placeholder="اسم المنشأ" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">اسم جهه الإتصال باللغة المحلية
+                                    </label>
+                                    <input type="text" id="localName" name="localName" formControlName="localName"
+                                        class="form-control custom-input" placeholder="contact Name  " />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field4 text-end">رقم جوال 1 لجهه الإتصال</label>
+                                    <input type="text" id="phoneNumber1" name="phoneNumber1"
+                                        formControlName="phoneNumber1" class="form-control custom-input"
+                                        placeholder="رقم الجوال 1" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">رقم الجوال 2 لجهه الإتصال
+                                    </label>
+                                    <input type="text" id="phoneNumber2" name="phoneNumber2"
+                                        formControlName="phoneNumber2" class="form-control custom-input"
+                                        placeholder="رقم الجوال 2" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end"> وظيفة جهه التواصل</label>
+                                    <input type="text" id="jobTitle" name="jobTitle" formControlName="jobTitle"
+                                        class="form-control custom-input" placeholder="وظيفة جهه التواصل" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">ايميل جهه التواصل
+                                    </label>
+                                    <input type="text" id="email" name="email" ngModel formControlName="email"
+                                        class="form-control custom-input" placeholder="ايميل جهه التواصل" />
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!--  -->
+                        <!-- Location Section -->
+                        <div class="row align-items-center">
+                            <div class="col-md-9">
+                                <label for="location" class="form-label">موقع جهه التواصل</label>
+                                <div class="input-group">
+                                    <select class="form-select custom-input" formControlName="locationLinks"
+                                        name="locationLinks">
+                                        <option selected disabled>قم بإختيار الموقع</option>
+                                        <option *ngFor="let item of location" [value]="item.id">{{item.locationName}}
+                                        </option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                                <button class="btn btn-primary locationButton" type="button">
+                                    <i class="fas fa-map-marker-alt"></i> أضف موقع
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="taskField4">جنسية جهه التواصل</label>
+                                    <select id="taskField4" name="nationality" formControlName="nationality"
+                                        class="form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار جنسية جهه التواصل</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="taskField3">العميل</label>
+                                    <select id="taskField" name="clientId" formControlName="clientId"
+                                        class="form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار العميل</option>
+                                        <option *ngFor="let item of clients" [value]="item.id">{{item.name}}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="taskField4">المورد</label>
+                                    <select id="taskField4" name="supplier" formControlName="supplier"
+                                        class="form-select form-control custom-input">
+                                        <option value="" disabled selected>قم باختيار المورد</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="Textarea1">وصف جهه الإتصال</label>
+                                <textarea class="form-control" name="description" formControlName="description"
+                                    id="Textarea1" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Buttons for actions -->
+                        <div class="row mb-4">
+                            <div class="col-md-12 text-start">
+                                <button type="button" class="btn btn-outline-primary me-3">الغاء</button>
+                                <button type="button" class="btn btn-primary m-2">حفظ</button>
+                            </div>
+                        </div>
+
+                        <!-- 
+                    <div class="container mt-3 mb-3">
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-between align-items-center flex-row-reverse">
+                                <div class="file-upload-area d-flex flex-grow-1">
+                                    <label for="file-upload" class="custom-file-upload w-100">
+                                        <input type="file" id="file-upload" />
+                                        <div class="upload-placeholder">
+                                            <i class="fa fa-cloud-upload-alt"></i>
+                                            <span>حدد ملفًا أو قم بالسحب والإسقاط هنا</span>
+                                            <p>JPG, PNG or, file size no more than 10MB</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="profile-picture ml-3">
+                                    <img src="../../../../../assets/images/images.jpg" alt="صوره شخصيه"
+                                        class="rounded-circle" />
+                                    <p class="text-center mt-2">صوره شخصيه</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+
+                        <!-- There was code here -->
+
+                        <div class="col-md-6 mx-auto ">
+                            <button type="submit" class="btn my-button3">
+                                حفظ
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" (click)="closeModal()" class="btn closebutton "
+                                data-bs-dismiss="modal">
+                                الغاء
+                            </button>
+
+                        </div>
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div *ngIf="showConfirmationModal" class="confirmation-modal">
+    <div class="modal-content">
+      <p>هل أنت متأكد؟</p>
+     <div class="col-md-12 mx-auto">
+      <button (click)="deleteItemType()" class="btn btn-danger">نعم</button>
+      <button (click)="closeConfirmationModal()" class="btn btn-secondary">إلغاء</button>
+  
+     </div>
+    </div>
+  </div>

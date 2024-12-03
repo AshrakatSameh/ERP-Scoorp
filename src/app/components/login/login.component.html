@@ -1,0 +1,79 @@
+
+<div class="container login-container">
+    <div class="row">
+        <!-- Centered 8-column container -->
+        <div class="col-md-8 mx-auto col-sm-12">
+            <div class="row">
+                <!-- First Form taking 6 columns in desktop, 12 in mobile -->
+                <div class="col-md-6 col-sm-12 login-form-1">
+                    <div class="shade mx-auto">
+                        <img style="width: 201px;" class="blog" src="../../../assets/images/women with tab 1.png">
+                    </div>
+                </div>
+                <!-- Second Form taking 6 columns in desktop, 12 in mobile -->
+                <div class="col-md-6 col-sm-12 login-form-2">
+                    <div class="col-md-12 mx-auto shad2">
+                        <div class="spaces">
+                            <img class="blog-2" src="../../../assets/images/Image (1).png">
+                            <div class="shade-roll mx-auto">
+                                <button class="ml-0 bttn">الموظف</button>
+                                <button class="ml-1 bttn">المدير</button>
+                            </div>
+                            <h1 class="position" style="font-size: 1.5rem;">تسجيل الدخول</h1>
+                            <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" >
+                                <div class="form-group blog-4 mx-auto">
+                                    <label class="blog-4">اسم المساحه</label>
+                                    <input class=" form-control input-1"
+                                    name="tenant"
+                                    id="tenant"
+                                    formControlName="tenant"
+                                    placeholder="قم بكتابة اسم المساحه" type="text">
+                                </div>
+                                <div class="form-group blog-4">
+                                    <label class="blog-4">البريد الالكتروني</label>
+                                    <input id="email" name="email" formControlName="email"
+                                     class=" form-control input-1" placeholder="قم بكتابة البريد الالكتروني" type="email">
+                                </div>
+                                <div class="form-group blog-4">
+                                    <label class="blog-4">كلمة السر</label>
+                                    <input id="password" name="password" formControlName="password"
+                                     class="form-control input-1" placeholder="قم بكتابة كلمة السر" type="password">
+                                </div>
+                                <div>
+                                    <p class="blog-3"><a href="#">هل نسيت كلمة المرور؟</a></p>
+                                </div>
+                                <div class="row">
+                                    <div class="fs-6 col-md-6 mx-auto ">
+                                        <button type="submit" class="btn btn-primary mt-2">تسجيل الدخول</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- <div class="blog-4 mx-auto">
+                                <label class="blog-4">اسم المساحه</label>
+                                <input class="blog-4 input-1" placeholder="قم بكتابة اسم المساحه" type="text">
+                            </div>
+                            <div class="blog-4">
+                                <label class="blog-4">البريد الالكتروني</label>
+                                <input class="blog-4 input-1" placeholder="قم بكتابة البريد الالكتروني" type="email">
+                            </div>
+                            <div class="blog-4">
+                                <label class="blog-4">كلمة السر</label>
+                                <input class="blog-4 input-1" placeholder="قم بكتابة كلمة السر" type="password">
+                            </div>
+                            <div>
+                                <p class="blog-3"><a href="#">هل نسيت كلمة المرور؟</a></p>
+                            </div>
+                            <div class="fs-6">
+                                <button class="btn btn-primary mt-2">تسجيل الدخول</button>
+                            </div> -->
+                            <p class="blog-3">ليس لديك حساب؟ <a href="#" style="color: #224273;">اشترك الان</a></p>
+                        
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

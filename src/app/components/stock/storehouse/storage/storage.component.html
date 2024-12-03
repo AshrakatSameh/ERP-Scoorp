@@ -1,0 +1,452 @@
+<div class="wrapper">
+  <!-- Sidebar component on the left -->
+
+  <div class="main-panel">
+    <!-- Main content section -->
+    <div class="container">
+      <div class="page-inner">
+        <div class="page-header d-flex justify-content-between align-items-center flex-row-reverse">
+          <h3 class="fw-bold mb-3 text-end">المخزون</h3>
+          <ul class="breadcrumbs mb-3">
+
+            <li class="nav-item dropdown">
+              <button class="btn d-flex justify-content-start align-items-center" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Admin
+                <!-- Placeholder for the dropdown arrow -->
+                <i class="fa-solid fa-caret-down"></i>
+              </button>
+
+            </li>
+
+            <li class="nav-home">
+              <a href="#">
+                <i class="fa-solid fa-search"></i>
+              </a>
+            </li>
+            <li class="separator">
+              <!-- <i class="icon-arrow-right"></i> -->
+            </li>
+            <li class="nav-item">
+              <a href="#">
+                <i class="fa-solid fa-bell"></i>
+              </a>
+            </li>
+            <li class="separator">
+              <!-- <i class="icon-arrow-right"></i> -->
+            </li>
+            <li class="nav-item">
+              <i class="fa-solid fa-gear"></i>
+            </li>
+          </ul>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center flex-row-reverse">
+                <h4 class="card-title text-end"> اماكن التخزين</h4>
+                <div class="button-group d-flex justify-content-start">
+                  <button type="button" class="btn my-button" data-bs-toggle="modal" data-bs-target="#myModal">
+                    اضف اماكن التخزين
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                  <button type="button" class="btn ms-3 my-button2">
+                    <i class="fa-solid fa-print"></i>
+                    طباعه
+                  </button>
+                  <div class="dropdown" [class.show]="isDropdownOpen">
+                    <button type="button" class="btn ms-3 my-button2" (click)="toggleDropdown()">
+                      <i class="fa-solid fa-gear"></i> الاجراءات
+                    </button>
+
+                    <div class="dropdown-menu" [class.show]="isDropdownOpen">
+                      <a class="dropdown-item" (click)="openModalForSelected()">تعديل</a>
+                      <!-- <a class="dropdown-item" href="#">عرض</a> -->
+                      <a class="dropdown-item" (click)="openConfirmationModal()">حذف</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="d-flex flex-row align-items-center mt-3 d-flex justify-content-between align-items-center flex-row-reverse">
+                <div class="mb-2 me-2" style="width: 100px">
+                  <select class="form-select" aria-label="Default select example">
+                    <option selected>الاحدث</option>
+                    <option value="1">خيار 1</option>
+                    <option value="2">خيار 2</option>
+                    <option value="3">خيار 3</option>
+                  </select>
+                </div>
+
+                <div class="d-flex align-items-center flex-row-reverse">
+                  <!-- Button with icon -->
+                  <button class="btn my-custom-icone me-2">
+                    <span class="btn-label">
+                      <i class="fa-solid fa-sliders"></i>
+                    </span>
+                  </button>
+
+                  <!-- Search form -->
+                  <form class="d-flex position-relative">
+                    <input class="form-control text-end search-input" type="search" placeholder="بحث "
+                      aria-label="Search" />
+                    <i class="fs-4 bi-search position-absolute search-icon"></i>
+                  </form>
+                </div>
+
+
+                <div class="icon-group d-flex align-items-center">
+                  <button class="btn my-custom-icone">
+                    <span class="btn-label">
+                      <i class="fa-solid fa-table-cells-large"></i>
+                    </span>
+                  </button>
+
+                  <button class="btn my-custom-icone" style="background-color: #224273; color: #e7e7ea">
+                    <span class="btn-label">
+                      <i class="fa-solid fa-list-ul"></i>
+                    </span>
+                  </button>
+
+                  <button class="btn my-custom-icone">
+                    <span class="btn-label">
+                      <i class="fa-solid fa-bag-shopping my-icone"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="basic-datatables" class="display table table-striped table-hover">
+                    <thead>
+                      <tr class="firstcol">
+                        <th class="firstcolleft">المرفقات</th>
+                        <th> وصف اماكن التخزين</th>
+                        <th>اسم اماكن التخزين باللغه المحلية</th>
+                        <th>اسم اماكن التخزين</th>
+                        <th>المسلسل</th>
+                        <th class="firstcolright">
+                          <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                            style="display: inline-block; width: 1.5rem; text-align: center;">
+                            {{ selectedCount }}
+                          </span>
+                          <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleAllCheckboxes()"
+                            class="large-checkbox mx-1" />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of stores, let i= index">
+                        <td>
+                          <ul *ngFor="let attachment of item.attachments" class="list-unstyled list-inline-item">
+                            <li><a [href]="imgApiUrl+attachment.fileUrl" target="_blank"><img src="../../../../../assets/images/mingcute_pdf-fill.png" style="height: 30px;"></a></li>
+                        </ul></td>
+                        <td>{{ item.note}}</td>
+                        <td>{{item.localName}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{ i+1 }}</td>
+                        <td class="firstcolright">
+                          <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item,$event)"
+                            class="large-checkbox mx-4" />
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+
+                  <!-- paging -->
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                      <!-- Previous Button -->
+                      <li class="page-item" [class.disabled]="pageNumber === 1">
+                        <a class="page-link" (click)="changePage(pageNumber - 1)" tabindex="-1"
+                          [attr.aria-disabled]="pageNumber === 1 ? true : null">&laquo;</a>
+                      </li>
+
+                      <!-- Dynamically Render Page Numbers -->
+                      <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+                        <li class="page-item" [class.active]="pageNumber === (i + 1)">
+                          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+                        </li>
+                      </ng-container>
+
+                      <!-- Next Button -->
+                      <li class="page-item" [class.disabled]="pageNumber === totalPages">
+                        <a class="page-link" (click)="changePage(pageNumber + 1)"
+                          [attr.aria-disabled]="pageNumber === totalPages ? true : null">&raquo;</a>
+                      </li>
+                    </ul>
+                  </nav>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+
+<div  class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+          اضافه اماكن التخزين
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitAdd()" [formGroup]="myForm">
+          <div class="container">
+            <!-- Row with two fields -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field1 text-end"> اسم اماكن التخزين</label>
+                  <input type="text" id="field1" formControlName="name" class="form-control custom-input"
+                    placeholder="اسم اماكن التخزين" />
+                    <div
+                    *ngIf="myForm.get('name')?.touched && myForm.get('name')?.errors?.['required']"
+                    class="text-danger"
+                  >
+                    اسم اماكن التخزين مطلوب.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">اسم اماكن التخزين باللغه المحليه
+                  </label>
+                  <input type="text" id="field2" formControlName="localName" class="form-control custom-input"
+                    placeholder="Storage places" />
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- Row with three fields -->
+
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field3"> اختيار المستودع</label>
+                  <select class="form-control form-select" formControlName="warehouseId">
+                    <option value="">قم باختيار المستودع</option>
+                    <option *ngFor="let item of storehouse" [value]="item.id">{{item.name}}</option>
+                  </select>
+                </div>
+                <div
+                *ngIf="myForm.get('name')?.touched && myForm.get('name')?.errors?.['required']"
+                class="text-danger"
+              >
+                اسم المستودع مطلوب.
+              </div>
+              </div>
+       
+
+            </div>
+            <!-- ألمرفقات -->
+            <div class="container mt-5">
+              <h5 class="mb-3">المرفقات</h5>
+              <div class="mb-3 text-center">
+                <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+                  <i class="fa fa-paperclip"></i> أضف ملف
+                </button>
+                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+              </div>
+              <ul class="list-group mt-3 mb-3">
+                <li *ngFor="let attachment of attachments.controls; let i = index"
+                  class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="https://www.iconpacks.net/icons/2/free-pdf-file-icon-3382-thumb.png" style="width: 35px;" />
+                    <span>{{ attachment.value?.name || 'Unnamed File' }}</span> <!-- Safely access fileTitle -->
+                  </div>
+                  <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                    <i class="fa fa-trash"></i> حذف
+                  </button>
+                </li>
+              </ul>
+            </div>
+            
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="field1 text-end">وصف اماكن التخزين</label>
+                  <textarea class="form-control custom-input" formControlName="note" id="Textarea1" rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-6 mx-auto ">
+
+              <button type="submit" class="btn my-button3">
+                حفظ
+              </button>
+
+              <button type="button" (click)="closeModal()" class="btn closebutton" data-bs-dismiss="modal">
+                الغاء
+              </button>
+            </div>
+
+
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- update -->
+<div class="modal" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;"
+  *ngIf="isModalOpen">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+          تعديل اماكن التخزين
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="updateCategory()" [formGroup]="myForm">
+          <div class="container">
+            <!-- Row with two fields -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field1 text-end"> اسم اماكن التخزين</label>
+                  <input type="text" id="field1" formControlName="name" class="form-control custom-input"
+                    placeholder="اسم اماكن التخزين" />
+                    <div
+                    *ngIf="myForm.get('name')?.touched && myForm.get('name')?.errors?.['required']"
+                    class="text-danger"
+                  >
+                    اسم اماكن التخزين مطلوب.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">اسم اماكن التخزين باللغه المحليه
+                  </label>
+                  <input type="text" id="field2" formControlName="localName" class="form-control custom-input"
+                    placeholder="Storage places" />
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- Row with three fields -->
+
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field3"> اختيار المستودع</label>
+                  <select class="form-control form-select" formControlName="warehouseId">
+                    <option value="">قم باختيار المستودع</option>
+                    <option *ngFor="let item of storehouse" [value]="item.id">{{item.name}}</option>
+                  </select>
+                </div>
+                <div
+                *ngIf="myForm.get('name')?.touched && myForm.get('name')?.errors?.['required']"
+                class="text-danger"
+              >
+                اسم المستودع مطلوب.
+              </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field4">كود اماكن التخزين </label>
+                  <input type="text" id="field2" disabled class="form-control custom-input"
+                    placeholder="قم بكتابه كود اماكن التخزين" />
+                </div>
+              </div>
+
+            </div>
+
+           <!-- ألمرفقات -->
+           <div class="container mt-5">
+            <h5 class="mb-3">المرفقات</h5>
+            <div class="mb-3 text-center">
+              <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+                <i class="fa fa-paperclip"></i> أضف ملف
+              </button>
+              <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+            </div>
+            <ul class="list-group mt-3 mb-3">
+              <li *ngFor="let attachment of attachments.controls; let i = index"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <img src="https://www.iconpacks.net/icons/2/free-pdf-file-icon-3382-thumb.png"
+                    style="width: 35px;" />
+                  <span>{{ attachment.value.name }}</span>
+                </div>
+                <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                  <i class="fa fa-trash"></i> حذف
+                </button>
+              </li>
+            </ul>
+           
+          </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="field1 text-end">وصف اماكن التخزين</label>
+                  <textarea class="form-control custom-input" formControlName="note" id="Textarea1" rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-6 mx-auto ">
+
+              <button type="button my-button3" class="btn my-button3">
+                حفظ
+              </button>
+
+              <button type="button" class="btn closebutton" data-bs-dismiss="modal" (click)="closeModal()">
+                الغاء
+              </button>
+            </div>
+
+
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Confirmation Modal -->
+<div *ngIf="showConfirmationModal" class="confirmation-modal">
+  <div class="modal-content">
+    <p>هل أنت متأكد؟</p>
+    <div class="col-md-12 mx-auto">
+      <button (click)="deleteItemType()" class="btn btn-danger">نعم</button>
+
+      <button (click)="closeConfirmationModal()" class="btn btn-secondary">إلغاء</button>
+
+    </div>
+  </div>
+</div>

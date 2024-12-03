@@ -1,0 +1,46 @@
+/* @import '~@angular/material/prebuilt-themes/indigo-pink.css'; */
+
+@import 'ngx-toastr/toastr';
+
+
+
+.modal-backdrop {
+   position: relative;
+   z-index: -1;
+
+   position: fixed; 
+   top: 50vh;
+   left: 50vw;
+   transform: translate(-50%,-50%);
+   height: 400px; 
+   width: 600px;
+   background-color: white;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+ /* font */
+ h2,h1,h4,
+ h3,
+ h5,
+a,
+h4,
+p,
+label,
+input,
+button,
+span,select, option , form, textarea{
+   font-family: "Cairo", sans-serif;
+   font-optical-sizing: auto;
+   font-weight: 600;
+   font-style: normal;
+
+}
+
+table th{
+   cursor: default;
+}
+
+div .dropdown-menu{
+   cursor: default;
+}

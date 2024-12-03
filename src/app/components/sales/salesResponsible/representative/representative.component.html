@@ -1,0 +1,306 @@
+<div class="main-panel">
+    <div class="container">
+        <div class="page-inner">
+            <div class="page-header d-flex justify-content-between align-items-center flex-row-reverse">
+                <h3 class="fw-bold mb-3 text-end">المناديب</h3>
+                <ul class="breadcrumbs mb-3 ">
+                    <li class="nav-item dropdown">
+                        <button class="btn d-flex justify-content-start align-items-center" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Admin
+                            <!-- Placeholder for the dropdown arrow -->
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+
+                    </li>
+
+                    <li class="nav-home">
+                        <a href="#">
+                            <i class="fa-solid fa-search mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fa-solid fa-bell mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <i class="fa-solid fa-gear mx-2"></i>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-row-reverse">
+                            <h4 class="card-title text-end">ادارة المناديب</h4>
+                            <div class="button-group d-flex justify-content-start">
+                                <button type="button" class="btn my-button" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    اضف مندوب
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn ms-3 my-button">
+                                    <i class="fa-solid fa-print"></i>
+                                    طباعه
+                                </button>
+                                <button type="button" class="btn ms-3 my-button">
+                                    <i class="fa-solid fa-gear"></i>
+                                    الاجراءات
+                                </button>
+                            </div>
+                        </div>
+
+
+
+
+                        <div
+                            class="d-flex flex-row align-items-center mt-3 d-flex justify-content-between align-items-center flex-row-reverse">
+                            <div class="mb-2 me-2 " style="width:100px">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected> الاحدث</option>
+                                    <option value="1">خيار 1</option>
+                                    <option value="2">خيار 2</option>
+                                    <option value="3">خيار 3</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center flex-row-reverse">
+                                <!-- Button with icon -->
+                                <button class="btn my-custom-icone me-2">
+                                  <span class="btn-label">
+                                    <i class="fa-solid fa-sliders"></i>
+                                  </span>
+                                </button>
+                
+                                <!-- Search form -->
+                                <div class="d-flex position-relative">
+                                    <input class="form-control text-end search-input" type="search" placeholder="بحث في الكل"
+                                    aria-label="Search" [(ngModel)]="searchQuery" (input)="onSearchInputChange($event)" />
+                                  <i class="fs-4 bi-search position-absolute search-icon"></i>
+                                </div>
+                              </div>
+                            <div class="icon-group d-flex align-items-center">
+
+                                <button class="btn  my-custom-icone">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-table-cells-large"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone" style="background-color: #224273; color:#E7E7EA">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone ">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-bag-shopping my-icone "></i>
+                                    </span>
+
+                                </button>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="basic-datatables" class="display table table-striped table-hover">
+                                    <thead>
+                                        <tr class="firstcol">
+
+                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th>
+                                            <!-- <th>المنشأ</th> -->
+                                            <th>تاريخ الإنشاء</th>
+                                            <th>البريد الإلكتروني</th>
+                                            <th>اسم المندوب</th>
+                                            <th>المسلسل</th>
+                                            <th class="firstcolright">
+                                                <span 
+                                                  *ngIf="true" 
+                                                  [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                                                  style="display: inline-block; width: 1.5rem; text-align: center;"
+                                                >
+                                                  {{ selectedCount }}
+                                                </span>
+                                                <input 
+                                                  type="checkbox" 
+                                                  [(ngModel)]="selectAll" 
+                                                  (change)="toggleAllCheckboxes()" 
+                                                  class="large-checkbox mx-1" 
+                                                />                      </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of filteredRepresentative, let i = index">
+
+                                            <td> </td>
+                                            <!-- <td>San Francisco</td> -->
+                                            <td>{{item.createdOn | date: 'yy/mm/dd'}}</td>
+                                            <td>{{item.email}}</td>
+                                            <td>{{item.userName}}</td>
+                                            <td>{{ i+1 }}</td>
+                                            <td>
+                                                <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+                    اضافه مندوب
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="representativeForm" (ngSubmit)="onSubmitAdd()">
+                    <div class="container">
+                        <!-- Row with two fields -->
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field4 text-end">اسم المندوب</label>
+                                    <input type="text" id="userName" formControlName="username" name="userName"
+                                        class="form-control" placeholder="اسم المندوب" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for=" text-end">البريد الإلكتروني</label>
+                                    <input type="email" id="email" formControlName="email" name="email"
+                                        class="form-control" placeholder="البريد الإلكتروني" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="password text-end">كلمة المرور</label>
+                                    <input type="password" id="password" formControlName="password" name="password"
+                                        class="form-control" placeholder="كلمة المرور" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">الموظف</label>
+                                    <div class="input-group">
+                                        <select class="form-select form-control custom-input"
+                                            formControlName="employeeId">
+                                            <option value="" disabled selected>قم باختيار الموظف</option>
+                                            <option *ngFor="let item of employees" [value]="item.id">{{ item.name }}
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">نوع العمل</label>
+                                    <div class="input-group">
+                                        <select class="form-select form-control custom-input" formControlName="jobType">
+                                            <option value="" disabled selected>قم باختيار نوع العمل</option>
+                                            <option *ngFor="let item of jobTypeList" [value]="item.key">{{ item.value }}
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">نوع الوصول</label>
+                                    <div class="input-group">
+                                        <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings"
+                                            [data]="userAccessTypeList" (onSelect)="onItemSelect($event)"
+                                            (onDeSelect)="onItemDeselect($event)" (onSelectAll)="onSelectAll($event)"
+                                            (onDeSelectAll)="onDeselectAll()">
+                                        </ng-multiselect-dropdown>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="startDate text-end">تاريخ البدء</label>
+                                    <input type="date" id="startDate" formControlName="startDate" name="startDate"
+                                        class="form-control" placeholder="تاريخ البدء" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="endDate text-end">تاريخ الإنتهاء</label>
+                                    <input type="date" id="endDate" formControlName="endDate" name="endDate"
+                                        class="form-control" placeholder="تاريخ الإنتهاء" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="text-end">وصف</label>
+                                    <textarea placeholder="الوصف" class="form-control" formControlName="description">
+
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!-- show table button 1 -->
+
+                        <div class="col-md-6 mx-auto ">
+                            <button type="submit" class="btn my-button3">
+                                اضافه
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+                                الغاء
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

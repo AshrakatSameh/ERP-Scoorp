@@ -1,0 +1,524 @@
+<div class="main-panel">
+    <div class="container">
+        <div class="page-inner">
+            <div class="page-header d-flex justify-content-between align-items-center flex-row-reverse">
+                <h3 class="fw-bold mb-3 text-end">المبيعات</h3>
+                <ul class="breadcrumbs mb-3 ">
+                    <li class="nav-item dropdown">
+                        <button class="btn d-flex justify-content-start align-items-center" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Admin
+                            <!-- Placeholder for the dropdown arrow -->
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+
+                    </li>
+
+                    <li class="nav-home">
+                        <a href="#">
+                            <i class="fa-solid fa-search mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fa-solid fa-bell mx-2"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <i class="fa-solid fa-gear mx-2"></i>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-row-reverse">
+                            <h4 class="card-title text-end">فروع ومواقع العملاء</h4>
+                            <div class="button-group d-flex justify-content-start">
+                                <button type="button" class="btn my-button" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    اضف فروع ومواقع العملاء
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn ms-3 my-button">
+                                    <i class="fa-solid fa-print"></i>
+                                    طباعه
+                                </button>
+                                <button type="button" class="btn ms-3 my-button">
+                                    <i class="fa-solid fa-gear"></i>
+                                    الاجراءات
+                                </button>
+                            </div>
+                        </div>
+
+
+
+
+                        <div
+                            class="d-flex flex-row align-items-center mt-3 d-flex justify-content-between align-items-center flex-row-reverse">
+                            <div class="mb-2 me-2 " style="width:100px">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected> الاحدث</option>
+                                    <option value="1">خيار 1</option>
+                                    <option value="2">خيار 2</option>
+                                    <option value="3">خيار 3</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center flex-row-reverse">
+                                <!-- Button with icon -->
+                                <button class="btn my-custom-icone me-2">
+                                  <span class="btn-label">
+                                    <i class="fa-solid fa-sliders"></i>
+                                  </span>
+                                </button>
+              
+                                <!-- Search form -->
+                                <div class="d-flex position-relative">
+                                  <input class="form-control text-end search-input" type="search" placeholder="بحث في الكل"
+                                    aria-label="Search"  />
+                                  <i class="fs-4 bi-search position-absolute search-icon"></i>
+                                </div>
+                              </div>
+                            <div class="icon-group d-flex align-items-center">
+
+                                <button class="btn  my-custom-icone">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-table-cells-large"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone" style="background-color: #224273; color:#E7E7EA">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </span>
+
+                                </button>
+
+                                <button class="btn  my-custom-icone ">
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-bag-shopping my-icone "></i>
+                                    </span>
+
+                                </button>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="basic-datatables" class="display table table-striped table-hover">
+                                    <thead>
+                                        <tr class="firstcol">
+
+                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th>
+                                            <th>كود الفرع</th>
+                                            <th>العميل</th>
+                                            <th>المورد</th>
+                                            <th>اسم الفرع/ الموقع باللغة المحلية</th>
+                                            <th>اسم الفرع/ الموقع</th>
+                                            <th class="firstcolright">
+                                                <input type="checkbox" class="large-checkbox" />
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+
+                                            <td> </td>
+                                            <td>48</td>
+                                            <td>San Francisco</td>
+                                            <td>Chief Operating Officer (COO)</td>
+                                            <td>2010/03/11</td>
+                                            <td>Fiona Green</td>
+                                            <td> <input type="checkbox" class="large-checkbox" />
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td> </td>
+                                            <td>Shou Itou</td>
+                                            <td>2011/08/14</td>
+                                            <td>Regional Marketing</td>
+                                            <td>Tokyo</td>
+                                            <td>20</td>
+
+                                            <td> <input type="checkbox" class="large-checkbox" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
+                    اضافه فرع/موقع
+                </h5>
+            </div>
+            <div class="modal-body">
+                <!-- Form or content for the second modal -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="taskField">اسم الفرع/ الموقع</label>
+                            <input type="text" id="taskField" class="form-control" placeholder="أدخل اسم المهمه">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="taskField2">اسم الفرع/ الموقع باللغه المحليه</label>
+                            <input type="text" id="taskField2" class="form-control"
+                                placeholder="أدخل اسم الفرع/ الموقع">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="taskField2">كود الفرع/ الموقع</label>
+                            <input type="text" id="taskField2" class="form-control"
+                                placeholder="أدخل كود الفرا/ الموقع">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">اسم مسؤول الفرع</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار اسم مسؤول الفرع</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">اسم العميل</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار اسم العميل</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">المشروع</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار المشروع</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">المورد</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار المورد</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">العقد</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار العقد</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="taskField3">المعده</label>
+                            <select id="taskField" class="form-control">
+                                <option value="" disabled selected>قم باختيار المعده</option>
+                                <option value="option1">الخيار الأول</option>
+                                <option value="option2">الخيار الثاني</option>
+                                <option value="option3">الخيار الثالث</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Location Section -->
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                        <label for="location" class="form-label">الموقع</label>
+                        <div class="input-group">
+                            <select class="form-select" id="location">
+                                <option selected>قم بإختيار الموقع</option>
+                                <option value="1">الموقع 1</option>
+                                <option value="2">الموقع 2</option>
+                                <option value="3">الموقع 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                        <button class="btn btn-primary locationButton" type="button">
+                            <i class="fas fa-map-marker-alt"></i> أضف موقع
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- Buttons for actions -->
+                <div class="row mb-4">
+                    <div class="col-md-12 text-start">
+                        <button class="btn btn-outline-primary me-3">الغاء</button>
+                        <button class="btn btn-primary m-2">حفظ</button>
+                    </div>
+                </div>
+
+                <!-- Input Fields for Site Information -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="siteName" class="form-label">اسم الموقع</label>
+                        <input type="text" class="form-control" id="siteName" placeholder="قم بكتابة اسم الموقع">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line1" class="form-label">خط الطول</label>
+                        <input type="text" class="form-control" id="line1" placeholder="قم بكتابة خط الطول">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line2" class="form-label">خط العرض</label>
+                        <input type="text" class="form-control" id="line2" placeholder="قم بكتابة خط العرض">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="line3" class="form-label">العنوان</label>
+                        <input type="text" class="form-control" id="line3" placeholder="قم بكتابة خط العرض">
+                    </div>
+                </div>
+
+                <!-- Map Display Section -->
+                <div class="row mb-4">
+                    <div class="col-md-12 text-center">
+                        <h5 class="mb-4">عرض الخريطة</h5>
+                        <div class="map-container"
+                            style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <iframe
+                                src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                                width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                                aria-hidden="false" tabindex="0">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12 ">
+                        <label for="Textarea1">وصف الموقع</label>
+                        <textarea class="form-control" id="Textarea1" rows="3" placeholder="اضف وصف الموقع"></textarea>
+                    </div>
+                </div>
+                <!-- ألمرفقات -->
+                <div class="container mt-5">
+                    <h5 class="mb-3">المرفقات</h5>
+                    <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+    
+                    <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+    
+                    <div class="custom-file-upload">
+                      <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                      <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
+                      <small class="text-muted">JPG, PNG or PDF; file size no more than 10MB</small>
+                    </div>
+                  </div>
+                
+                  <div class="card-body">
+                    <div class="table-responsive">
+  
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <!-- "المهام" on the far right -->
+                        <span>المهام</span>
+  
+                        <!-- Button on the far left -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                          data-bs-target="#Addmession">+ إضافة مهمه</button>
+  
+  
+  
+                      </div>
+  
+                      <table id="basic-datatables" class="display table table-striped table-hover">
+                        <thead>
+                          <tr class="firstcol">
+                            <th>موكل الى</th>
+                            <th> الاولويه</th>
+                            <th>التاريخ</th>
+                            <th>الحاله</th>
+                            <th>المهمه</th>
+  
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+  
+                            <td>موكل الى</td>
+                            <td> الاولويه</td>
+                            <td>التاريخ</td>
+                            <td>الحاله</td>
+                            <td>المهمه</td>
+                          </tr>
+  
+                        </tbody>
+                      </table>
+                    </div>
+  
+                  </div>
+
+
+                <div class="col-md-6 mx-auto ">
+                    <button type="button" class="btn my-button3">
+                        اضافه
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+                        الغاء
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- buuton modal -->
+<div class="modal fade" id="Addmession" tabindex="-1" aria-labelledby="AddmessionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="AddmessionLabel">إضافة مهمه</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form or content for the second modal -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField">اسم المهمه</label>
+                <input type="text" id="taskField" class="form-control" placeholder="أدخل اسم المهمه">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField2">اسم المهمه باللغه المحليه</label>
+                <input type="text" id="taskField2" class="form-control" placeholder="أدخل اسم المهمه">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField3">الحالة</label>
+                <select id="taskField" class="form-control">
+                  <option value="" disabled selected>قم باختيار الحالة</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField4">النوع</label>
+                <select id="taskField4" class="form-control">
+                  <option value="" disabled selected>قم باختيار النوع</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField5">الأولوية</label>
+                <select id="taskField5" class="form-control">
+                  <option value="" disabled selected>قم باختيار الأولوية</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="taskField6">موكل الى</label>
+                <select id="taskField6" class="form-control">
+                  <option value="" disabled selected>قم باختيار المستخدم</option>
+                  <option value="option1">الخيار الأول</option>
+                  <option value="option2">الخيار الثاني</option>
+                  <option value="option3">الخيار الثالث</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="Textarea1">وصف المهمه</label>
+              <textarea class="form-control" id="Textarea1" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="dateInput">تاريخ البدء</label>
+              <input type="date" id="dateInput" class="form-control" placeholder="قم باختيار التاريخ">
+            </div>
+            <div class="col-md-6">
+              <label for="dateInput2">تاريخ الإنتهاء</label>
+              <input type="date" id="dateInput2" class="form-control" placeholder="قم باختيار التاريخ">
+            </div>
+          </div>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+          <button type="button" class="btn btn-primary">إضافة + </button>
+        </div>
+      </div>
+    </div>
+  </div>
