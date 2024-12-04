@@ -44,3 +44,35 @@ table th{
 div .dropdown-menu{
    cursor: default;
 }
+
+
+
+
+/* Drop and Drag File */
+/* Customizing the ngx-file-drop component */
+   .ngx-file-drop__content {
+      border: 3px dotted gainsboro;
+      background-color: none;
+      padding: 20px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease-in-out;
+      color: black !important;
+      position: relative;
+      height: 75px !important;
+   }
+   
+   .ngx-file-drop__drop-zone{
+      border: none !important;
+      height: 75px !important;
+   }
+   .ngx-file-drop__drop-zone--over{
+      border-radius: 10px !important;
+   }
+
+
+
+   /* Fixed Column and Direction */
+   .fixed-right{
+      width: 141px;
+      text-align: right;
+   }
