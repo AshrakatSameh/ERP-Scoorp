@@ -72,6 +72,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 
+
+// Drop and Drag Files imports
+import { NgxFileDropModule } from 'ngx-file-drop';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -125,7 +129,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
     PriceListComponent,
     BodyComponent,
     DashboardComponent,
-    
   ],
   imports: [
     BrowserModule,
@@ -147,7 +150,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
       timeOut: 5000, // Duration in milliseconds
       preventDuplicates: true, // Prevent duplicate toasts
     }),
-    NgbModule
+    NgbModule,
     // NgToastModule, 
     // TranslateModule.forRoot({
     //   defaultLanguage: 'ar',
@@ -158,6 +161,11 @@ import { NgSelectModule } from '@ng-select/ng-select';
     //     deps: [HttpClient]
     //   },
     // })
+    
+
+
+    // Drag and Drop Module
+    NgxFileDropModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },  // Provide JWT options

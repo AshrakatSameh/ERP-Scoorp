@@ -95,11 +95,45 @@ export class ReceivedCovenantComponent implements OnInit {
    // handle array of attachments
    fileNames: string[] = []; // Array to store file names
 
-   get attachments(): FormArray {
-     return this.convenantForm.get('attachments') as FormArray;
-   }
- 
-   onFileSelected(event: Event): void {
+    get attachments(): FormArray {
+      return this.convenantForm.get('attachments') as FormArray;
+    }
+    // Method to handle files dropped into the ngx-file-drop zone
+    dropped(event: any): void {
+      if (event && event.length) {
+        for (const droppedFile of event) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+    
+          if (fileEntry.isFile) {
+            fileEntry.file((file: File) => {
+              const fileData = {
+                fileTitle: file.name,
+                fileType: file.type,
+                fileSize: file.size,
+                fileUrl: null, // Placeholder for URL after upload
+                file: file,
+              };
+              this.attachments.push(this.fb.control(fileData));
+            });
+          }
+        }
+      } else {
+        console.error('No files detected in the dropped event:', event);
+      }
+    }
+    
+  
+  
+    // Method to handle when a file is over the drop zone
+    fileOver(event: any): void {
+      console.log('File is over the drop zone:', event);
+    }
+  
+    // Method to handle when a file leaves the drop zone
+    fileLeave(event: any): void {
+      console.log('File has left the drop zone:', event);
+    }
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
