@@ -230,6 +230,12 @@
                      
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('clientId')?.touched && salesForm.get('clientId')?.errors?.['required']"
+                class="text-danger"
+              >
+              اسم العميل مطلوب.
+              </div>
                 </div>
               </div>
             </div>
@@ -245,6 +251,12 @@
                        
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('representativeId')?.touched && salesForm.get('representativeId')?.errors?.['required']"
+                class="text-danger"
+              >
+              اسم المندوب مطلوب.
+              </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -297,6 +309,12 @@
                         
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('paymentPeriodId')?.touched && salesForm.get('paymentPeriodId')?.errors?.['required']"
+                class="text-danger"
+              >
+              فترة الدفع مطلوبة.
+              </div>
                 </div>
                   
                 </div>
@@ -338,7 +356,12 @@
                   </div>
                 </div>
               </div>
-
+              <div
+              *ngIf="salesForm.get('items')?.touched && salesForm.get('items')?.errors?.['required']"
+              class="text-danger"
+            >
+            يجب إضافة صنف واحد على الأقل
+            </div>
             <div class="scroll-buttons-container">
               <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i" class="scroll-button"
                 type="button" (click)="showContent(i)">
@@ -359,13 +382,13 @@
                           
                           
                           <th>مسلسل</th>
-                          <th>Item ID</th>
-                          <th>soldQuantity</th>
-                          <th>Unit Price</th>
-                          <th>Sales Tax</th>
-                          <th>Discount</th>
-                          <th>Unit</th>
-                          <th>Notes</th>
+                          <th>الصنف</th>
+                          <th>الكمية المباعة</th>
+                          <th>سعر الوحدة</th>
+                          <th>الضريبة</th>
+                          <th>الخصم</th>
+                          <th>الوحدة</th>
+                          <th>ملاحظات</th>
                           <th> </th>
 
                           <th class="firstcolleft"> </th>
@@ -691,40 +714,10 @@
       <div class="modal-body">
         <form [formGroup]="salesForm" (ngSubmit)="updateCategory()">
           <div class="container">
-            <!-- Row with two fields -->
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                    <label for="location" class="form-label" >المنشأ</label>
-                <div class="input-group">
-                    <select class="form-control" disabled id="location">
-                        <option selected>قم بإختيار المنشأ</option>
-                        <option value="1">الموقع 1</option>
-                        <option value="2">الموقع 2</option>
-                        <option value="3">الموقع 3</option>
-                    </select>
-                </div>
-                </div>
-
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field2 text-end" class="form-label">تاريخ الانشاء
-                  </label>
-                  <input type="date" id="field2" disabled class="form-control"
-                    placeholder="قم باختيار التاريخ" />
-                </div>
-              </div>
-            </div>
+           
 
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="text-end" class="form-label"> رقم الطلب</label>
-                  <input type="text" id="code" formControlName="code"  class="form-control"
-                    placeholder="رقم الطلب" />
-                </div>
-              </div>
+              
               <div class="col-md-6">
                 <div class="form-group">
                     <label for="location" class="form-label">العميل</label>
@@ -735,6 +728,12 @@
                      
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('clientId')?.touched && salesForm.get('clientId')?.errors?.['required']"
+                class="text-danger"
+              >
+              اسم العميل مطلوب.
+              </div>
                 </div>
               </div>
             </div>
@@ -750,6 +749,12 @@
                        
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('representativeId')?.touched && salesForm.get('representativeId')?.errors?.['required']"
+                class="text-danger"
+              >
+              اسم المندوب مطلوب.
+              </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -774,33 +779,7 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <!-- <div class="form-group">
-                    <label for="location" class="form-label">حالة الفاتورة</label>
-                <div class="input-group">
-                    <select class="form-select form-control" disabled >
-                        <option selected>قم بإختيار حالة الفاتورة</option>
-                        <option *ngFor="let type of invoiceStatusList" [value]="type.key">
-                           {{type.value}}</option>
-                        
-                    </select>
-                </div>
-                </div> -->
-              </div>
-              <div class="col-md-6">
-                <!-- <div class="form-group">
-                    <label for="location" class="form-label">الأصناف</label>
-                <div class="input-group">
-                    <select class="form-control" disabled  id="location">
-                        <option selected disabled>قم بإختيار الأصناف</option>
-                        <option value="1">صنف 1</option>
-                       
-                    </select>
-                </div>
-                </div> -->
-              </div>
-            </div>
+          
         
 
             <div class="row">
@@ -828,6 +807,12 @@
                         
                     </select>
                 </div>
+                <div
+                *ngIf="salesForm.get('paymentPeriodId')?.touched && salesForm.get('paymentPeriodId')?.errors?.['required']"
+                class="text-danger"
+              >
+              فترة الدفع مطلوبة.
+              </div>
                 </div>
                   
                 </div>
@@ -869,7 +854,12 @@
                   </div>
                 </div>
               </div>
-
+              <div
+              *ngIf="salesForm.get('items')?.touched && salesForm.get('items')?.errors?.['required']"
+              class="text-danger"
+            >
+            يجب إضافة صنف واحد على الأقل
+            </div>
             <div class="scroll-buttons-container">
               <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i" class="scroll-button"
                 type="button" (click)="showContent(i)">

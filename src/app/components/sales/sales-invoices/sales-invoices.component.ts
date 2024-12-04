@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { SalesService } from 'src/app/services/getAllServices/Sales/sales.service';
 import { SalesComponent } from '../sales.component';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
@@ -49,23 +49,24 @@ export class SalesInvoicesComponent implements OnInit {
     private representService: RepresentativeService, private fb: FormBuilder, private payService: PaymentPeriodsService,
     private teamService: TeamsService, private itemServices: ItemsService,private renderer: Renderer2,
     private costService: CostCenterService, private priceService: PriceListService,
-    private http: HttpClient, private toast: ToastrService, private itemService: ItemsService
+    private http: HttpClient, private toast: ToastrService, private itemService: ItemsService,
+    private cdr: ChangeDetectorRef
+
   ) {
     this.salesForm = this.fb.group({
-      code:[],
-      clientId:  [null],
-      representativeId:  [null],
-      teamId:  [null],
-      invoiceNumber: [null],
-      priceListId:  [null],
-      paymentPeriodId:  [null],
-      invoiceType: [null],
-      costCenterId:  [null],
-      driver: [null],
+      clientId:  ['', Validators.required],
+      representativeId:  ['', Validators.required],
+      teamId:  [''],
+      invoiceNumber: [''],
+      priceListId:  [''],
+      paymentPeriodId:  ['', Validators.required],
+      invoiceType: [''],
+      costCenterId:  [''],
+      driver: [''],
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([]),
 
-      items: this.fb.array([]) || null
+      items: this.fb.array([], Validators.required) 
       // purchaseOrderNumber: ['', Validators.required],
 
       // note:[],
@@ -235,12 +236,7 @@ export class SalesInvoicesComponent implements OnInit {
         fileType: [file.type],
         fileSize: [file.size],
         fileUrl: [null],  // URL will be set after uploading
-        file: [file]  // Store the file in the form group
-        // name: file.name,
-        // size: file.size,
-        // type: file.type,
-        // lastModified: file.lastModified,
-        // file: file, 
+        file: [file] 
       };
       // Add the selected file to the FormArray as a FormControl
       this.attachmentFiles.push(this.fb.control(file));
@@ -265,6 +261,44 @@ export class SalesInvoicesComponent implements OnInit {
   }
 
   onSubmit() {
+    const clientControl = this.salesForm.get('clientId');
+    const representativeControl = this.salesForm.get('representativeId');
+    const paymentPeriodControl = this.salesForm.get('paymentPeriodId');
+    const itemsArray = this.salesForm.get('items') as FormArray;
+    
+    // Validate clientId field
+    if (!clientControl || clientControl.invalid) {
+      console.log('Form is invalid because the client id field is invalid.');
+      console.log('Client field errors:', clientControl?.errors);
+      this.salesForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    
+    // Validate representativeId field
+    if (!representativeControl || representativeControl.invalid) {
+      console.log('Form is invalid because the representative id field is invalid.');
+      console.log('Representative field errors:', representativeControl?.errors);
+      representativeControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    if (!paymentPeriodControl || paymentPeriodControl.invalid) {
+      console.log('Form is invalid because the payment period field is invalid.');
+      console.log('payment period field errors:', paymentPeriodControl?.errors);
+      paymentPeriodControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    // Validate items array
+    if (!itemsArray || itemsArray.length === 0) {
+      console.log('Form is invalid because the items array is empty.');
+      itemsArray?.markAllAsTouched();
+      this.cdr.detectChanges();
+      // alert('The items array must have at least one item.');
+      return; // Stop submission
+    }
+    
     const formData = new FormData();
     const getValue = (fieldName: string) =>
       this.salesForm.get(fieldName)?.value || ''; // Return empty string if null/undefined
@@ -404,9 +438,44 @@ export class SalesInvoicesComponent implements OnInit {
   }
 
   updateCategory() {
-    if (this.salesForm.valid) {
       const updatedCategory = { ...this.salesForm.value, id: this.selectedCategory.id };
-
+      const clientControl = this.salesForm.get('clientId');
+      const representativeControl = this.salesForm.get('representativeId');
+      const paymentPeriodControl = this.salesForm.get('paymentPeriodId');
+      const itemsArray = this.salesForm.get('items') as FormArray;
+      
+      // Validate clientId field
+      if (!clientControl || clientControl.invalid) {
+        console.log('Form is invalid because the client id field is invalid.');
+        console.log('Client field errors:', clientControl?.errors);
+        this.salesForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission
+      }
+      
+      // Validate representativeId field
+      if (!representativeControl || representativeControl.invalid) {
+        console.log('Form is invalid because the representative id field is invalid.');
+        console.log('Representative field errors:', representativeControl?.errors);
+        representativeControl?.markAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission
+      }
+      if (!paymentPeriodControl || paymentPeriodControl.invalid) {
+        console.log('Form is invalid because the payment period field is invalid.');
+        console.log('payment period field errors:', paymentPeriodControl?.errors);
+        paymentPeriodControl?.markAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission
+      }
+      // Validate items array
+      if (!itemsArray || itemsArray.length === 0) {
+        console.log('Form is invalid because the items array is empty.');
+        itemsArray?.markAllAsTouched();
+        this.cdr.detectChanges();
+        // alert('The items array must have at least one item.');
+        return; // Stop submission
+      }
       // Call the update service method using the category's id
       this.salesInvoiceService.updateSalesInvoice(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -431,10 +500,7 @@ export class SalesInvoicesComponent implements OnInit {
           this.toast.error(errorMessage, 'Error');
         }
       );
-    }else{
-      console.log(this.salesForm);
-      this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى')
-    }
+    
   }
 
   showConfirmationModal = false;

@@ -355,7 +355,7 @@
                             </div>
                         </div>
 
-
+                      
                         <!--  -->
                         <!-- Location Section -->
                         <div class="row align-items-center">
@@ -807,13 +807,7 @@
 
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="field4 text-end"> رقم الطلب</label>
-                                    <input type="text" id="code" disabled class="custom-input form-control"
-                                        placeholder="رقم الطلب" />
-                                </div>
-                            </div>
+                           
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">العميل</label>
@@ -826,6 +820,12 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="deliveryVoucherForm.get('clientId')?.touched && deliveryVoucherForm.get('clientId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم العميل مطلوب.
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -843,6 +843,12 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="deliveryVoucherForm.get('representativeId')?.touched && deliveryVoucherForm.get('representativeId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم المندوب مطلوب.
+                                  </div>
                                 </div>
                             </div>
 
@@ -901,12 +907,18 @@
                                     <div class="input-group">
                                         <select class="form-select form-control custom-input"
                                             formControlName="warehouseId">
-                                            <option value="" disabled selected>قم باختيار المستودع</option>
+                                            <option value="" disabled selected>{{warehouseName}}</option>
                                             <option *ngFor="let item of warehouses " [value]="item.id">{{item.name}}
                                             </option>
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="deliveryVoucherForm.get('warehouseId')?.touched && deliveryVoucherForm.get('warehouseId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم المستودع مطلوب.
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -976,6 +988,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div
+                        *ngIf="deliveryVoucherForm.get('deliveryNoteItems')?.touched && deliveryVoucherForm.get('deliveryNoteItems')?.errors?.['required']"
+                        class="text-danger"
+                      >
+                      يجب إضافة صنف واحد على الأقل
+                      </div>
                         <!-- show buttons -->
                         <div class="scroll-buttons-container" dir="ltr">
                             <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i"

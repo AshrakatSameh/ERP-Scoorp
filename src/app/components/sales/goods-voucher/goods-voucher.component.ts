@@ -51,26 +51,17 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     this.deliveryVoucherForm= this.fb.group({
     clientId: ['', Validators.required],
     representativeId: ['', Validators.required || null],
-    // code: ['', Validators.required || null],
-    teamId: ['', Validators.required || null],
+    teamId: [''],
     purchaseOrderNumber: [''],
-    costCenterId:  ['', Validators.required || null],
+    costCenterId:  [''],
     warehouseId:  ['', Validators.required || null],
     locationLinkIds: this.fb.array([]),
-
-    deliveryNoteItems:this.fb.array([]),
+    deliveryNoteItems:this.fb.array([], Validators.required),
     attachmentFiles: this.fb.array([]),
     attachments: this.fb.array([])
     
     });
 
-    
-    // this.locationForm = this.fb.group({
-    //   locationName: ['', Validators.required],
-    //   locationAddress: ['', Validators.required],
-    //   latitude: ['', Validators.required],
-    //   linelongitude3: ['', Validators.required]
-    // }) 
 
     this.deliveryStatusList = Object.keys(this.deliveryStatus).map(key => ({
       key: key,
@@ -356,6 +347,22 @@ addLocationId() {
       document.body.style.overflow = '';
     });
   }
+
+  initializeDeliveryNoteForm(): FormGroup{
+    return this.fb.group({
+      clientId: ['', Validators.required],
+      representativeId: ['', Validators.required || null],
+      teamId: [''],
+      purchaseOrderNumber: [''],
+      costCenterId:  [''],
+      warehouseId:  ['', Validators.required || null],
+      locationLinkIds: this.fb.array([]),
+      deliveryNoteItems:this.fb.array([], Validators.required),
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([])
+      
+      });
+  }
 onSubmit() {
   const clientControl = this.deliveryVoucherForm.get('clientId');
   const representativeControl = this.deliveryVoucherForm.get('representativeId');
@@ -434,7 +441,6 @@ onSubmit() {
  this.http.post(this.apiUrl, formData, { headers })
    .subscribe(response => {
      console.log('Response:', response);
-     // alert('submit successfully');
      this.toast.success('تم الإضافة بنجاح')
      console.log(this.deliveryVoucherForm.value);
      this.getAllDeliveryVouchers();
@@ -448,19 +454,10 @@ onSubmit() {
        
        document.body.style.overflow = '';
      }, 300);
-     this.deliveryVoucherForm.reset({
-      clientId: [],
-      representativeId: [null],
-      teamId: [null],
-      purchaseOrderNumber: [''],
-      costCenterId:  [null],
-      warehouseId:  [null],
-      locationLinkIds: this.fb.array([]),
-  
-      deliveryNoteItems:this.fb.array([]),
-      attachmentFiles: this.fb.array([]),
-      attachments: this.fb.array([])
-     });
+     this.deliveryVoucherForm.reset();
+     this.deliveryVoucherForm = this.initializeDeliveryNoteForm();
+
+     this.deliveryNoteItems.clear();
      this.attachments.clear();
    }, error => {
      console.error('Error:', error);
@@ -550,6 +547,11 @@ getClientNameById(clientId: number): string {
   const client = this.clients.find(c => c.id === clientId);
   return client ? client.name : 'Unknown Client';
 }
+warehouseName:any;
+getwarehouseById(warehouseId: number): string {
+  const warehouse = this.warehouses.find(c => c.id === warehouseId);
+  return warehouse ? warehouse.name : 'Unknown warehouse';
+}
 getLocationNamesByIds(locationIds: string[] | undefined): string {
   if (!locationIds || !Array.isArray(locationIds)) {
     return ''; // Return empty string if locationIds is undefined or not an array
@@ -570,17 +572,17 @@ getItemNameById(itemId: number): string {
 openModalForSelected() {
   const clientName = this.getClientNameById(this.selectedCategory.clientId);
   const locationName = this.getLocationNamesByIds(this.selectedCategory.locationLinkIds);
-
+  const warehouseName = this.getwarehouseById(this.selectedCategory.warehouseId)
   if (this.selectedCategory) {
     this.deliveryVoucherForm.patchValue({
       clientId: this.selectedCategory.clientId,
       clientName: clientName,
       representativeId: this.selectedCategory.representativeId,
       teamId: this.selectedCategory.teamId,
-      // code: this.selectedCategory.code,
       purchaseOrderNumber: this.selectedCategory.purchaseOrderNumber,
       costCenterId: this.selectedCategory.costCenterId,
       warehouseId: this.selectedCategory.warehouseId,
+      warehouseName: warehouseName,
       locationName:locationName,
     });
      // Clear existing deliveryNoteItems in form array
@@ -635,9 +637,45 @@ closeModal() {
 }
 
 updateCategory() {
-  if (this.deliveryVoucherForm.valid) {
     const updatedCategory = { ...this.deliveryVoucherForm.value, id: this.selectedCategory.id };
 
+    const clientControl = this.deliveryVoucherForm.get('clientId');
+    const representativeControl = this.deliveryVoucherForm.get('representativeId');
+    const warehouseControl = this.deliveryVoucherForm.get('warehouseId');
+    const itemsArray = this.deliveryVoucherForm.get('deliveryNoteItems') as FormArray;
+  
+    // Validate clientId field
+    if (!clientControl || clientControl.invalid) {
+      console.log('Form is invalid because the client id field is invalid.');
+      console.log('Client field errors:', clientControl?.errors);
+      this.deliveryVoucherForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+  
+    // Validate representativeId field
+    if (!representativeControl || representativeControl.invalid) {
+      console.log('Form is invalid because the representative id field is invalid.');
+      console.log('Representative field errors:', representativeControl?.errors);
+      representativeControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+    if (!warehouseControl || warehouseControl.invalid) {
+      console.log('Form is invalid because the warehouse id field is invalid.');
+      console.log('warehouse field errors:', warehouseControl?.errors);
+      warehouseControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+  
+    // Validate items array
+    if (!itemsArray || itemsArray.length === 0) {
+      console.log('Form is invalid because the items array is empty.');
+      this.deliveryNoteItems.clear(); // Clear items if validation fails
+      return;
+    }
+  
     // Call the update service method using the category's id
     this.salesService.update(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {
@@ -651,7 +689,9 @@ updateCategory() {
 
         this.getAllDeliveryVouchers();
         this.closeModal();  // Close the modal after successful update
-        this.deliveryVoucherForm.reset();
+        this.deliveryVoucherForm = this.initializeDeliveryNoteForm();
+        this.deliveryNoteItems.clear();
+        this.attachments.clear();
       },
       (error) => {
         console.error('Error updating delivery note:', error);
@@ -661,10 +701,7 @@ updateCategory() {
         this.toast.error("لا يمكن التحديث لأنها ليست مسودة");
              }
     );
-    }else{
-      console.log(this.deliveryVoucherForm);
-      this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى')
-    }
+   
     
   }
 
@@ -739,9 +776,15 @@ finalizeDeletion(successfulDeletions: number[], failedDeletions: { id: number; e
     this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
     this.getAllDeliveryVouchers();
     this.closeConfirmationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    if (this.filteredDeliveryNote.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getAllDeliveryVouchers(); // Re-fetch items for the updated page
+    } else {
+      // If the page is not empty, just re-fetch the data
+      this.getAllDeliveryVouchers();
+    }
   }
 }
 
