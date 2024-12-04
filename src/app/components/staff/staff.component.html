@@ -128,8 +128,8 @@
                         <th>المهنة</th>
                         <th>اسم الموظف باللغه المحلية</th>
                         <th>اسم الموظف بالعربي</th>
-                        <th>مسلسل</th>
-                        <th class="firstcolright">
+                        <th class="fixed-right">مسلسل</th>
+                        <th class="firstcolright fixed-right">
                           <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
                             style="display: inline-block; width: 1.5rem; text-align: center;">
                             {{ selectedCount }}
@@ -146,8 +146,8 @@
                         <td>{{item.jobTitle}}</td>
                         <td>{{item.localName}}</td>
                         <td>{{item.name}}</td>
-                        <td>{{i+1}}</td>
-                        <td class="firstcolright">
+                        <td class="fixed-right">{{i+1}}</td>
+                        <td class="firstcolright fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
                             class="large-checkbox mx-4" />
                         </td>

@@ -150,8 +150,8 @@
                         <th>تاريخ الانشاء</th>
                         <th>اسم القسم باللغه المحليه</th>
                         <th>اسم القسم</th> -->
-                        <th>المسلسل</th>
-                        <th class="firstcolright">
+                        <th class="fixed-right">المسلسل</th>
+                        <th class="firstcolright fixed-right">
                           <span 
                             *ngIf="true" 
                             [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
@@ -182,8 +182,8 @@
                         <td>{{item.startDate}}</td>
                         <td>{{item.localName}}</td>
                         <td>{{item.name}}</td> -->
-                        <td>{{ i+1 }}</td>
-                        <td class="firstcolright">
+                        <td class="fixed-right">{{ i+1 }}</td>
+                        <td class="firstcolright fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
                         </td>
 

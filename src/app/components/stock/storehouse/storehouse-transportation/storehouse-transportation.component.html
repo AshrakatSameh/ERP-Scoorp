@@ -147,8 +147,8 @@
                           <th>ملاحظة</th>
                           <th>الإسم المحلى</th>
                           <th>الإسم</th>
-                          <th>المسلسل</th>
-                          <th class="firstcolright">
+                          <th class="fixed-right">المسلسل</th>
+                          <th class="firstcolright fixed-right">
                             <span 
                               *ngIf="true" 
                               [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
@@ -176,8 +176,8 @@
                           <td>{{item.note}}</td>
                           <td>{{item.localName}}</td>
                           <td>{{item.name}}</td>
-                          <td>{{ i+1 }}</td>
-                          <td class="firstcolright">
+                          <td class="fixed-right">{{ i+1 }}</td>
+                          <td class="firstcolright fixed-right">
                             <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item, $event)" class="large-checkbox mx-4" />
                           </td>
                         </tr>

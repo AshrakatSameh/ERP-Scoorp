@@ -159,8 +159,8 @@
                                             <th *ngIf="isColumnVisible('clientPhone')">رقم الهاتف</th>
                                             <th *ngIf="isColumnVisible('code')">كود</th>
 
-                                            <th>مسلسل</th>
-                                            <th class="firstcolright">
+                                            <th class="fixed-right">مسلسل</th>
+                                            <th class="firstcolright fixed-right">
                                                 <span 
                                                   *ngIf="true" 
                                                   [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
@@ -193,8 +193,8 @@
                                             <td *ngIf="isColumnVisible('clientEmail')">{{ item.clientEmail }}</td>
                                             <td *ngIf="isColumnVisible('clientPhone')">{{ item.clientPhone }}</td>
                                             <td *ngIf="isColumnVisible('code')">{{ item.code }}</td>
-                                            <td>{{ i+1}}</td>
-                                            <td><input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
+                                            <td class="fixed-right">{{ i+1}}</td>
+                                            <td class="fixed-right"><input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
                                                 class="large-checkbox mx-4"  />
                                             </td>
                                         </tr>
