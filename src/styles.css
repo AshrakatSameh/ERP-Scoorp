@@ -68,3 +68,11 @@ div .dropdown-menu{
    .ngx-file-drop__drop-zone--over{
       border-radius: 10px !important;
    }
+
+
+
+   /* Fixed Column and Direction */
+   .fixed-right{
+      width: 141px;
+      text-align: right;
+   }

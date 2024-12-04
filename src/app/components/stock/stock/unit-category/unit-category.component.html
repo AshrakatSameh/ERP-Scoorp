@@ -147,8 +147,8 @@
                         <th *ngIf="isColumnVisible('note')">ملاحظة</th>
                         <th *ngIf="isColumnVisible('localName')">الإسم المحلي</th>
                         <th>اسم فئه الوحده</th>
-                        <th style="width: 141px; text-align:right"> المسلسل</th>
-                        <th class="firstcolright" style="width: 141px; text-align:right">
+                        <th class="fixed-right"> المسلسل</th>
+                        <th class="firstcolright fixed-right">
                           <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
                             style="display: inline-block; width: 1.5rem; text-align: center;">
                             {{ selectedCount }}
@@ -168,8 +168,8 @@
                       <td *ngIf="isColumnVisible('note')">{{ item.note }}</td>
                       <td *ngIf="isColumnVisible('localName')">{{ item.localName}}</td>
                         <td>{{item.name}}</td>
-                        <td style="width: 141px; text-align:right">{{ i+1 }}</td>
-                        <td style="width: 141px; text-align:right">
+                        <td class="fixed-right">{{ i+1 }}</td>
+                        <td class="fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
                             class="large-checkbox mx-1" />
                         </td>

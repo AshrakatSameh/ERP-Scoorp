@@ -129,8 +129,8 @@
                                             <th>وصف فترة السداد</th>
                                     
                                             <th>اسم الوسم</th>
-                                            <th>المسلسل</th>
-                                            <th class="firstcolright">
+                                            <th class="fixed-right">المسلسل</th>
+                                            <th class="firstcolright fixed-right">
                                                 <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
                                                   style="display: inline-block; width: 1.5rem; text-align: center;">
                                                   {{ selectedCount }}
@@ -147,8 +147,8 @@
                                             <td>{{item.description}}</td>
                                        
                                             <td>{{item.name}}</td>
-                                            <td>{{i+1}}</td>
-                                            <td>   <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
+                                            <td class="fixed-right">{{i+1}}</td>
+                                            <td class="fixed-right">   <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
                                                 class="large-checkbox mx-4" />
                                             </td>
                                         </tr>
