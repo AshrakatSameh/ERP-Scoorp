@@ -149,6 +149,7 @@ export class UnitCategoryComponent implements OnDestroy {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    console.log(this.attachments)
   }
 
   @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -312,16 +313,20 @@ export class UnitCategoryComponent implements OnDestroy {
   closeModal() {
     this.isModalOpen = false;
     this.unitCatForm.reset();
+    this.resetAttachments();
   }
-
+  resetAttachments(){
+    this.attachments.clear();
+  }
   updateCategory() {
     if (this.unitCatForm.valid) {
       const updatedCategory = { ...this.unitCatForm.value, id: this.selectedCategory.id };
-
+      console.log(updatedCategory,this.attachments)
+      updatedCategory.attachmentFiles = this.attachments;
       // Call the update service method using the category's id
       this.mysrv.updateUnitCat(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
-          console.log('Unit category updated successfully:', response);
+          console.log('Unit category updated successfully:', updatedCategory, response);
           this.toast.success('تم تحديث البيانات بنجاح')
           // Update the local categories array if necessary
           const index = this.storesSec.findIndex(cat => cat.id === updatedCategory.id);

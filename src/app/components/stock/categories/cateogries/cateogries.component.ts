@@ -242,7 +242,41 @@ export class CateogriesComponent {
   get attachments(): FormArray {
     return this.ItemsForm.get('attachments') as FormArray;
   }
-
+    // Method to handle files dropped into the ngx-file-drop zone
+    dropped(event: any): void {
+      if (event && event.length) {
+        for (const droppedFile of event) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+    
+          if (fileEntry.isFile) {
+            fileEntry.file((file: File) => {
+              const fileData = {
+                fileTitle: file.name,
+                fileType: file.type,
+                fileSize: file.size,
+                fileUrl: null, // Placeholder for URL after upload
+                file: file,
+              };
+              this.attachments.push(this.fb.control(fileData));
+            });
+          }
+        }
+      } else {
+        console.error('No files detected in the dropped event:', event);
+      }
+    }
+    
+  
+  
+    // Method to handle when a file is over the drop zone
+    fileOver(event: any): void {
+      console.log('File is over the drop zone:', event);
+    }
+  
+    // Method to handle when a file leaves the drop zone
+    fileLeave(event: any): void {
+      console.log('File has left the drop zone:', event);
+    }
   // Method to handle file selection
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -466,7 +500,6 @@ export class CateogriesComponent {
         weight: this.selectedCategory.weight,
         customField: this.selectedCategory.customField,
         itemClassification: this.mapIntToEnum(this.selectedCategory.itemClassification)
-
       });
       console.log('Selected itemClassification:', this.selectedCategory.itemClassification);
 
@@ -479,6 +512,14 @@ export class CateogriesComponent {
         }
       // الأرصدة الإفتتاحية لكل عنصر
 
+      //Return Attachments 
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       // Populate ItemWarehouses array
       this.selectedCategory.itemWarehouses.forEach((warehouse: any) => {
         const warehouseGroup = this.fb.group({
@@ -537,6 +578,10 @@ export class CateogriesComponent {
   closeModal() {
     this.ItemsForm.reset();
     this.isModalOpen = false;
+    this.resetAttachments();
+  }
+  resetAttachments(){
+    this.attachments.clear();
   }
 
   updateCategory() {

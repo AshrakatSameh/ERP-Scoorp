@@ -271,7 +271,13 @@ openModalForSelected() {
       note: this.selectedCategory.note,
       parentProductGroupId: this.selectedCategory.parentProductGroupId,
     });
-
+    this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     this.GroupForm.patchValue({
       attachments: this.selectedCategory.attachments || [],
     });    this.isModalOpen = true;
@@ -283,6 +289,10 @@ openModalForSelected() {
 closeModal() {
   this.isModalOpen = false;
   this.GroupForm.reset();
+  this.resetAttachments();
+}
+resetAttachments(){
+  this.attachments.clear();
 }
 
 updateCategory() {

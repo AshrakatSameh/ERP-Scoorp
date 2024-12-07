@@ -209,7 +209,41 @@ export class ReceiveVoucherComponent implements OnInit {
   get attachmentFiles (): FormArray {
     return this.goodsForm.get('attachmentFiles') as FormArray;
   }
-
+    // Method to handle files dropped into the ngx-file-drop zone
+    dropped(event: any): void {
+      if (event && event.length) {
+        for (const droppedFile of event) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+    
+          if (fileEntry.isFile) {
+            fileEntry.file((file: File) => {
+              const fileData = {
+                fileTitle: file.name,
+                fileType: file.type,
+                fileSize: file.size,
+                fileUrl: null, // Placeholder for URL after upload
+                file: file,
+              };
+              this.attachmentFiles.push(this.fb.control(fileData));
+            });
+          }
+        }
+      } else {
+        console.error('No files detected in the dropped event:', event);
+      }
+    }
+    
+  
+  
+    // Method to handle when a file is over the drop zone
+    fileOver(event: any): void {
+      console.log('File is over the drop zone:', event);
+    }
+  
+    // Method to handle when a file leaves the drop zone
+    fileLeave(event: any): void {
+      console.log('File has left the drop zone:', event);
+    }
   // Method to handle file selection
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -502,7 +536,13 @@ export class ReceiveVoucherComponent implements OnInit {
         supplier: this.selectedCategory.supplier,
         locationLinkIds: this.selectedCategory.locationLinkIds,
       });
-
+      this.attachmentFiles.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachmentFiles.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('Please select a category to update.');
@@ -512,8 +552,11 @@ export class ReceiveVoucherComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.goodsForm.reset();
+    this.resetAttachments();
   }
-
+  resetAttachments(){
+    this.attachmentFiles.clear();
+  }
   updateCategory() {
     if (this.goodsForm.valid) {
       const updatedCategory = { ...this.goodsForm.value, id: this.selectedCategory.id };

@@ -393,3 +393,27 @@ tr, th, tr {
     opacity: 1;
   }
 }
+
+
+/* Drag and Drop Style */
+.icon{
+  position:absolute;
+  left: 20px;
+}
+.cloud-custom{
+  color: gainsboro;
+  font-size: 35px;
+}
+.upload-text p{
+  margin: 0;
+  flex: 1;
+  text-align: right;
+}
+.upload-title{
+  font-weight: 700;
+  font-size: 12px;
+}
+.upload-subtitle{
+  color: gray;
+  font-size: 12px;
+}
