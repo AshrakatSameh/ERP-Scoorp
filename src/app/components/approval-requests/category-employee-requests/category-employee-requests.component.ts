@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +16,8 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
   EmpReqCategoryForm: FormGroup;
   apiUrl = environment.apiUrl;
   constructor(private empReqService: EmpRequestCategService, private fb: FormBuilder, private http: HttpClient,
-    private toast: ToastrService, private renderer: Renderer2
+    private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef
+
   ) {
     this.EmpReqCategoryForm = this.fb.group({
       name: ['', Validators.required],
@@ -141,6 +142,15 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
    });
  }
   onSubmitAdd(): void {
+    const nameControl = this.EmpReqCategoryForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.EmpReqCategoryForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     // Append simple fields like 'name' and 'description'

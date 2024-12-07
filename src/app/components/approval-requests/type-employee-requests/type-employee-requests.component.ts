@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -22,17 +22,18 @@ export class TypeEmployeeRequestsComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private empType: EmpRequestTypeService, private userServ: UserService,
     private catService: EmpRequestCategService, private http:HttpClient, private toast: ToastrService,
-    private renderer: Renderer2
+    private renderer: Renderer2, private cdr: ChangeDetectorRef
   ){
     this.EmpReqTypeForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
-      categoryId: [''],
+      categoryId: ['', Validators.required],
       approvalLevels: this.fb.array([]) , // Array of approval levels
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
     })
   }
+
   ngOnInit(): void {
     this.getAllEmpRequestTypes();
     this.getAllUsers();
@@ -194,12 +195,7 @@ changePage(newPageNumber: number): void {
         fileType: [file.type],
         fileSize: [file.size],
         fileUrl: [null],  // URL will be set after uploading
-        file: [file]  // Store the file in the form group
-        // name: file.name,
-        // size: file.size,
-        // type: file.type,
-        // lastModified: file.lastModified,
-        // file: file, 
+        file: [file]  
       };
       // Add the selected file to the FormArray as a FormControl
       this.attachments.push(this.fb.control(file));
@@ -222,7 +218,37 @@ changePage(newPageNumber: number): void {
       document.body.style.overflow = '';
     });
   }
+
+  initializeEmpTypeForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      description: [''],
+      categoryId: ['', Validators.required],
+      approvalLevels: this.fb.array([]) ,
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([])
+    });
+  }
    onSubmitAdd(): void {
+    const nameControl = this.EmpReqTypeForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.EmpReqTypeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+
+    const categoryName = this.EmpReqTypeForm.get('categoryId');
+  
+    if (!categoryName || categoryName.invalid) {
+      console.log('Form is invalid because the categoryId field is invalid.');
+      console.log('categoryId field errors:', categoryName?.errors);
+      this.EmpReqTypeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; 
+    }
     const formData = new FormData();
   
     // Append simple fields like 'name' and 'description'
@@ -267,7 +293,7 @@ changePage(newPageNumber: number): void {
           console.log('Response:', response);
           this.toast.success('تم الإضافة بنجاح');
           this.getAllEmpRequestTypes();
-          this.EmpReqTypeForm.reset();
+          this.EmpReqTypeForm = this.initializeEmpTypeForm();
           const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
           if (modalInstance) {
             modalInstance.hide();
@@ -327,9 +353,26 @@ changePage(newPageNumber: number): void {
    }
  
    updateCategory() {
-     if (this.EmpReqTypeForm.valid) {
        const updatedCategory = { ...this.EmpReqTypeForm.value, id: this.selectedCategory.id };
- 
+       const nameControl = this.EmpReqTypeForm.get('name');
+  
+       if (!nameControl || nameControl.invalid) {
+         console.log('Form is invalid because the name field is invalid.');
+         console.log('Name field errors:', nameControl?.errors);
+         this.EmpReqTypeForm.markAllAsTouched();
+         this.cdr.detectChanges();
+         return; // Stop submission if the name field is invalid
+       }
+   
+       const categoryName = this.EmpReqTypeForm.get('categoryId');
+     
+       if (!categoryName || categoryName.invalid) {
+         console.log('Form is invalid because the categoryId field is invalid.');
+         console.log('categoryId field errors:', categoryName?.errors);
+         this.EmpReqTypeForm.markAllAsTouched();
+         this.cdr.detectChanges();
+         return; 
+       }
        // Call the update service method using the category's id
        this.empType.updateEmpRequestType(this.selectedCategory.id, updatedCategory).subscribe(
          (response) => {
@@ -342,6 +385,8 @@ changePage(newPageNumber: number): void {
            }
  
            this.getAllEmpRequestTypes();
+           this.EmpReqTypeForm = this.initializeEmpTypeForm();
+
            this.closeModal();  // Close the modal after successful update
          },
          (error) => {
@@ -352,7 +397,7 @@ changePage(newPageNumber: number): void {
            this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى'); 
           }
        );
-     }
+     
    }
 
    showConfirmationModal = false;

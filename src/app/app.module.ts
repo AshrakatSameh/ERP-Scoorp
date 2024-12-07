@@ -159,7 +159,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
     //     provide: TranslateLoader,
     //     useFactory: HttpLoaderFactory,
     //     deps: [HttpClient]
-    //   },
+    //   }, 
     // })
     
 

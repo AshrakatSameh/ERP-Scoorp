@@ -144,19 +144,13 @@
                         <th>اسم فئه طلب الموظف</th>
                         <th class="fixed-right">المسلسل</th>
                         <th class="firstcolright fixed-right">
-                          <span 
-                            *ngIf="true" 
-                            [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
-                            style="display: inline-block; width: 1.5rem; text-align: center;"
-                          >
+                          <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                            style="display: inline-block; width: 1.5rem; text-align: center;">
                             {{ selectedCount }}
                           </span>
-                          <input 
-                            type="checkbox" 
-                            [(ngModel)]="selectAll" 
-                            (change)="toggleAllCheckboxes()" 
-                            class="large-checkbox mx-1" 
-                          />                      </th>
+                          <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleAllCheckboxes()"
+                            class="large-checkbox mx-1" />
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -166,8 +160,8 @@
                         <td>{{item.name}}</td>
                         <td class="fixed-right">{{ i+1 }}</td>
                         <td class="fixed-right">
-                          <input type="checkbox" [(ngModel)]="item.checked"
-                        (change)="onCheckboxChange(item, $event)" class="large-checkbox mx-4" />
+                          <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
+                            class="large-checkbox mx-1" />
                         </td>
                       </tr>
                   
@@ -235,6 +229,9 @@
                     class="form-control custom-input"
                     placeholder="اسم فئه طلب الموظف"
                   />
+                  <div *ngIf="EmpReqCategoryForm.get('name')?.invalid && EmpReqCategoryForm.get('name')?.touched" class="text-danger">
+                    اسم فئة الطلب مطلوب.
+                  </div>
                 </div>
               </div>
             </div>

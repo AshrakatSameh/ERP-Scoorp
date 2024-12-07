@@ -166,9 +166,10 @@
                         <td>{{item.description}}</td>
                         <td>{{item.name}}</td>
                         <td class="fixed-right">{{ i+1 }}</td>
-                        <td class="firstcolright fixed-right">
-                          <input type="checkbox" [(ngModel)]="item.checked"
-                          (change)="onCheckboxChange(item, $event)" class="large-checkbox mx-4" />                        </td>
+                        <td class="fixed-right">
+                          <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
+                            class="large-checkbox mx-1" />
+                        </td>
                       </tr>
                    
                     </tbody>
@@ -235,6 +236,9 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     class="form-control custom-input"
                     placeholder="اسم نوع طلب الموظف"
                   />
+                  <div *ngIf="EmpReqTypeForm.get('name')?.invalid && EmpReqTypeForm.get('name')?.touched" class="text-danger">
+                    اسم نوع طلب مطلوب.
+                  </div>
                 </div>
               </div>
             </div>
@@ -265,6 +269,10 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
 
                  </select>
+                
+                </div>
+                <div *ngIf="EmpReqTypeForm.get('categoryId')?.invalid && EmpReqTypeForm.get('categoryId')?.touched" class="text-danger">
+                  فئة الطلب مطلوبة.
                 </div>
               </div>
             </div>
@@ -374,6 +382,9 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                   class="form-control custom-input"
                   placeholder="اسم نوع طلب الموظف"
                 />
+                <div *ngIf="EmpReqTypeForm.get('name')?.invalid && EmpReqTypeForm.get('name')?.touched" class="text-danger">
+                  اسم نوع طلب مطلوب.
+                </div>
               </div>
             </div>
           </div>
@@ -404,6 +415,9 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                 <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
 
                </select>
+              </div>
+              <div *ngIf="EmpReqTypeForm.get('categoryId')?.invalid && EmpReqTypeForm.get('categoryId')?.touched" class="text-danger">
+                فئة الطلب مطلوبة.
               </div>
             </div>
           </div>
