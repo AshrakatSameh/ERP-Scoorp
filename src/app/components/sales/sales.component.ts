@@ -504,7 +504,13 @@ export class SalesComponent implements OnInit {
         paymentPeriod: this.selectedCategory.paymentPeriod,
         paymentType: this.selectedCategory.paymentType,
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('الرجاء اختيار العنصر');
@@ -514,6 +520,10 @@ export class SalesComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.saleOfferForm.reset();
+    this.resetAttachments();
+  }
+  resetAttachments(){
+    this.attachments.clear();
   }
 
   updateCategory() {

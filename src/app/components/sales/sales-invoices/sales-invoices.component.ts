@@ -459,7 +459,13 @@ export class SalesInvoicesComponent implements OnInit {
         costCenterId: this.selectedCategory.costCenterId,
         driver: this.selectedCategory.driver,
       });
-
+      this.attachmentFiles.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachmentFiles.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('الرجاء اختيار العنصر ');
@@ -469,6 +475,10 @@ export class SalesInvoicesComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.salesForm.reset();
+    this.resetAttachments();
+  }
+  resetAttachments(){
+    this.attachmentFiles.clear();
   }
 
   updateCategory() {

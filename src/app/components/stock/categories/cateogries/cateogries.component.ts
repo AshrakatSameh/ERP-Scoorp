@@ -500,7 +500,6 @@ export class CateogriesComponent {
         weight: this.selectedCategory.weight,
         customField: this.selectedCategory.customField,
         itemClassification: this.mapIntToEnum(this.selectedCategory.itemClassification)
-
       });
       console.log('Selected itemClassification:', this.selectedCategory.itemClassification);
 
@@ -513,6 +512,14 @@ export class CateogriesComponent {
         }
       // الأرصدة الإفتتاحية لكل عنصر
 
+      //Return Attachments 
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       // Populate ItemWarehouses array
       this.selectedCategory.itemWarehouses.forEach((warehouse: any) => {
         const warehouseGroup = this.fb.group({
@@ -571,6 +578,10 @@ export class CateogriesComponent {
   closeModal() {
     this.ItemsForm.reset();
     this.isModalOpen = false;
+    this.resetAttachments();
+  }
+  resetAttachments(){
+    this.attachments.clear();
   }
 
   updateCategory() {

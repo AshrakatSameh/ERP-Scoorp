@@ -90,18 +90,31 @@ export class UnitService {
     formData.append('localName', updatedCategory.localName || '');
     formData.append('note', updatedCategory.note || '');
     formData.append('UnitCategoryId', updatedCategory.UnitCategoryId || '');
-  
+    console.log('Full attachments:', updatedCategory.attachments);
     // Add new and existing attachments to the FormData
     updatedCategory.attachments.forEach((attachment: any) => {
-      // If the attachment is a new file (instance of File), append it
-      if (attachment instanceof File) {
-        formData.append('attachments', attachment, attachment.name);
-      } else {
-        // If the attachment is an existing attachment (ID or URL), append it as a string
-        formData.append('existingAttachments', attachment);
+      console.log(attachment)
+      // Existing attachments (with fileUrl)
+      if (attachment.fileUrl) {
+        formData.append('existingAttachments', attachment.fileTitle);
+        console.log('Appending existing attachment:', attachment.fileTitle);
+      } 
+      // New file uploads (with File object)
+      if (attachment.file instanceof File) {
+        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+        console.log('Appending new file:', attachment.fileTitle);
       }
     });
-  
+    
+    for (const [key, value] of (formData as any).entries()) {
+      if (value instanceof File) {
+        console.log(`${key}:`, value.name); // Log file name
+      } else {
+        console.log(`${key}:`, value); // Log value
+      }
+    }
+    
+    
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}StoresSection/unit/${id}`, formData, { headers });
   }

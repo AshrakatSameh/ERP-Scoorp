@@ -231,7 +231,13 @@ openModalForSelected() {
       localName: this.selectedCategory.localName,
       note: this.selectedCategory.note,
     });
-
+    this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     this.isModalOpen = true;
   } else {
     alert('Please select a type category to update.');
@@ -240,6 +246,10 @@ openModalForSelected() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.resetAttachments();
+}
+resetAttachments(){
+  this.attachments.clear();
 }
 
 updateCategory() {

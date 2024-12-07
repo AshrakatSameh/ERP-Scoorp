@@ -803,8 +803,11 @@ updateItem() {
   closeModal() {
     this.isModalOpen = false;
     this.invoiceFrom.reset();
+    this.resetAttachments();
   }
-
+  resetAttachments(){
+    this.attachmentFiles.clear();
+  }
   updateCategory() {
     if (this.invoiceFrom.valid) {
       const updatedCategory = { ...this.invoiceFrom.value, id: this.selectedCategory.id };

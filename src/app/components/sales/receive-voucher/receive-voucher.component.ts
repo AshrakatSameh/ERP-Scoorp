@@ -536,7 +536,13 @@ export class ReceiveVoucherComponent implements OnInit {
         supplier: this.selectedCategory.supplier,
         locationLinkIds: this.selectedCategory.locationLinkIds,
       });
-
+      this.attachmentFiles.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachmentFiles.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('Please select a category to update.');
@@ -546,8 +552,11 @@ export class ReceiveVoucherComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.goodsForm.reset();
+    this.resetAttachments();
   }
-
+  resetAttachments(){
+    this.attachmentFiles.clear();
+  }
   updateCategory() {
     if (this.goodsForm.valid) {
       const updatedCategory = { ...this.goodsForm.value, id: this.selectedCategory.id };

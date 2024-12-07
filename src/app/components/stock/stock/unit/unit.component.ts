@@ -17,9 +17,6 @@ export class UnitComponent {
   storesSec: any[] = [];
   unitForm: FormGroup;
 
-
-
-
   apiUrl = environment.apiUrl;
   imgApiUrl = environment.imgApiUrl;
 
@@ -95,6 +92,7 @@ export class UnitComponent {
                 file: file,
               };
               this.attachments.push(this.fb.control(fileData));
+              console.log(this.attachments)
             });
           }
         }
@@ -121,8 +119,14 @@ export class UnitComponent {
       const file = input.files[0];
 
       // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
-
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -158,10 +162,11 @@ export class UnitComponent {
     formData.append('note', this.unitForm.get('note')?.value);
     formData.append('UnitCategoryId', this.unitForm.get('UnitCategoryId')?.value);
     // Append each attachment file
+    console.log(this.attachments)
     this.attachments.controls.forEach((control) => {
       const file = control.value;
       if (file) {
-        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+        formData.append('attachments', file); // Append each file under 'AttachmentFiles'
       }
     });
     console.log('FormData contents:');
@@ -269,7 +274,16 @@ export class UnitComponent {
       this.attachments.clear();
       if (this.selectedCategory.attachments?.length) {
         this.selectedCategory.attachments.forEach((attachment: any) => {
-          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
         });
       }
       this.isModalOpen = true;
@@ -282,11 +296,12 @@ export class UnitComponent {
   closeModal() {
     this.unitForm.reset();
     this.isModalOpen = false;
+    this.resetAttachments();
   }
 
   updateCategory() {
     const updatedCategory = { ...this.unitForm.value, id: this.selectedCategory.id };
-
+    console.log(updatedCategory);
   
       // Call the update service method using the category's id
       this.unitService.updateUnit(this.selectedCategory.id, updatedCategory).subscribe(
@@ -325,7 +340,9 @@ export class UnitComponent {
 
       this.showConfirmationModal = true;
   }
-
+  resetAttachments(){
+    this.attachments.clear();
+  }
   closeConfirmationModal() {
     this.showConfirmationModal = false;
   }

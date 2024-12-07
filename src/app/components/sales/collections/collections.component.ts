@@ -392,7 +392,13 @@ openModalForSelected() {
       covenantBoxId: this.selectedCategory.covenantBoxId,
       value: this.selectedCategory.value
     });
-
+    this.attachmentFiles.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachmentFiles.controls);
+        });
+      }
     this.isModalOpen = true;
   } else {
     alert('Please select a category to update.');
@@ -402,6 +408,10 @@ openModalForSelected() {
 closeModal() {
   this.collectionForm.reset();
   this.isModalOpen = false;
+  this.resetAttachments();
+}
+resetAttachments(){
+  this.attachmentFiles.clear();
 }
 
 updateCategory() {

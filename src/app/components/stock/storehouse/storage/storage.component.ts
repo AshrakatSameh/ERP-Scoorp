@@ -268,7 +268,13 @@ imgApiUrl= environment.imgApiUrl;
         code: this.selectedCategory.code,
         warehouseId: this.selectedCategory.warehouseId,
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('Please select a category to update.');
@@ -278,6 +284,10 @@ imgApiUrl= environment.imgApiUrl;
   closeModal() {
     this.isModalOpen = false;
     this.myForm.reset();
+    this.resetAttachments();
+  }
+  resetAttachments(){
+    this.attachments.clear();
   }
 
   updateCategory() {

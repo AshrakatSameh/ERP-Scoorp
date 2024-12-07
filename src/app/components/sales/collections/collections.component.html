@@ -756,7 +756,9 @@
 
 <!-- Update modal -->
 <div class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;"
-    *ngIf="isModalOpen" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    *ngIf="isModalOpen" aria-labelledby="staticBackdropLabel"
+    [attr.aria-hidden]="!isModalOpen ? 'true' : null"
+    >
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
