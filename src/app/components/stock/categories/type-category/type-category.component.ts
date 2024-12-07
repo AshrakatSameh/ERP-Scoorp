@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ItemcategoryService } from 'src/app/services/getAllServices/itemcategory/itemcategory.service';
@@ -100,24 +100,26 @@ getAllItemCat(){
       console.log('File has left the drop zone:', event);
     }
  // Method to handle file selection
- onFileSelected(event: Event): void {
-   const input = event.target as HTMLInputElement;
-   if (input.files && input.files.length > 0) {
-     const file = input.files[0];
-     const fileData = {
-       name: file.name,
-       size: file.size,
-       type: file.type,
-       lastModified: file.lastModified,
-       file: file, // Store the actual file object if needed for upload
-     };
-     // Add the selected file to the FormArray as a FormControl
-     this.attachments.push(this.fb.control(file));
+  onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
 
-     // Reset the input value to allow selecting the same file again
-     input.value = '';
-   }
- }
+    // Add the selected file to the FormArray as a FormControl
+    const fileData = {
+      fileTitle: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+      fileUrl: null, // Placeholder for URL after upload
+      file: file,
+    };
+    this.attachments.push(this.fb.control(fileData));
+    console.log(this.attachments)
+    // Reset the input value to allow selecting the same file again
+    input.value = '';
+  }
+}
+
 
  // Method to remove a file from the attachments FormArray
  removeAttachment(index: number): void {
@@ -152,9 +154,10 @@ onSubmitAdd(): void {
 
   // Append each attachment file
   this.attachments.controls.forEach((control) => {
-    const file = control.value;
-    if (file) {
-      formData.append('AttachmentFiles', file, file.name);
+    const fileData = control.value;
+    if (fileData && fileData.file instanceof File) {
+      // Append the actual file object
+      formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
     }
   });
 
@@ -259,32 +262,26 @@ resetAttachments(){
 }
 
 updateCategory() {
-    const updatedCategory = { ...this.TypeCatForm.value, id: this.selectedCategory.id };
+  const updatedCategory = { ...this.TypeCatForm.value, id: this.selectedCategory.id };
 
-    // Call the update service method using the category's id
-    this.itemCatServices.updateItemCat(this.selectedCategory.id, updatedCategory).subscribe(
-      (response) => {
-        console.log('Category updated successfully:', response);
-        this.toast.success('تم تحديث البيانات بنجاح')
-        // Update the local categories array if necessary
-        const index = this.storesSec.findIndex(cat => cat.id === updatedCategory.id);
-        if (index !== -1) {
-          this.storesSec[index] = updatedCategory;
-        }
 
-        this.getAllItemCat();
-        this.closeModal();  // Close the modal after successful update
-      },
-      (error) => {
-        console.error('Error updating category:', error);
-        console.log('Updated Category Data:', updatedCategory);
-        // alert('An error occurred while updating the item type .');
-        const errorMessage = error.error?.message || 'An unexpected error occurred.';
-        this.toast.error("حدث خطأ ، تأكد من البيانات و حاول مرة أخرى"); 
-            }
-    );
-    
-  }
+  // Call the update service method
+  this.itemCatServices.updateItemCat(this.selectedCategory.id, updatedCategory).subscribe(
+    (response) => {
+      console.log('Category updated successfully:', response);
+      this.toast.success('تم تحديث البيانات بنجاح');
+      this.getAllItemCat();
+      this.closeModal();
+    },
+    (error) => {
+      console.error('Error updating category:', error);
+      this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
+    }
+  );
+}
+
+
+
 
   showConfirmationModal = false;
 

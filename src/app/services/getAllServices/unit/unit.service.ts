@@ -91,16 +91,16 @@ export class UnitService {
     formData.append('note', updatedCategory.note || '');
     formData.append('UnitCategoryId', updatedCategory.UnitCategoryId || '');
     console.log('Full attachments:', updatedCategory.attachments);
-    // Add new and existing attachments to the FormData
+
+    
     updatedCategory.attachments.forEach((attachment: any) => {
-      console.log(attachment)
-      // Existing attachments (with fileUrl)
       if (attachment.fileUrl) {
-        formData.append('existingAttachments', attachment.fileTitle);
-        console.log('Appending existing attachment:', attachment.fileTitle);
-      } 
-      // New file uploads (with File object)
+        // For existing files, use a metadata representation (fileUrl or any reference)
+        formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+        console.log('Appending existing file reference:', attachment.fileTitle);
+      }
       if (attachment.file instanceof File) {
+        // For new files, append the actual file object
         formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
         console.log('Appending new file:', attachment.fileTitle);
       }

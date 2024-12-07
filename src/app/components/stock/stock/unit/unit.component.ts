@@ -127,6 +127,7 @@ export class UnitComponent {
         file: file,
       };
       this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -164,9 +165,10 @@ export class UnitComponent {
     // Append each attachment file
     console.log(this.attachments)
     this.attachments.controls.forEach((control) => {
-      const file = control.value;
-      if (file) {
-        formData.append('attachments', file); // Append each file under 'AttachmentFiles'
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
     });
     console.log('FormData contents:');
