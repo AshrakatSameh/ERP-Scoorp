@@ -258,21 +258,17 @@ imgApiUrl= environment.imgApiUrl;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const fileData = {
-        fileTitle: [file.name],
-        fileType: [file.type],
-        fileSize: [file.size],
-        fileUrl: [null],  // URL will be set after uploading
-        file: [file]  // Store the file in the form group
-        // name: file.name,
-        // size: file.size,
-        // type: file.type,
-        // lastModified: file.lastModified,
-        // file: file, 
-      };
-      // Add the selected file to the FormArray as a FormControl
-      this.attachmentFiles.push(this.fb.control(file));
 
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachmentFiles.push(this.fb.control(fileData));
+      console.log(this.attachmentFiles)
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -310,9 +306,10 @@ imgApiUrl= environment.imgApiUrl;
 
       // Append each attachment file
   this.attachmentFiles.controls.forEach((control) => {
-    const file = control.value;
-    if (file) {
-      formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+    const fileData = control.value;
+    if (fileData && fileData.file instanceof File) {
+      // Append the actual file object
+      formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
     }
   });
     this.items.controls.forEach((item, index) => {

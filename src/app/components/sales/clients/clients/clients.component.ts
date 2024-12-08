@@ -204,23 +204,21 @@ export class ClientsComponent implements OnInit {
   // Handle file selection
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Check for duplicates by file name
-      if (this.attachments.controls.some(control => control.value.name === file.name)) {
-        alert('This file is already added.');
-        return;
-      }
-
-      // Add the file to the attachments array
-      this.attachments.push(
-        this.fb.group({
-          name: file.name,
-          file: file
-        })
-      );
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
+      // Reset the input value to allow selecting the same file again
+      input.value = '';
     }
   }
 
@@ -279,8 +277,12 @@ export class ClientsComponent implements OnInit {
 
     const attachments = this.clientForm.get('attachments')!.value; // Assuming attachments are stored in the form
     if (attachments && attachments.length > 0) {
-      attachments.forEach((attachment: { file: File }) => {
-        formData.append('attachments', attachment.file, attachment.file.name);
+      this.attachments.controls.forEach((control) => {
+        const fileData = control.value;
+        if (fileData && fileData.file instanceof File) {
+          // Append the actual file object
+          formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+        }
       });
     }
     const tenantId = localStorage.getItem('tenant');

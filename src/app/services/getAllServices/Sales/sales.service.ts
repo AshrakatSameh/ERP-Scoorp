@@ -72,7 +72,23 @@ export class SalesService {
     formData.append('offerExpiryDate', updatedCategory.offerExpiryDate || '');
     formData.append('paymentPeriod', updatedCategory.paymentPeriod || '');
     formData.append('paymentType', updatedCategory.paymentType || '');
-      
+    
+    console.log("Form Service", updatedCategory.attachments);
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}SaleOffer/${id}`, formData, { headers });
   }
@@ -177,7 +193,23 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     formData.append('invoiceType', updatedCategory.invoiceType || '');
     formData.append('costCenterId', updatedCategory.costCenterId || '');
     formData.append('driver', updatedCategory.driver || '');
-  
+    
+    console.log("Form Service", updatedCategory.attachments);
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}SalesInvoice/${id}`, formData, { headers });
   }
@@ -312,6 +344,23 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
       formData.append(`Items[${index}].unit`, item.unit || '');
       formData.append(`Items[${index}].notes`, item.notes || '');
     });
+
+    console.log("Form Service", updatedCategory.attachments);
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}DeliveryNotes/Update/${id}`, formData, { headers });
   }
@@ -412,6 +461,23 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
       formData.append(`Items[${index}].unit`, item.unit || '');
       formData.append(`Items[${index}].notes`, item.notes || '');
     });
+
+    console.log("Form Service", updatedCategory.attachmentFiles);
+      updatedCategory.attachmentFiles.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}ReturnInvoice/${id}`, formData, { headers });
   }
@@ -496,7 +562,24 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     formData.append('supplier', updatedCategory.supplier || '');
     (updatedCategory.locationLinkIds || []).forEach((id: string) => {
       formData.append('locationLinkIds', id);
-    });  
+    });
+    
+    console.log("Form Service", updatedCategory.attachments);
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}GoodsReceipt/${id}`, formData, { headers });
   }

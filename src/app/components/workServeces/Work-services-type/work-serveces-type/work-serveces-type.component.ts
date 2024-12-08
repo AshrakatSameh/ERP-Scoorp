@@ -162,18 +162,18 @@ export class WorkServecesTypeComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-  
-      const attachmentGroup = this.fb.group({
-        file: [file], // Actual file object
-        name: [file.name],
-        type: [file.type],
-        size: [file.size]
-      });
-  
-      // Add the file as a FormGroup to the attachments FormArray
-      this.attachments.push(attachmentGroup);
-  
-      // Reset input to allow selecting the same file again
+
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
+      // Reset the input value to allow selecting the same file again
       input.value = '';
     }
   }
@@ -216,9 +216,10 @@ export class WorkServecesTypeComponent implements OnInit {
     });
     // Append each attachment file
     this.attachments.controls.forEach((control) => {
-      const file = control.get('file')?.value;
-      if (file) {
-        formData.append('AttachmentFiles', file); // Append the file
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
     });
 
