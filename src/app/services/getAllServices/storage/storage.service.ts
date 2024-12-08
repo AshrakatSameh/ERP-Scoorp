@@ -63,7 +63,23 @@ export class StorageService {
       formData.append('code', updatedCategory.code || '');
       formData.append('warehouseId', updatedCategory.warehouseId || '');
       formData.append('description', updatedCategory.description || '');
-    
+      
+      console.log("Form Service", updatedCategory.attachments);
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+      console.log(formData.get("attachmentFiles"))
       // API call with PUT method using the FormData and headers
       return this.http.put(`${this.apiUrl}StoresSection/storage-place/${id}`, formData, { headers });
     }

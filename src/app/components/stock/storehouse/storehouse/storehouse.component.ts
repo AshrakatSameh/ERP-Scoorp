@@ -110,18 +110,25 @@ get attachments(): FormArray {
     fileLeave(event: any): void {
       console.log('File has left the drop zone:', event);
     }
-onFileSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    const file = input.files[0];
-
-    // Push the file object directly to the FormArray
-    this.attachments.push(this.fb.control(file));
-
-    // Clear the file input after selection
-    input.value = '';
-  }
-}
+    onFileSelected(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+  
+        // Add the selected file to the FormArray as a FormControl
+        const fileData = {
+          fileTitle: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          fileUrl: null, // Placeholder for URL after upload
+          file: file,
+        };
+        this.attachments.push(this.fb.control(fileData));
+        console.log(this.attachments)
+        // Reset the input value to allow selecting the same file again
+        input.value = '';
+      }
+    }
 
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
@@ -160,9 +167,10 @@ onFileSelected(event: Event): void {
   
     // Append files
     this.attachments.controls.forEach((control) => {
-      const file = control.value; // Directly access the file object
-      if (file) {
-        formData.append('AttachmentFiles', file, file.name); // Append file with its name
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
     });
   
