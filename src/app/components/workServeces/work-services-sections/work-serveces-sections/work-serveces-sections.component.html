@@ -206,6 +206,9 @@
                                     <label for="field4 text-end"> اسم القسم</label>
                                     <input type="text" id="name" formControlName="name"  class="form-control"
                                         placeholder="اسم القسم" />
+                                        <div *ngIf="serviceDepForm.get('name')?.invalid && serviceDepForm.get('name')?.touched" class="text-danger">
+                                          اسم القسم مطلوب.
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -320,6 +323,9 @@
                                 <label for="field4 text-end"> اسم القسم</label>
                                 <input type="text" id="name" formControlName="name"  class="form-control"
                                     placeholder="اسم القسم" />
+                                    <div *ngIf="serviceDepForm.get('name')?.invalid && serviceDepForm.get('name')?.touched" class="text-danger">
+                                      اسم القسم مطلوب.
+                                    </div>
                             </div>
                         </div>
                         <div class="col-md-6">

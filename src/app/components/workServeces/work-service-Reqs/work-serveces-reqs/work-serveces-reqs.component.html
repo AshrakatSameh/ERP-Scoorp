@@ -190,14 +190,7 @@
                     <div class="container">
                         <!-- Row with two fields -->
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="field4 text-end">رقم طلب العمل</label>
-                                    <input type="text" id="field3" class="form-control"
-                                       disabled placeholder="رقم طلب العمل" />
-                                </div>
-                               
-                            </div>
+                           
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="location" class="form-label">القسم</label>
@@ -207,6 +200,9 @@
                                             <option *ngFor="let item of deps" [value]="item.id">{{item.name}}</option>
                                             
                                         </select>
+                                    </div>
+                                    <div *ngIf="serviceRequestForm.get('workServiceDepartmentId')?.invalid && serviceRequestForm.get('workServiceDepartmentId')?.touched" class="text-danger">
+                                      اسم القسم مطلوب.
                                     </div>
                                 </div>
                             </div>
@@ -224,6 +220,9 @@
                                  
                                     </select>
                                 </div>
+                                <div *ngIf="serviceRequestForm.get('workServiceCategoryId')?.invalid && serviceRequestForm.get('workServiceCategoryId')?.touched" class="text-danger">
+                                  نوع الطلب مطلوب.
+                                </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -235,6 +234,9 @@
                                             <option *ngFor="let item of cats" [value]="item.id">{{item.name }}</option>
                                             
                                         </select>
+                                    </div>
+                                    <div *ngIf="serviceRequestForm.get('workServiceCategoryId')?.invalid && serviceRequestForm.get('workServiceCategoryId')?.touched" class="text-danger">
+                                      اسم الفئة مطلوب.
                                     </div>
                                 </div>
                             </div>
@@ -542,6 +544,9 @@
                                             
                                         </select>
                                     </div>
+                                    <div *ngIf="serviceRequestForm.get('workServiceDepartmentId')?.invalid && serviceRequestForm.get('workServiceDepartmentId')?.touched" class="text-danger">
+                                      اسم القسم مطلوب.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -558,6 +563,9 @@
                                  
                                     </select>
                                 </div>
+                                <div *ngIf="serviceRequestForm.get('serviceTypeId')?.invalid && serviceRequestForm.get('serviceTypeId')?.touched" class="text-danger">
+                                  اسم الفئة مطلوب.
+                                </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -569,6 +577,9 @@
                                             <option *ngFor="let item of cats" [value]="item.id">{{item.name }}</option>
                                             
                                         </select>
+                                    </div>
+                                    <div *ngIf="serviceRequestForm.get('workServiceCategoryId')?.invalid && serviceRequestForm.get('workServiceCategoryId')?.touched" class="text-danger">
+                                      اسم الفئة مطلوب.
                                     </div>
                                 </div>
                             </div>

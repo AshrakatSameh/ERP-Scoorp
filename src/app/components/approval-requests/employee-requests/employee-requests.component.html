@@ -211,20 +211,12 @@
                   <label for="name text-end">اسم الطلب </label>
                   <input type="text" id="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم الطلب" />
+                    <div *ngIf="employeeRequestForm.get('name')?.invalid && employeeRequestForm.get('name')?.touched" class="text-danger">
+                      اسم الطلب مطلوب.
+                    </div>
                 </div>
               </div>
-              <!-- <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field1 text-end"> رقم الطلب</label>
-                  <input
-                    type="text"
-                    id="field1"
-                    
-                    class="form-control custom-input"
-                    placeholder=" رقم الطلب"
-                  />
-                </div>
-              </div> -->
+        
             </div>
 
             <div class="row">
@@ -236,6 +228,9 @@
                     <option [value]="" disabled selected>قم باختيار نوع الطلب</option>
                     <option *ngFor="let item of types" [value]="item.id">{{item.name}}</option>
                   </select>
+                </div>
+                <div *ngIf="employeeRequestForm.get('requestTypeId')?.invalid && employeeRequestForm.get('requestTypeId')?.touched" class="text-danger">
+                  ،نوع الطلب مطلوب.
                 </div>
               </div>
               <!-- <div class="col-md-6">

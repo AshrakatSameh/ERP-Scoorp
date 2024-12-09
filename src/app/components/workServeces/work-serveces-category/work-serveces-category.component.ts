@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +16,7 @@ export class WorkServecesCategoryComponent implements OnInit {
   serviceCategoryForm: FormGroup;
 
   constructor(private serCategory: ServiceCategoryService, private fb: FormBuilder, private http: HttpClient,
-    private toast: ToastrService
+    private toast: ToastrService, private cdr: ChangeDetectorRef
   ) {
     this.serviceCategoryForm = this.fb.group({
       name: ['', Validators.required],
@@ -110,12 +110,7 @@ export class WorkServecesCategoryComponent implements OnInit {
        fileType: [file.type],
        fileSize: [file.size],
        fileUrl: [null],  // URL will be set after uploading
-       file: [file]  // Store the file in the form group
-       // name: file.name,
-       // size: file.size,
-       // type: file.type,
-       // lastModified: file.lastModified,
-       // file: file, 
+       file: [file]  
      };
      // Add the selected file to the FormArray as a FormControl
      this.attachments.push(this.fb.control(file));
@@ -139,7 +134,25 @@ export class WorkServecesCategoryComponent implements OnInit {
    });
  }
 
+ initializeCatForm(): FormGroup {
+  return this.fb.group({
+    name: ['', Validators.required],
+    localName: [''],
+    description: [''],
+    attachmentFiles: this.fb.array([]),
+    attachments: this.fb.array([])
+  });
+}
   onSubmitAdd(): void {
+    const nameControl = this.serviceCategoryForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.serviceCategoryForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     // Append simple fields like 'name' and 'description'
@@ -171,7 +184,7 @@ export class WorkServecesCategoryComponent implements OnInit {
           console.log('Response:', response);
           this.toast.success('تمت الإضافة بنجاح');
           this.getAllServiceCategories();
-          this.serviceCategoryForm.reset();
+          this.serviceCategoryForm= this.initializeCatForm();
           const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
           if (modalInstance) {
             modalInstance.hide();
@@ -226,14 +239,20 @@ export class WorkServecesCategoryComponent implements OnInit {
   }
 
   closeModal() {
-    this.serviceCategoryForm.reset();
     this.isModalOpen = false;
   }
 
   updateCategory() {
-    if (this.serviceCategoryForm.valid) {
       const updatedCategory = { ...this.serviceCategoryForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.serviceCategoryForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.serviceCategoryForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.serCategory.updateServiceCategory(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -247,6 +266,7 @@ export class WorkServecesCategoryComponent implements OnInit {
 
           this.getAllServiceCategories();
           this.closeModal();  // Close the modal after successful update
+          this.serviceCategoryForm = this.initializeCatForm();
         },
         (error) => {
           console.error('Error updating category :', error);
@@ -256,7 +276,7 @@ export class WorkServecesCategoryComponent implements OnInit {
           this.toast.error("حدث خطأ ، تأكد من البيانات و حاول مرة أخرى");
         }
       );
-    }
+    
   }
 
   showConfirmationModal = false;
@@ -329,9 +349,15 @@ export class WorkServecesCategoryComponent implements OnInit {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllServiceCategories();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredServiceCategory.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllServiceCategories(); // Re-fetch items for the updated page
+      } else {
+        // If the page is not empty, just re-fetch the data
+        this.getAllServiceCategories();
+      }
     }
   }
   // select checkbox

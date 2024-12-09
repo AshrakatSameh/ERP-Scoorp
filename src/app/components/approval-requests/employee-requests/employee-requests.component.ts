@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -18,12 +18,12 @@ export class EmployeeRequestsComponent implements OnInit {
   apiUrl = environment.apiUrl;
 
   constructor(private empService: EmpRequestsService, private fb: FormBuilder, private empType: EmpRequestTypeService,
-    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2
+    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef
   ) {
     this.employeeRequestForm = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      requestTypeId: [''],
+      requestTypeId: ['', Validators.required],
       startDate: [''],
       endDate: [''],
       RequestValue: [''],
@@ -160,6 +160,24 @@ export class EmployeeRequestsComponent implements OnInit {
     });
   }
   onSubmitAdd(): void {
+    const nameControl = this.employeeRequestForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.employeeRequestForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const requestTypeControl = this.employeeRequestForm.get('requestTypeId');
+  
+    if (!requestTypeControl || requestTypeControl.invalid) {
+      console.log('Form is invalid because the requestTypeId field is invalid.');
+      console.log('requestTypeId field errors:', requestTypeControl?.errors);
+      this.employeeRequestForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData()
 
     // Append simple fields like 'name' and 'description'

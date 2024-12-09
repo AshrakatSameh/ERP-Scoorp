@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -16,10 +16,10 @@ export class WorkServecesSectionsComponent implements OnInit {
   apiUrl = environment.apiUrl;
   serviceDepForm: FormGroup;
   constructor(private serDep: ServiceDepartmentService, private fb: FormBuilder, private http: HttpClient,
-    private toast: ToastrService
+    private toast: ToastrService, private cdr: ChangeDetectorRef
   ) {
     this.serviceDepForm = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       localName: [''],
       description: [''],
       attachmentFiles: this.fb.array([]),
@@ -99,11 +99,7 @@ export class WorkServecesSectionsComponent implements OnInit {
          fileSize: [file.size],
          fileUrl: [null],  // URL will be set after uploading
          file: [file]  // Store the file in the form group
-         // name: file.name,
-         // size: file.size,
-         // type: file.type,
-         // lastModified: file.lastModified,
-         // file: file, 
+       
        };
        // Add the selected file to the FormArray as a FormControl
        this.attachments.push(this.fb.control(file));
@@ -127,7 +123,26 @@ export class WorkServecesSectionsComponent implements OnInit {
      });
    }
 
+   initializeDepForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      description: [''],
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([])
+    });
+  }
+
   onSubmitAdd(): void {
+    const nameControl = this.serviceDepForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.serviceDepForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     // Append simple fields like 'name' and 'description'
@@ -158,7 +173,7 @@ export class WorkServecesSectionsComponent implements OnInit {
           console.log('Response:', response);
           this.toast.success('تم الإضافة بنجاح');
           this.getAllServiceDeps();
-          this.serviceDepForm.reset();
+          this.serviceDepForm = this.initializeDepForm();
           const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
           if (modalInstance) {
             modalInstance.hide();
@@ -218,14 +233,22 @@ export class WorkServecesSectionsComponent implements OnInit {
   }
 
   updateCategory() {
-    if (this.serviceDepForm.valid) {
       const updatedCategory = { ...this.serviceDepForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.serviceDepForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.serviceDepForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.serDep.updateServiceDep(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
           console.log('Service department updated successfully:', response);
-          this.toast.success('تم تحديث البيانات بنجاح')
+          this.toast.success('تم تحديث البيانات بنجاح');
+          this.serviceDepForm = this.initializeDepForm();
           // Update the local categories array if necessary
           const index = this.storesSec.findIndex(cat => cat.id === updatedCategory.id);
           if (index !== -1) {
@@ -244,7 +267,7 @@ export class WorkServecesSectionsComponent implements OnInit {
           this.toast.error("حدث خطأ ، تأكد من البيانات و حاول مرة أخرى");
         }
       );
-    }
+    
   }
 
   // select checkbox

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { data } from 'jquery';
@@ -24,17 +24,17 @@ export class WorkServecesReqsComponent implements OnInit {
   constructor(private reqService: ServiceRequestService, private servType: ServiceTypesService,
     private type: ServiceTypesService, private dep: ServiceDepartmentService, private cat: ServiceCategoryService,
     private fb: FormBuilder, private employeeServ: EmployeeService, private toast: ToastrService,
-    private http: HttpClient
+    private http: HttpClient, private cdr: ChangeDetectorRef
   ) {
     this.serviceRequestForm = this.fb.group({
       serviceTypeId: ['', Validators.required],
-      requestedEmployeeId: ['', Validators.required],
+      requestedEmployeeId: [''],
       workServiceCategoryId: ['', Validators.required],
       workServiceDepartmentId: ['', Validators.required],
-      executionTime: ['', Validators.required],
-      completionDate: ['', Validators.required],
-      reference: ['', Validators.required],
-      description: ['', Validators.required],
+      executionTime: [''],
+      completionDate: [''],
+      reference: [''],
+      description: [''],
 
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
@@ -216,7 +216,49 @@ export class WorkServecesReqsComponent implements OnInit {
     });
   }
 
+  initializeReqForm(): FormGroup {
+    return this.fb.group({
+      serviceTypeId: ['', Validators.required],
+      requestedEmployeeId: [''],
+      workServiceCategoryId: ['', Validators.required],
+      workServiceDepartmentId: ['', Validators.required],
+      executionTime: [''],
+      completionDate: [''],
+      reference: [''],
+      description: [''],
+
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([])
+    });
+  }
   onSubmitAdd(): void {
+    const typeControl = this.serviceRequestForm.get('serviceTypeId');
+  
+    if (!typeControl || typeControl.invalid) {
+      console.log('Form is invalid because the serviceTypeId field is invalid.');
+      console.log('serviceTypeId field errors:', typeControl?.errors);
+      this.serviceRequestForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+     const CatControl = this.serviceRequestForm.get('workServiceCategoryId');
+  
+    if (!CatControl || CatControl.invalid) {
+      console.log('Form is invalid because the workServiceCategoryId field is invalid.');
+      console.log('workServiceCategoryId field errors:', CatControl?.errors);
+      this.serviceRequestForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    } 
+    const deptControl = this.serviceRequestForm.get('workServiceDepartmentId');
+  
+    if (!deptControl || deptControl.invalid) {
+      console.log('Form is invalid because the workServiceDepartmentId field is invalid.');
+      console.log('workServiceDepartmentId field errors:', deptControl?.errors);
+      this.serviceRequestForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     // Append simple fields like 'name' and 'description'
@@ -252,7 +294,7 @@ export class WorkServecesReqsComponent implements OnInit {
           console.log('Response:', response);
           this.toast.success('تمت الإضافة بنجاح');
           this.getAllServiceRequests();
-          this.serviceRequestForm.reset();
+          this.serviceRequestForm = this.initializeReqForm();
           const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
           if (modalInstance) {
             modalInstance.hide();
@@ -312,7 +354,6 @@ export class WorkServecesReqsComponent implements OnInit {
   }
 
   closeModal() {
-    this.serviceRequestForm.reset();
     this.isModalOpen = false;
   }
 
@@ -328,7 +369,33 @@ export class WorkServecesReqsComponent implements OnInit {
   }
   updateCategory() {
       const updatedCategory = { ...this.serviceRequestForm.value, id: this.selectedCategory.id };
-
+      const typeControl = this.serviceRequestForm.get('serviceTypeId');
+  
+      if (!typeControl || typeControl.invalid) {
+        console.log('Form is invalid because the serviceTypeId field is invalid.');
+        console.log('serviceTypeId field errors:', typeControl?.errors);
+        this.serviceRequestForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+       const CatControl = this.serviceRequestForm.get('workServiceCategoryId');
+    
+      if (!CatControl || CatControl.invalid) {
+        console.log('Form is invalid because the workServiceCategoryId field is invalid.');
+        console.log('workServiceCategoryId field errors:', CatControl?.errors);
+        this.serviceRequestForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      } 
+      const deptControl = this.serviceRequestForm.get('workServiceDepartmentId');
+    
+      if (!deptControl || deptControl.invalid) {
+        console.log('Form is invalid because the workServiceDepartmentId field is invalid.');
+        console.log('workServiceDepartmentId field errors:', deptControl?.errors);
+        this.serviceRequestForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.reqService.updateServiceRequest(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -341,6 +408,8 @@ export class WorkServecesReqsComponent implements OnInit {
           }
 
           this.getAllServiceRequests();
+          this.serviceRequestForm = this.initializeReqForm();
+
           this.closeModal();  // Close the modal after successful update
         },
         (error) => {

@@ -56,7 +56,6 @@ export class EmpRequestTypeService {
     const formData = new FormData();
     formData.append('name', updatedCategory.name || '');
     formData.append('description', updatedCategory.description || '');
-    formData.append('categoryId', updatedCategory.categoryId || '');
   
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}EmployeeRequestTypes/${id}`, formData, { headers });
