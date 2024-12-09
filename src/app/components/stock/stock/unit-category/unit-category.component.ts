@@ -126,25 +126,26 @@ export class UnitCategoryComponent implements OnDestroy {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
+  
+      // Construct the file data to store in the FormArray
       const fileData = {
-        fileTitle: [file.name],
-        fileType: [file.type],
-        fileSize: [file.size],
-        fileUrl: [null],  // URL will be set after uploading
-        file: [file]  // Store the file in the form group
-        // name: file.name,
-        // size: file.size,
-        // type: file.type,
-        // lastModified: file.lastModified,
-        // file: file, 
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file // Store the actual file object
       };
-      // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
-
+  
+      // Add the file data to the FormArray
+      this.attachments.push(this.fb.control(fileData));
+  
+      console.log('Attachments after file selection:', this.attachments.value);
+  
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
   }
+  
   
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
@@ -193,15 +194,15 @@ export class UnitCategoryComponent implements OnDestroy {
     formData.append('name', this.unitCatForm.get('name')?.value);
     formData.append('localName', this.unitCatForm.get('localName')?.value);
     formData.append('note', this.unitCatForm.get('note')?.value);
-  
+    console.log(this.attachments)
     // Append each attachment file
     this.attachments.controls.forEach((control) => {
-      const file = control.value;
-      if (file) {
-        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
     });
-  
     console.log('FormData contents:');
     formData.forEach((value, key) => {
       console.log(key, value);

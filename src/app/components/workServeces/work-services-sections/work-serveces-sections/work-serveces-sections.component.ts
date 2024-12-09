@@ -89,31 +89,31 @@ export class WorkServecesSectionsComponent implements OnInit {
     console.log('File has left the drop zone:', event);
   }
    // Method to handle file selection
-   onFileSelected(event: Event): void {
-     const input = event.target as HTMLInputElement;
-     if (input.files && input.files.length > 0) {
-       const file = input.files[0];
-       const fileData = {
-         fileTitle: [file.name],
-         fileType: [file.type],
-         fileSize: [file.size],
-         fileUrl: [null],  // URL will be set after uploading
-         file: [file]  // Store the file in the form group
-       
-       };
-       // Add the selected file to the FormArray as a FormControl
-       this.attachments.push(this.fb.control(file));
- 
-       // Reset the input value to allow selecting the same file again
-       input.value = '';
-     }
-   }
- 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
+      // Reset the input value to allow selecting the same file again
+      input.value = '';
+    }
+  }
+
    // Method to remove a file from the attachments FormArray
    removeAttachment(index: number): void {
      this.attachments.removeAt(index);
    }
- 
+
    @ViewChild('myModal', { static: false }) modal!: ElementRef;
    ngAfterViewInit(): void {
      this.modal.nativeElement.addEventListener('hidden.bs.modal', () => {
@@ -152,9 +152,10 @@ export class WorkServecesSectionsComponent implements OnInit {
 
     // Append each attachment file
     this.attachments.controls.forEach((control) => {
-      const file = control.value;
-      if (file) {
-        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
     });
 

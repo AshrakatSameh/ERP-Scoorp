@@ -226,16 +226,17 @@ export class TypeEmployeeRequestsComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const fileData = {
-        fileTitle: [file.name],
-        fileType: [file.type],
-        fileSize: [file.size],
-        fileUrl: [null],  // URL will be set after uploading
-        file: [file]
-      };
-      // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
 
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -296,6 +297,14 @@ export class TypeEmployeeRequestsComponent implements OnInit {
         formData.append(`approvalLevels[${levelIndex}].userIds[${userIdIndex}]`, userId);
       });
     });
+       // Append each attachment file
+      this.attachments.controls.forEach((control) => {
+        const fileData = control.value;
+        if (fileData && fileData.file instanceof File) {
+          // Append the actual file object
+          formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+        }
+      });
   
     // Append attachment files
     this.attachments.controls.forEach((control) => {

@@ -138,8 +138,15 @@ get attachments(): FormArray {
       const file = input.files[0];
 
       // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
-
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -175,12 +182,15 @@ onSubmit() {
   formData.append('localName', this.TypeForm.get('localName')?.value);
   formData.append('code', this.TypeForm.get('code')?.value);
   formData.append('note', this.TypeForm.get('note')?.value);
-  this.attachments.controls.forEach((control) => {
-    const file = control.value;
-    if (file) {
-      formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
-    }
-  });
+
+  console.log(this.attachments)
+    this.attachments.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+      }
+    });
 
 
   const headers = new HttpHeaders({

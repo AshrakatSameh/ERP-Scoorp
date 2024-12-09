@@ -74,12 +74,15 @@ export class StoresSectionService {
       formData.append('note', updatedCategory.note || '');
       if (updatedCategory.attachments && updatedCategory.attachments.length > 0) {
         updatedCategory.attachments.forEach((attachment: any) => {
-          // If the attachment has a file (i.e., it's a new file or updated file)
-          if (attachment.file) {
-            formData.append('attachments[]', attachment.file, attachment.file.name);
-          } else if (attachment.fileUrl) {
-            // If it's an existing file (no new file uploaded), include the URL if needed
-            formData.append('existingAttachments[]', attachment.fileUrl);
+          if (attachment.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+            console.log('Appending existing file reference:', attachment.fileTitle);
+          }
+          if (attachment.file instanceof File) {
+            // For new files, append the actual file object
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
           }
         });
       }
