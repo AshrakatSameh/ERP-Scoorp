@@ -35,6 +35,9 @@ export class ReceiveVoucherComponent implements OnInit {
   buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات']
   selectedButton: number | null = null; // To track which button is clicked
 
+  comments:any[] =[];
+  commentForm:FormGroup;
+
   // Method to handle button click and show content
   showContent(index: number): void {
     this.selectedButton = index;
@@ -64,6 +67,14 @@ export class ReceiveVoucherComponent implements OnInit {
       key: key,
       value: this.receiptStatus[key as keyof typeof GoodsReceiptStatus]
     }));
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
   ngOnInit(): void {
 
@@ -806,5 +817,25 @@ export class ReceiveVoucherComponent implements OnInit {
  }
   
 
+  // Add Comment Logic
+  addComment(parent:any =''){
+    this.salesService.postGoodsReceiptsComment({
+      Content:this.commentForm.controls['content'].value,
+      EntityId:this.selectedCategory.id,
+      ParentCommentId:parent
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    this.commentForm.reset();
+    if(parent) this.replayId = '';
+  }
 
+  getComments(){
+    this.salesService.getGoodsReceiptsComments(this.selectedCategory.id).subscribe((res)=>{
+      this.comments = res;
+    })
+  }
+  replayId:any;
+  toggleReplay(commentId:any){
+    this.replayId = commentId;
+  }
 }

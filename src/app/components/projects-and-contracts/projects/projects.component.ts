@@ -25,6 +25,10 @@ export class ProjectsComponent implements OnInit {
   names: any[] = [];
   projectForm: FormGroup;
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
+  commentForm:FormGroup;
+
+  comments:any[] =[];
 
 
   constructor(private projectService: ProjactService, private http: HttpClient,
@@ -48,10 +52,15 @@ export class ProjectsComponent implements OnInit {
       // status: [null, Validators.required],
       priority: [0],
       size: [0],
-
-
-
     });
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
 
   ngOnInit(): void {
@@ -541,4 +550,25 @@ applySearchFilter() {
   }
 }
 
+  // Add Comment Logic
+  addComment(parent:any =''){
+    this.projectService.postProjectComment({
+      Content:this.commentForm.controls['content'].value,
+      EntityId:this.selectedCategory.id,
+      ParentCommentId:parent
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    this.commentForm.reset();
+    if(parent) this.replayId = '';
+  }
+
+  getComments(){
+    this.projectService.getProjectComments(this.selectedCategory.id).subscribe((res)=>{
+      this.comments = res;
+    })
+  }
+  replayId:any;
+  toggleReplay(commentId:any){
+    this.replayId = commentId;
+  }
 }

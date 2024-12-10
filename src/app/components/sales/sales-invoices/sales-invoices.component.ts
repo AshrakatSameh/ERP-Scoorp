@@ -44,6 +44,10 @@ export class SalesInvoicesComponent implements OnInit {
   // Convert enum to an array for dropdown
   invoiceTypeList: { key: string, value: string }[] = [];
 
+  comments:any[] =[];
+  imgApiUrl= environment.imgApiUrl;
+  commentForm:FormGroup;
+
 
   constructor(private salesInvoiceService: SalesService, private clientService: ClientsService,
     private representService: RepresentativeService, private fb: FormBuilder, private payService: PaymentPeriodsService,
@@ -85,6 +89,15 @@ export class SalesInvoicesComponent implements OnInit {
       key: key,
       value: this.invoiceType[key as keyof typeof InvoiceType]
     }));
+
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
 
   }
   ngOnInit(): void {
@@ -788,5 +801,25 @@ export class SalesInvoicesComponent implements OnInit {
   }
 
 
+  // Add Comment Logic
+  addComment(parent:any =''){
+    this.salesInvoiceService.postSalesInvoiceComment({
+      Content:this.commentForm.controls['content'].value,
+      EntityId:this.selectedCategory.id,
+      ParentCommentId:parent
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    this.commentForm.reset();
+    if(parent) this.replayId = '';
+  }
 
+  getComments(){
+    this.salesInvoiceService.getSalesInvoiceComments(this.selectedCategory.id).subscribe((res)=>{
+      this.comments = res;
+    })
+  }
+  replayId:any;
+  toggleReplay(commentId:any){
+    this.replayId = commentId;
+  }
 }

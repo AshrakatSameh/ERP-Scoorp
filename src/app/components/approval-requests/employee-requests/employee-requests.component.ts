@@ -16,6 +16,12 @@ export class EmployeeRequestsComponent implements OnInit {
   employeeRequestForm: FormGroup;
 
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
+
+  comments:any[] =[];
+  commentForm:FormGroup;
+
+
 
   constructor(private empService: EmpRequestsService, private fb: FormBuilder, private empType: EmpRequestTypeService,
     private http: HttpClient, private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef
@@ -32,6 +38,15 @@ export class EmployeeRequestsComponent implements OnInit {
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
     })
+
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
   ngOnInit(): void {
     this.getAllEmployeeRequests();
@@ -472,5 +487,29 @@ export class EmployeeRequestsComponent implements OnInit {
       this.filteredEmpRequest = this.requests;
     }
   }
+
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.empService.postEmployeeRequestComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.empService.getEmployeeRequestComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
 
 }

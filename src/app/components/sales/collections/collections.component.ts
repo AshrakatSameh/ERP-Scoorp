@@ -39,16 +39,22 @@ imgApiUrl= environment.imgApiUrl;
   paymentType = PaymentType;  // Access the PaymentType enum
   // Convert enum to an array for dropdown
   paymentTypeList: { key: number; value: string }[] = [];
- 
+  
   collectionForm!: FormGroup;
+  
+  commentForm:FormGroup;
+  comments:any[] =[];
+
+
+
 
   constructor(private costCenterService: CostCenterService, private representService:RepresentativeService,
-     private convenantBoxService: ConvenantBoxService, private contractService:ContractService,
-    private paymentService:PaymentMethodService, private clientService:ClientsService,
-  private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
-  private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
-  private contract:ContractService,
-private toast:ToastrService) { 
+      private convenantBoxService: ConvenantBoxService, private contractService:ContractService,
+      private paymentService:PaymentMethodService, private clientService:ClientsService,
+      private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
+      private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
+      private contract:ContractService,
+      private toast:ToastrService) { 
     this.collectionForm= this.fb.group({
       code: ['', Validators.required || null],
       clientId: ['', Validators.required || null],
@@ -67,6 +73,13 @@ private toast:ToastrService) {
       attachments: this.fb.array([])
     });
 
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
     // this.paymentTypeList = Object.keys(PaymentType)
     // .map((key, index) => ({
     //   key: index,  // Use the index as the numeric key
@@ -633,4 +646,29 @@ toggleColumnVisibility(columnName: string) {
       this.filteredCollections = this.collections;
     }
   }
+
+
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.collectionService.postCollectionsComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.collectionService.getCollectionsComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
 }

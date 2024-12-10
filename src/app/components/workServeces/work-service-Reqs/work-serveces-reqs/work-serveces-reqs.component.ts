@@ -20,6 +20,10 @@ export class WorkServecesReqsComponent implements OnInit {
 
   apiUrl = environment.apiUrl;
   serviceRequestForm: FormGroup;
+  imgApiUrl= environment.imgApiUrl;
+
+  comments:any[] =[];
+  commentForm:FormGroup;
 
   constructor(private reqService: ServiceRequestService, private servType: ServiceTypesService,
     private type: ServiceTypesService, private dep: ServiceDepartmentService, private cat: ServiceCategoryService,
@@ -39,6 +43,14 @@ export class WorkServecesReqsComponent implements OnInit {
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
     })
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
   ngOnInit(): void {
     this.getAllServiceRequests();
@@ -501,4 +513,27 @@ export class WorkServecesReqsComponent implements OnInit {
       this.getAllServiceRequests();
     }
   }
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.reqService.postServiceRequestsComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.reqService.getServiceRequestsComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
 }

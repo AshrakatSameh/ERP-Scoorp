@@ -40,6 +40,11 @@ deliveryStatusList: { key: string, value: string }[] = [];
 
 dropdownSettings = {};
 
+comments:any[] =[];
+imgApiUrl= environment.imgApiUrl;
+commentForm:FormGroup;
+
+
 constructor(private salesService:SalesService,private clientService:ClientsService,
     private representServece:RepresentativeService, private fb: FormBuilder, private  http:HttpClient,
     private teamService: TeamsService, private costCenterService:CostCenterService,
@@ -66,6 +71,14 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
       key: key,
       value: this.deliveryStatus[key as keyof typeof DeliveryStatus]
     }));
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
 
  
@@ -1078,4 +1091,28 @@ resetUpdatedItems() {
       this.filteredDeliveryNote = this.deliveryVouchers;
     }
   }
+
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.salesService.postDeliveryNotesComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.salesService.getDeliveryNotesComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
 }

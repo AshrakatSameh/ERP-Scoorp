@@ -35,7 +35,11 @@ imgApiUrl= environment.imgApiUrl;
   // Convert enum to an array for dropdown
   invoiceStatusList: { key: string, value: string }[] = [];
 
-  invoiceFrom: FormGroup
+  invoiceFrom: FormGroup;
+
+  comments:any[] =[];
+  commentForm:FormGroup;
+
   constructor(private clientServ: ClientsService, private teamServ: TeamsService, private repServ: RepresentativeService,
     private priceServ: PriceListService, private costService: CostCenterService,
     private projectServ: ProjactService, private salesService: SalesService,private renderer: Renderer2,
@@ -73,6 +77,15 @@ imgApiUrl= environment.imgApiUrl;
       key: key,
       value: this.invoiceStatus[key as keyof typeof InvoiceStatus]
     }));
+
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
   ngOnInit(): void {
     this.getAllClients();
@@ -836,4 +849,27 @@ updateItem() {
     }
   }
 
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.salesService.postReturnInvoiceComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.salesService.getReturnInvoiceComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
 }

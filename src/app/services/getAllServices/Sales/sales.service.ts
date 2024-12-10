@@ -240,7 +240,7 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     const headers = new HttpHeaders({
       tenant: tenantId || '' // Set tenantId header if available
     });
-    return this.http.put(`${this.apiUrl}SalesInvoice/GetComments/${modelId}`, { headers });
+    return this.http.get(`${this.apiUrl}SalesInvoice/GetComments/${modelId}`, { headers });
   }
   // Get the activities of Sales Invoice
   getSalesInvoiceActivities(modelId:number): Observable<any>{
@@ -257,7 +257,6 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     const tenantId = localStorage.getItem('tenant');
     const headers = new HttpHeaders({
       tenant: tenantId || '', // Set tenantId header if available
-      'Content-Type': 'application/json',
     });
     const formData = new FormData();
     formData.append('Content', data.Content || '');
@@ -678,4 +677,270 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     return this.http.delete<void>(`${this.apiUrl}GoodsReceipt/${id}`,{headers});
   }
 
+
+    // DeliveryNotes Comments Endpoints
+  // Get the Comments of Sales Invoice
+  getDeliveryNotesComments(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}DeliveryNotes/GetComments/${modelId}`, { headers });
+  }
+  // Get the activities of Sales Invoice
+  getDeliveryNotesActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}DeliveryNotes/GetActivities/${modelId}`, { headers });
+  }
+  // Add Comment to Sales Invoice
+  postDeliveryNotesComment(data: any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    const headers = new HttpHeaders({
+      tenant: tenantId || '', // Set tenantId header if available
+    });
+    console.log(data)
+    const formData = new FormData();
+    formData.append('content', data.Content || '');
+    formData.append('EntityId', data.EntityId || '');
+    formData.append('ParentCommentId', data.ParentCommentId || '');
+    if(data.attachments){
+      data.attachments.forEach((attachment: any) => {
+        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+        console.log('Appending new file:', attachment.fileTitle);
+      });
+    }
+    console.log(formData.get("content"))
+    return this.http.post(`${this.apiUrl}DeliveryNotes/AddComment`, formData, { headers });
+  }
+  // Edit Comment of Sales Invoice
+  updateDeliveryNotesComment(commentId: number, payload:any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('Content', payload.content || '');
+  
+    console.log("Form Service", payload.attachments);
+      payload.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+    console.log(formData.get("attachmentFiles"))
+  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}DeliveryNotes/UpdateComment/${commentId}`, formData, { headers });
+  }
+  // Like Comment of Sales Invoice
+  likeDeliveryNotesComment(commentId: number): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}DeliveryNotes/LikeComment/${commentId}`, { headers });
+  }
+
+
+
+
+
+    // GoodsReceipts Comments Endpoints
+  // Get the Comments of Sales Invoice
+  getGoodsReceiptsComments(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}GoodsReceipts/GetComments/${modelId}`, { headers });
+  }
+  // Get the activities of Sales Invoice
+  getGoodsReceiptsActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}GoodsReceipts/GetActivities/${modelId}`, { headers });
+  }
+  // Add Comment to Sales Invoice
+  postGoodsReceiptsComment(data: any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    const headers = new HttpHeaders({
+      tenant: tenantId || '', // Set tenantId header if available
+    });
+    console.log(data)
+    const formData = new FormData();
+    formData.append('content', data.Content || '');
+    formData.append('EntityId', data.EntityId || '');
+    formData.append('ParentCommentId', data.ParentCommentId || '');
+    if(data.attachments){
+      data.attachments.forEach((attachment: any) => {
+        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+        console.log('Appending new file:', attachment.fileTitle);
+      });
+    }
+    console.log(formData.get("content"))
+    return this.http.post(`${this.apiUrl}GoodsReceipts/AddComment`, formData, { headers });
+  }
+  // Edit Comment of Sales Invoice
+  updateGoodsReceiptsComment(commentId: number, payload:any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('Content', payload.content || '');
+  
+    console.log("Form Service", payload.attachments);
+      payload.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+    console.log(formData.get("attachmentFiles"))
+  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}GoodsReceipts/UpdateComment/${commentId}`, formData, { headers });
+  }
+  // Like Comment of Sales Invoice
+  likeGoodsReceiptsComment(commentId: number): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}GoodsReceipts/LikeComment/${commentId}`, { headers });
+  }
+
+
+
+
+
+    // ReturnInvoice Comments Endpoints
+  // Get the Comments of Sales Invoice
+  getReturnInvoiceComments(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}ReturnInvoice/GetComments/${modelId}`, { headers });
+  }
+  // Get the activities of Sales Invoice
+  getReturnInvoiceActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}ReturnInvoice/GetActivities/${modelId}`, { headers });
+  }
+  // Add Comment to Sales Invoice
+  postReturnInvoiceComment(data: any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    const headers = new HttpHeaders({
+      tenant: tenantId || '', // Set tenantId header if available
+    });
+    console.log(data)
+    const formData = new FormData();
+    formData.append('content', data.Content || '');
+    formData.append('EntityId', data.EntityId || '');
+    formData.append('ParentCommentId', data.ParentCommentId || '');
+    if(data.attachments){
+      data.attachments.forEach((attachment: any) => {
+        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+        console.log('Appending new file:', attachment.fileTitle);
+      });
+    }
+    console.log(formData.get("content"))
+    return this.http.post(`${this.apiUrl}ReturnInvoice/AddComment`, formData, { headers });
+  }
+  // Edit Comment of Sales Invoice
+  updateReturnInvoiceComment(commentId: number, payload:any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('Content', payload.content || '');
+  
+    console.log("Form Service", payload.attachments);
+      payload.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+    console.log(formData.get("attachmentFiles"))
+  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}ReturnInvoice/UpdateComment/${commentId}`, formData, { headers });
+  }
+  // Like Comment of Sales Invoice
+  likeReturnInvoiceComment(commentId: number): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}ReturnInvoice/LikeComment/${commentId}`, { headers });
+  }
 }
