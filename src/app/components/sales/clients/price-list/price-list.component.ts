@@ -369,6 +369,7 @@ openModalForSelected() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.selectedCategory =null;
 }
 
 updateCategory() {

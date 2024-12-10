@@ -231,6 +231,7 @@ export class WorkServecesSectionsComponent implements OnInit {
   closeModal() {
     this.serviceDepForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

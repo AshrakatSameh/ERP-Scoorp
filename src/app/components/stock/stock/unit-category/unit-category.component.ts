@@ -313,6 +313,7 @@ export class UnitCategoryComponent implements OnDestroy {
   }
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.unitCatForm.reset();
     this.resetAttachments();
   }

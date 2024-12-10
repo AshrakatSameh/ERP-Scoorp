@@ -250,6 +250,7 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
   closeModal() {
     this.EmpReqCategoryForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

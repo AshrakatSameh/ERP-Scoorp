@@ -586,6 +586,7 @@ export class CateogriesComponent {
   }
   closeModal() {
     this.ItemsForm.reset();
+    this.selectedCategory =null;
     this.isModalOpen = false;
     this.resetAttachments();
   }

@@ -298,8 +298,8 @@ export class UnitComponent {
   closeModal() {
     this.unitForm.reset();
     this.isModalOpen = false;
-    this.resetAttachments();
-  }
+    this.selectedCategory =null;
+    this.resetAttachments();  }
 
   updateCategory() {
     const updatedCategory = { ...this.unitForm.value, id: this.selectedCategory.id };

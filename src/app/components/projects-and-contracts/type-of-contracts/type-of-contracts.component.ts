@@ -271,6 +271,7 @@ updateSelectAll() {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.contractTypeForm.reset();
   }
 

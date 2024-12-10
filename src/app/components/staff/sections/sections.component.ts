@@ -114,6 +114,7 @@ updateSelectAll() {
   closeModal() {
     this.depForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
 

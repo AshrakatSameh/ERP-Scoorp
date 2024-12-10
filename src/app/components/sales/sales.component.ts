@@ -516,6 +516,7 @@ export class SalesComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.saleOfferForm.reset();
     this.resetAttachments();
   }

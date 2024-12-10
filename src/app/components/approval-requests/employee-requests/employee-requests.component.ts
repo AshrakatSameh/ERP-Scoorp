@@ -284,6 +284,7 @@ export class EmployeeRequestsComponent implements OnInit {
   closeModal() {
     this.employeeRequestForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   isDropdownOpen: boolean = false;

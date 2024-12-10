@@ -254,6 +254,7 @@ openModalForSelected() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.TypeCatForm.reset();
   this.resetAttachments();
 }

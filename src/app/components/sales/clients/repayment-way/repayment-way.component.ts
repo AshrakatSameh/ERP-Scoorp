@@ -262,6 +262,7 @@ export class RepaymentWayComponent implements OnInit {
    }
    closeModal() {
      this.isModalOpen = false;
+     this.selectedCategory =null;
      this.paymentForm.reset();
    }
  

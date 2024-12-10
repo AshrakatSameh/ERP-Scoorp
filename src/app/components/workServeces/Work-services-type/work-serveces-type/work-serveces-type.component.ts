@@ -322,6 +322,7 @@ export class WorkServecesTypeComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

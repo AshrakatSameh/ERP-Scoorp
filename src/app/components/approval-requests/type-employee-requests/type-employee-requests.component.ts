@@ -401,6 +401,7 @@ export class TypeEmployeeRequestsComponent implements OnInit {
   closeModal() {
     this.EmpReqTypeForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 //   addApprovalLevel() {
 //   const approvalLevelsArray = this.EmpReqTypeForm.get('approvalLevels') as FormArray;

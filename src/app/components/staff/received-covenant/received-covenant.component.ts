@@ -353,6 +353,7 @@ export class ReceivedCovenantComponent implements OnInit {
    }
    closeModal() {
      this.isModalOpen = false;
+     this.selectedCategory =null;
      this.convenantForm.reset();
    }
  

@@ -314,6 +314,7 @@ private removeDocumentClickListener(): void {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.resetAttachments();
   }
   resetAttachments(){

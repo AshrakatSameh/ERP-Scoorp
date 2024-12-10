@@ -403,6 +403,7 @@ export class ClientsComponent implements OnInit {
   closeModal() {
     this.clientForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

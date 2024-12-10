@@ -560,6 +560,7 @@ export class ReceiveVoucherComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.goodsForm.reset();
+    this.selectedCategory =null;
     this.resetAttachments();
   }
   resetAttachments(){

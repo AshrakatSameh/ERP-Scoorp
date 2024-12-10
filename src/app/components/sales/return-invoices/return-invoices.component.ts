@@ -812,6 +812,7 @@ updateItem() {
   }
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.invoiceFrom.reset();
     this.resetAttachments();
   }

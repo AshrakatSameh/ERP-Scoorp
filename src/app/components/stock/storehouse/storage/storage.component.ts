@@ -285,6 +285,7 @@ imgApiUrl= environment.imgApiUrl;
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.myForm.reset();
     this.resetAttachments();
   }

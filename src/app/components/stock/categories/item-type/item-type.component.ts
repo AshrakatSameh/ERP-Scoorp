@@ -278,6 +278,7 @@ openModalForSelected() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.resetAttachments();
 }
 resetAttachments(){

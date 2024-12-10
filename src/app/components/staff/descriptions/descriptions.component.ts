@@ -258,6 +258,7 @@ export class DescriptionsComponent {
   closeModal() {
     this.JobForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
 

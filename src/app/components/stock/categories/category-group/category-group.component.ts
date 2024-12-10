@@ -296,6 +296,7 @@ openModalForSelected() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.GroupForm.reset();
   this.resetAttachments();
 }

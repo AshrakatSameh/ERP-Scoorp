@@ -364,6 +364,7 @@ export class WorkServecesReqsComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   // edit and delete toggle

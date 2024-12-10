@@ -242,6 +242,7 @@ onFileSelected(event: Event): void {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

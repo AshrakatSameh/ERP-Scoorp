@@ -225,6 +225,7 @@ openModalForSelected() {
 
 closeModal() {
   this.paymentForm.reset();
+  this.selectedCategory =null;
   this.isModalOpen = false;
 }
 

@@ -322,6 +322,7 @@ openModalForSelected() {
 closeModal() {
   this.contractForm.reset();
   this.isModalOpen = false;
+  this.selectedCategory =null;
 }
 
 updateCategory() {

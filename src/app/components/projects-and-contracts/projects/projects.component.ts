@@ -355,6 +355,7 @@ export class ProjectsComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   updateCategory() {

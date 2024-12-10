@@ -418,6 +418,7 @@ openModalForSelected() {
 closeModal() {
   this.collectionForm.reset();
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.resetAttachments();
 }
 resetAttachments(){
