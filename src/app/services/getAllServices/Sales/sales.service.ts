@@ -231,6 +231,91 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     return this.http.put(this.apiUrl+'SalesInvoice/status', body, { headers });
   }
 
+  // Sales Invoice Comments Endpoints
+  // Get the Comments of Sales Invoice
+  getSalesInvoiceComments(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}SalesInvoice/GetComments/${modelId}`, { headers });
+  }
+  // Get the activities of Sales Invoice
+  getSalesInvoiceActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}SalesInvoice/GetActivities/${modelId}`, { headers });
+  }
+  // Add Comment to Sales Invoice
+  postSalesInvoiceComment(data: any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    const headers = new HttpHeaders({
+      tenant: tenantId || '', // Set tenantId header if available
+      'Content-Type': 'application/json',
+    });
+    const formData = new FormData();
+    formData.append('Content', data.Content || '');
+    formData.append('EntityId', data.EntityId || '');
+    formData.append('ParentCommentId', data.ParentCommentId || '');
+  
+    data.attachments.forEach((attachment: any) => {
+      formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+      console.log('Appending new file:', attachment.fileTitle);
+    });
+    return this.http.post(`${this.apiUrl}SalesInvoice/AddComment`, formData, { headers });
+  }
+  // Edit Comment of Sales Invoice
+  updateSalesInvoiceComment(commentId: number, payload:any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('Content', payload.content || '');
+  
+    console.log("Form Service", payload.attachments);
+      payload.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+    console.log(formData.get("attachmentFiles"))
+  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}SalesInvoice/UpdateComment/${commentId}`, formData, { headers });
+  }
+  // Like Comment of Sales Invoice
+  likeSalesInvoiceComment(commentId: number): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}SalesInvoice/LikeComment/${commentId}`, { headers });
+  }
+
+
   // Update delivery note/ goods voucher status
   updateStatus(id: number, payload: { newStatus: string; items: string[] }): Observable<any> {
     const tenantId = localStorage.getItem('tenant');
@@ -303,7 +388,7 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
 
     return this.http.post(`${this.apiUrl}SalesInvoice`, data, { headers });
   }
- 
+
   createSalesInvoice(data: any): Observable<any> {
     const tenantId = localStorage.getItem('tenant');
     const headers = new HttpHeaders({

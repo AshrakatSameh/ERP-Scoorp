@@ -59,7 +59,6 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     deliveryNoteItems:this.fb.array([], Validators.required),
     attachmentFiles: this.fb.array([]),
     attachments: this.fb.array([])
-    
     });
 
 

@@ -48,7 +48,11 @@ export class ContractsComponent implements OnInit {
   isModalOpen = false;
   selectedCategory: any = null;
 
+  comments:any[] =[];
+  imgApiUrl= environment.imgApiUrl;
+
   paymentForm:FormGroup;
+  commentForm:FormGroup;
 
   constructor(private cnotractService: ContractService, private fb: FormBuilder, private http: HttpClient,
     private clientService: ClientsService, private userService: UserService, private teamService: TeamsService
@@ -56,7 +60,7 @@ export class ContractsComponent implements OnInit {
   ) {
 
      // Initialize the form with default values and validation
-     this.paymentForm = this.fb.group({
+    this.paymentForm = this.fb.group({
       amount: [0, Validators.required],
       dueDate: [new Date().toISOString(), Validators.required],
       isPaid: ['', Validators.required],
@@ -76,9 +80,17 @@ export class ContractsComponent implements OnInit {
       endDate: ['', Validators.required],
       code: ['', Validators.required],
       locationLinks: fb.array([]),
-
     });
+
+    // Initializing Comment Form
+    this.commentForm = this.fb.group({
+      content:['', Validators.required],
+      entityId:['', Validators.required],
+      parentCommentId:[''],
+      attachmentFiles: this.fb.array([])
+    })
   }
+
   ngOnInit(): void {
     this.getcontracts();
     this.getAllClients();
@@ -299,7 +311,8 @@ openModalForSelected() {
       endDate: this.selectedCategory.endDate,
       code: this.selectedCategory.code,
     });
-
+    // Retrive the Comments
+    this.getComments();
     this.isModalOpen = true;
   } else {
     alert('Please select a category to update.');
@@ -604,4 +617,26 @@ applySearchFilter() {
     this.filteredContract = this.contracts;
   }
 }
+
+  // Add Comment Logic
+  addComment(parent:any =''){
+    this.cnotractService.postContractComment({
+      Content:this.commentForm.controls['content'].value,
+      EntityId:this.selectedCategory.id,
+      ParentCommentId:parent
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    this.commentForm.reset();
+    if(parent) this.replayId = '';
+  }
+
+  getComments(){
+    this.cnotractService.getContractComments(this.selectedCategory.id).subscribe((res)=>{
+      this.comments = res;
+    })
+  }
+  replayId:any;
+  toggleReplay(commentId:any){
+    this.replayId = commentId;
+  }
 }
