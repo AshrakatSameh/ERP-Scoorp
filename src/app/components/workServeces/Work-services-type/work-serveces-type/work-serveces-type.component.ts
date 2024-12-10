@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -23,12 +23,13 @@ export class WorkServecesTypeComponent implements OnInit {
   dropdownSettingsList: any[] = [];
 
   constructor(private servTypes: ServiceTypesService, private fb: FormBuilder, private http: HttpClient,
-    private toast: ToastrService, private userServ: UserService, private renderer: Renderer2
+    private toast: ToastrService, private userServ: UserService, private renderer: Renderer2,
+    private cdr: ChangeDetectorRef
   ) {
     this.serviceTypeForm = this.fb.group({
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      approvalLevels: this.fb.array([]), // Array of approval levels
+      approvalLevels: this.fb.array([], Validators.required), // Array of approval levels
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
     })
@@ -193,7 +194,34 @@ export class WorkServecesTypeComponent implements OnInit {
     });
   }
 
+  initializeTypeForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      description: [''],
+      approvalLevels: this.fb.array([], Validators.required), // Array of approval levels
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([])
+    });
+  }
   onSubmitAdd(): void {
+    const nameControl = this.serviceTypeForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.serviceTypeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const approvalControl = this.serviceTypeForm.get('approvalLevels');
+  
+    if (!approvalControl || approvalControl.invalid) {
+      console.log('Form is invalid because the approvalLevels field is invalid.');
+      console.log('approvalLevels field errors:', approvalControl?.errors);
+      this.serviceTypeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     // Append simple fields like 'name' and 'description'
@@ -238,7 +266,7 @@ export class WorkServecesTypeComponent implements OnInit {
           console.log('Response:', response);
           this.toast.success("تم الإضافة بنجاح");
           this.getAllServiceTypes();
-          this.serviceTypeForm.reset();
+          this.serviceTypeForm= this.initializeTypeForm();
           const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
           if (modalInstance) {
             modalInstance.hide();
@@ -293,14 +321,29 @@ export class WorkServecesTypeComponent implements OnInit {
   }
 
   closeModal() {
-    this.serviceTypeForm.reset();
     this.isModalOpen = false;
   }
 
   updateCategory() {
-    if (this.serviceTypeForm.valid) {
       const updatedCategory = { ...this.serviceTypeForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.serviceTypeForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.serviceTypeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const approvalControl = this.serviceTypeForm.get('approvalLevels');
+    
+      if (!approvalControl || approvalControl.invalid) {
+        console.log('Form is invalid because the approvalLevels field is invalid.');
+        console.log('approvalLevels field errors:', approvalControl?.errors);
+        this.serviceTypeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.servTypes.updateServiceType(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -313,6 +356,8 @@ export class WorkServecesTypeComponent implements OnInit {
           }
 
           this.getAllServiceTypes();
+          this.serviceTypeForm= this.initializeTypeForm();
+
           this.closeModal();  // Close the modal after successful update
         },
         (error) => {
@@ -323,7 +368,7 @@ export class WorkServecesTypeComponent implements OnInit {
           this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
         }
       );
-    }
+    
   }
 
   showConfirmationModal = false;
@@ -396,9 +441,15 @@ export class WorkServecesTypeComponent implements OnInit {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllServiceTypes();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredServiceType.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllServiceTypes(); // Re-fetch items for the updated page
+      } else {
+        // If the page is not empty, just re-fetch the data
+        this.getAllServiceTypes();
+      }
     }
   }
 

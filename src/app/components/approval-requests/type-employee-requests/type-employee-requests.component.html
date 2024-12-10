@@ -208,7 +208,7 @@
 </div>
 
 <!-- Modal -->
-<div
+<!-- <div
 class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal
 >
   <div class="modal-dialog modal-lg">
@@ -224,7 +224,6 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
       <div class="modal-body">
         <form [formGroup]="EmpReqTypeForm" (ngSubmit)="onSubmitAdd()">
           <div class="container">
-            <!-- Row with two fields -->
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
@@ -259,23 +258,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
               </div>
             </div>
             
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="floating">فئة الطلب</label>
-
-                 <select formControlName="categoryId" class="form-select form-control">
-                  <option [value]="" disabled selected>قم باختيار فئة الطلب</option>
-                  <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
-
-                 </select>
-                
-                </div>
-                <div *ngIf="EmpReqTypeForm.get('categoryId')?.invalid && EmpReqTypeForm.get('categoryId')?.touched" class="text-danger">
-                  فئة الطلب مطلوبة.
-                </div>
-              </div>
-            </div>
+           
 
             <h5 class="md-3">نظام الموافقات</h5>
             <div class="row">
@@ -292,7 +275,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                           readonly />
 
                         <label for="approverUserIds">Approver User IDs:</label>
-                        <ng-multiselect-dropdown class="col-md-12" [settings]="dropdownSettingsList[i]" [data]="users" 
+                        <ng-multiselect-dropdown class="col-md-12"  [settings]="dropdownSettingsList[i]" [data]="users" 
                           formControlName="approverUserIds">
                         </ng-multiselect-dropdown>
 
@@ -306,10 +289,8 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
             </div>
 
 
-               <!-- ألمرفقات -->
                <div class="container mt-5">
                 <h5 class="mb-3">المرفقات</h5>
-                <!-- Drag and Drop Zone -->
                 <ngx-file-drop
                   dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
                   (onFileDrop)="dropped($event)"
@@ -328,7 +309,6 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     </div>
                   </ng-template>
                 </ngx-file-drop>
-                <!-- Select File Zone -->
                 <div class="mb-3 mt-2">
                   <button type="button" class="btn btn-primary" (click)="fileInput.click()">
                     <i class="fa fa-paperclip"></i> أضف ملف
@@ -336,7 +316,6 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                 </div>
               
-                <!-- File List -->
                 <ul class="list-group mt-3 mb-3">
                   <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
@@ -370,7 +349,250 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
       </div>
     </div>
   </div>
+</div> -->
+<div
+  class="modal fade overlay"
+  id="myModal"
+  tabindex="-1"
+  aria-labelledby="modalLabel"
+  aria-hidden="true"
+  role="dialog"
+  #myModal
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title text-end flex-row-reverse"
+          id="staticBackdropLabel"
+        >
+          اضف نوع طلبات الموظفين
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="EmpReqTypeForm" (ngSubmit)="onSubmitAdd()">
+          <div class="container">
+            <!-- Row with Name Field -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="name text-end">اسم نوع طلب الموظف</label>
+                  <input
+                    type="text"
+                    id="name"
+                    formControlName="name"
+                    class="form-control custom-input"
+                    placeholder="اسم نوع طلب الموظف"
+                  />
+                  <div
+                    *ngIf="
+                      EmpReqTypeForm.get('name')?.invalid &&
+                      EmpReqTypeForm.get('name')?.touched
+                    "
+                    class="text-danger"
+                  >
+                    اسم نوع طلب مطلوب.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row with Description Field -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="description">وصف الطلب</label>
+                  <textarea
+                    class="form-control custom-input"
+                    placeholder="قم بوصف الطلب"
+                    id="description"
+                    formControlName="description"
+                    style="height: 100px"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approval Levels Section -->
+            <h5 class="md-3">نظام الموافقات</h5>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  <div class="row">
+                    <div
+                      class="col-md-12"
+                      formArrayName="approvalLevels"
+                    >
+                      <div
+                        *ngFor="
+                          let level of ApprovalLevels.controls;
+                          let i = index
+                        "
+                        [formGroupName]="i"
+                        class="approval-level"
+                      >
+                        <h4>المستوى {{ i + 1 }}</h4>
+
+                        <label [for]="'level-' + i">المستوى:</label>
+                        <input
+                          class="form-control form-select"
+                          [id]="'level-' + i"
+                          formControlName="Level"
+                          type="number"
+                          readonly
+                        />
+
+                        <label
+                          [for]="'approverUserIds-' + i"
+                        >
+                          معرفات المستخدمين الموافقين:
+                        </label>
+                        <ng-multiselect-dropdown
+                          class="col-md-12"
+                          [settings]="dropdownSettingsList[i]"
+                          [data]="users"
+                          formControlName="approverUserIds"
+                        >
+                        </ng-multiselect-dropdown>
+
+                        <div
+                          *ngIf="
+                            level.get('approverUserIds')?.invalid &&
+                            level.get('approverUserIds')?.touched
+                          "
+                          class="text-danger"
+                        >
+                          من فضلك اختر مستخدمين للموافقة.
+                        </div>
+
+                        <button
+                          type="button"
+                          class="btn btn-danger mt-2"
+                          (click)="removeApprovalLevel(i)"
+                        >
+                          إزالة مستوى الموافقة
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-success mt-3"
+                        (click)="addApprovalLevel()"
+                      >
+                        إضافة مستوى موافقة
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="container mt-5">
+              <h5 class="mb-3">المرفقات</h5>
+              <!-- Drag and Drop Zone -->
+              <ngx-file-drop
+                dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                (onFileDrop)="dropped($event)"
+                (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)"
+                class="mb-3"
+              >
+                <ng-template ngx-file-drop-content-tmp>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div class="upload-text">
+                      <p class="upload-title">
+                        حدد ملفاً أو قم بالسحب والإسقاط هنا
+                      </p>
+                      <p class="upload-subtitle">
+                        JPG, PNG أو PDF، حجم الملف لا يزيد عن 10MB
+                      </p>
+                    </div>
+                    <div class="icon">
+                      <i
+                        class="fa-solid fa-cloud-arrow-up cloud-custom"
+                      ></i>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-file-drop>
+              <!-- Select File Zone -->
+              <div class="mb-3 mt-2">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="fileInput.click()"
+                >
+                  <i class="fa fa-paperclip"></i> أضف ملف
+                </button>
+                <input
+                  type="file"
+                  #fileInput
+                  class="d-none"
+                  (change)="onFileSelected($event)"
+                />
+              </div>
+
+              <!-- File List -->
+              <ul
+                class="list-group mt-3 mb-3"
+              >
+                <li
+                  *ngFor="
+                    let attachment of attachments.controls;
+                    let i = index
+                  "
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div class="d-flex align-items-center">
+                    <img
+                      src="../../../../../assets/images/mingcute_pdf-fill.png"
+                      style="width: 35px"
+                    />
+                    <span>
+                      {{ attachment.value?.fileTitle || 'Unnamed File' }}
+                    </span>
+                  </div>
+                  <button
+                    (click)="removeAttachment(i)"
+                    class="btn btn-link text-danger"
+                  >
+                    <i class="fa fa-trash"></i> حذف
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Submission Buttons -->
+            <div
+              class="row mx-auto justify-content-center"
+            >
+              <button
+                type="submit"
+                class="btn my-button3"
+              >
+                اضافه
+                <i
+                  class="fa-solid fa-plus"
+                ></i>
+              </button>
+
+              <button
+                type="button"
+                class="btn closebutton"
+                data-bs-dismiss="modal"
+              >
+                الغاء
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
+
 
 
 <!-- Update -->
@@ -425,46 +647,39 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
             </div>
           </div>
           
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="floating">فئة الطلب</label>
-
-               <select formControlName="categoryId" class="form-select form-control">
-                <option [value]="" disabled selected>قم باختيار فئة الطلب</option>
-                <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
-
-               </select>
-              </div>
-              <div *ngIf="EmpReqTypeForm.get('categoryId')?.invalid && EmpReqTypeForm.get('categoryId')?.touched" class="text-danger">
-                فئة الطلب مطلوبة.
-              </div>
-            </div>
-          </div>
+      
 
           <h5 class="md-3">نظام الموافقات</h5>
           <div class="row">
             <div class="col-12">
               <div class="form-group">
                 <div class="row">
-                  <div class="col-md-12" formArrayName="approvalLevels">
-                    <div *ngFor="let level of ApprovalLevels.controls; let i = index" [formGroupName]="i"
-                      class="approval-level">
-                      <h4>المستوى {{ i + 1 }} </h4>
-
-                      <label for="level">Level:</label>
-                      <input class="form-control form-select" id="level" formControlName="Level" type="number"
-                        readonly />
-
-                      <label for="approverUserIds">Approver User IDs:</label>
-                      <ng-multiselect-dropdown class="col-md-12" [settings]="dropdownSettingsList[i]" [data]="users" 
-                        formControlName="approverUserIds">
-                      </ng-multiselect-dropdown>
-
-                      <button type="button" (click)="removeApprovalLevel(i)">Remove Approval Level</button>
+                  <div formArrayName="approvalLevels">
+                    <div *ngFor="let level of ApprovalLevels.controls; let i = index" [formGroupName]="i">
+                      <label>المستوى {{ i + 1 }}</label>
+                  
+                      <!-- Level Input -->
+                      <input type="number" class="form-control" placeholder="level.level" formControlName="Level" readonly />
+                  
+                      <!-- Approver User IDs Dropdown -->
+                      <ng-multiselect-dropdown
+                        [settings]="dropdownSettingsList[i]"
+                        [data]="users"
+                        formControlName="approverUserIds"
+                      ></ng-multiselect-dropdown>
+                  
+                      <!-- Remove Button -->
+                      <button type="button" class="btn btn-danger" (click)="removeApprovalLevel(i)">
+                        إزالة المستوى
+                      </button>
                     </div>
-                    <button type="button" (click)="addApprovalLevel()">Add Approval Level</button>
+                  
+                    <!-- Add Approval Level -->
+                    <button type="button" class="btn btn-primary mt-3" (click)="addApprovalLevel()">
+                      إضافة مستوى موافقة
+                    </button>
                   </div>
+                  
                 </div>
               </div>
             </div>

@@ -149,7 +149,7 @@
                       <td>{{item.name}}</td>
                       <td class="fixed-right">{{ i+1 }}</td>
                       <td class="fixed-right"> <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item, $event)"
-                        class="large-checkbox mx-4" />
+                        class="large-checkbox mx-1" />
                       </td>
                     </tr>
                 
@@ -196,7 +196,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
-                    اضافه قسم خدمات العمل
+                    اضافه فئة خدمات العمل
                 </h5>
             </div>
             <div class="modal-body">
@@ -209,6 +209,9 @@
                                     <label for="field4 text-end"> اسم الفئة</label>
                                     <input type="text" id="name" formControlName="name"  class="form-control"
                                         placeholder="اسم الفئة" />
+                                        <div *ngIf="serviceCategoryForm.get('name')?.invalid && serviceCategoryForm.get('name')?.touched" class="text-danger">
+                                          اسم الفئة مطلوب.
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -325,6 +328,9 @@
                                     <label for="field4 text-end"> اسم الفئة</label>
                                     <input type="text" id="name" formControlName="name"  class="form-control"
                                         placeholder="اسم الفئة" />
+                                        <div *ngIf="serviceCategoryForm.get('name')?.invalid && serviceCategoryForm.get('name')?.touched" class="text-danger">
+                                          اسم الفئة مطلوب.
+                                        </div>
                                 </div>
                             </div>
                             <div class="col-md-6">

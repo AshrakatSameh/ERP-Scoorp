@@ -39,7 +39,7 @@ export class ServiceDepartmentService {
     .set('pageNumber', pageNumber.toString())
     .set('pageSize', pageSize.toString());
     // Send the GET request with headers
-    return this.http.get(`${this.apiUrl}WorkServiceDepartment/GetAllCategories`, { headers, params});
+    return this.http.get(`${this.apiUrl}WorkServiceDepartment/GetAllDepartments`, { headers, params});
     
   }
 

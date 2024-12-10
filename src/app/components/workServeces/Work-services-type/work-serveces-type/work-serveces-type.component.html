@@ -138,7 +138,7 @@
                       <td>{{item.name}}</td>
                       <td class="fixed-right">{{ i+1 }}</td>
                       <td class="fixed-right"> <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                          class="large-checkbox mx-4" />
+                          class="large-checkbox mx-1" />
                       </td>
                     </tr>
 
@@ -199,21 +199,14 @@
                 <div class="form-group">
                   <label for="name text-end"> اسم نوع الطلب</label>
                   <input type="text" id="name" formControlName="name" class="form-control" placeholder="اسم القسم" />
+                  <div *ngIf="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched" class="text-danger">
+                    اسم النوع مطلوب.
+                  </div>
                 </div>
               </div>
 
             </div>
 
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="field4 text-end"> كود نوع الطلب</label>
-                  <input type="text"  disabled class="form-control" placeholder="كود نوع الطلب" />
-                </div>
-
-              </div>
-
-            </div>
 
             <div class="row mb-3">
               <div class="col-md-12">
@@ -248,6 +241,10 @@
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <div *ngIf="serviceTypeForm.get('approvalLevels')?.invalid && serviceTypeForm.get('approvalLevels')?.touched" class="text-danger">
+                مستوى الموافقة مطلوب.
               </div>
             </div>
 
@@ -328,7 +325,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
-          تعديل قسم خدمات العمل
+          تعديل نوع خدمات العمل
         </h5>
       </div>
       <div class="modal-body">
@@ -340,20 +337,15 @@
                 <div class="form-group">
                   <label for="name text-end"> اسم نوع الطلب</label>
                   <input type="text" id="name" formControlName="name" class="form-control" placeholder="اسم القسم" />
+                  <div *ngIf="serviceTypeForm.get('name')?.invalid && serviceTypeForm.get('name')?.touched" class="text-danger">
+                    اسم النوع مطلوب.
+                  </div>
+                
                 </div>
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for=" text-end"> كود نوع الطلب</label>
-                  <input type="text"  disabled class="form-control" placeholder="كود نوع الطلب" />
-                </div>
-
-              </div>
-
-            </div>
+        
 
             <div class="row mb-3">
               <div class="col-md-12">
@@ -388,6 +380,9 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              <div *ngIf="serviceTypeForm.get('approvalLevels')?.invalid && serviceTypeForm.get('approvalLevels')?.touched" class="text-danger">
+                مستوى الموافقة مطلوب.
               </div>
             </div>
 
