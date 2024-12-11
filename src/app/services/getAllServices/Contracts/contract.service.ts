@@ -169,6 +169,7 @@ export class ContractService {
     formData.append('Content', payload.content || '');
   
     console.log("Form Service", payload.attachments);
+    if(payload.attachments){
       payload.attachments.forEach((attachment: any) => {
         if (attachment.file) {
           // For new files, append the actual file object
@@ -184,6 +185,7 @@ export class ContractService {
         } 
       });
     console.log(formData.get("attachmentFiles"))
+    }
   
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}Contract/UpdateComment/${commentId}`, formData, { headers });

@@ -54,6 +54,8 @@ export class ContractsComponent implements OnInit {
   paymentForm:FormGroup;
   commentForm:FormGroup;
 
+  userId:any;
+
   constructor(private cnotractService: ContractService, private fb: FormBuilder, private http: HttpClient,
     private clientService: ClientsService, private userService: UserService, private teamService: TeamsService
     , private locarionService: LocationService, private toast:ToastrService, private renderer:Renderer2,
@@ -89,6 +91,8 @@ export class ContractsComponent implements OnInit {
       parentCommentId:[''],
       attachmentFiles: this.fb.array([])
     })
+
+    this.userId = JSON.parse(localStorage.getItem('userData')!).user_id;
   }
 
   ngOnInit(): void {
@@ -630,7 +634,15 @@ applySearchFilter() {
     this.commentForm.reset();
     if(parent) this.replayId = '';
   }
-
+  //Edit Comment
+  editComment(commentId:any,content:any){
+    this.cnotractService.updateContractComment(commentId,{
+      content:this.editedText,
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    if(this.editedText) this.editedText ='';this.editId='';
+  }
+  
   getComments(){
     this.cnotractService.getContractComments(this.selectedCategory.id).subscribe((res)=>{
       this.comments = res;
@@ -639,5 +651,11 @@ applySearchFilter() {
   replayId:any;
   toggleReplay(commentId:any){
     this.replayId = commentId;
+  }
+  editedText:string ='';
+  editId:any;
+  toggleEdit(commentId:any,text:any){
+    this.editId==commentId? this.editId='': this.editId= commentId;
+    this.editedText = text;
   }
 }
