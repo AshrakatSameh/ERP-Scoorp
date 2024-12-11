@@ -40,13 +40,14 @@ imgApiUrl= environment.imgApiUrl;
   comments:any[] =[];
   commentForm:FormGroup;
 
+  userId:any;
   constructor(private clientServ: ClientsService, private teamServ: TeamsService, private repServ: RepresentativeService,
     private priceServ: PriceListService, private costService: CostCenterService,
     private projectServ: ProjactService, private salesService: SalesService,private renderer: Renderer2,
     private http: HttpClient, private toast: ToastrService, private fb: FormBuilder,
     private payPeriodService: PaymentPeriodsService, private itemService: ItemsService
   ) {
-
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.invoiceFrom = this.fb.group({
       returnInvoiceNumber: [''],
       clientId:  ['', Validators.required || null],
@@ -872,5 +873,19 @@ updateItem() {
     replayId:any;
     toggleReplay(commentId:any){
       this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.salesService.updateReturnInvoiceComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
     }
 }

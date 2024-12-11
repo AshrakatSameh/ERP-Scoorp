@@ -45,7 +45,7 @@ imgApiUrl= environment.imgApiUrl;
   commentForm:FormGroup;
   comments:any[] =[];
 
-
+userId:any;
 
 
   constructor(private costCenterService: CostCenterService, private representService:RepresentativeService,
@@ -55,6 +55,7 @@ imgApiUrl= environment.imgApiUrl;
       private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
       private contract:ContractService,
       private toast:ToastrService) { 
+        this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.collectionForm= this.fb.group({
       code: ['', Validators.required || null],
       clientId: ['', Validators.required || null],
@@ -671,5 +672,19 @@ toggleColumnVisibility(columnName: string) {
     replayId:any;
     toggleReplay(commentId:any){
       this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.collectionService.updateCollectionsComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
     }
 }

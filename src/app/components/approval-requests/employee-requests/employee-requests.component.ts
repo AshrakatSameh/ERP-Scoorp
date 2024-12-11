@@ -20,12 +20,14 @@ export class EmployeeRequestsComponent implements OnInit {
 
   comments:any[] =[];
   commentForm:FormGroup;
+userId: any;
 
 
 
   constructor(private empService: EmpRequestsService, private fb: FormBuilder, private empType: EmpRequestTypeService,
     private http: HttpClient, private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef
   ) {
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.employeeRequestForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
@@ -512,5 +514,18 @@ export class EmployeeRequestsComponent implements OnInit {
     toggleReplay(commentId:any){
       this.replayId = commentId;
     }
-
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.empService.updateEmployeeRequestComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
+    }
 }

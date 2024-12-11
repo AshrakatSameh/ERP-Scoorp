@@ -2012,7 +2012,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                                   <div class="d-flex align-items-center justify-content-between">
                                     <p class="mt-2">
                                       {{ comment.content }}
-                                      <button class="btn btn-link p-0 m-1 w-20" style="font-size: 8px;" *ngIf="userId" (click)="toggleEdit(comment.id,comment.content)">
+                                      <button class="btn btn-link p-0 m-1 w-20" style="font-size: 8px;" *ngIf="userId==comment.userId" (click)="toggleEdit(comment.id,comment.content)">
                                         <i class="fa-solid fa-pen"></i>
                                       </button>
                                     </p>

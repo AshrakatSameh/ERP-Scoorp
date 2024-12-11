@@ -30,14 +30,13 @@ export class ProjectsComponent implements OnInit {
 
   comments:any[] =[];
 
-
+  userId:any;
   constructor(private projectService: ProjactService, private http: HttpClient,
     private fb: FormBuilder, private toast: ToastrService, private locationServ: LocationService,
     private clientService: ClientsService, private userServ: UserService, private renderer: Renderer2,
     private teamServ: TeamsService
   ) {
-
-
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
@@ -571,5 +570,20 @@ applySearchFilter() {
   replayId:any;
   toggleReplay(commentId:any){
     this.replayId = commentId;
+  }
+
+  editedText:string ='';
+  editId:any;
+  //Edit Comment
+  editComment(commentId:any,content:any){
+    this.projectService.updateProjectComment(commentId,{
+      content:this.editedText,
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    if(this.editedText) this.editedText ='';this.editId='';
+  }
+  toggleEdit(commentId:any,text:any){
+    this.editId==commentId? this.editId='': this.editId= commentId;
+    this.editedText = text;
   }
 }

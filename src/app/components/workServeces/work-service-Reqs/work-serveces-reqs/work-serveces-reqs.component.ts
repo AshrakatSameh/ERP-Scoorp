@@ -24,12 +24,13 @@ export class WorkServecesReqsComponent implements OnInit {
 
   comments:any[] =[];
   commentForm:FormGroup;
-
+  userId:any;
   constructor(private reqService: ServiceRequestService, private servType: ServiceTypesService,
     private type: ServiceTypesService, private dep: ServiceDepartmentService, private cat: ServiceCategoryService,
     private fb: FormBuilder, private employeeServ: EmployeeService, private toast: ToastrService,
     private http: HttpClient, private cdr: ChangeDetectorRef
   ) {
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.serviceRequestForm = this.fb.group({
       serviceTypeId: ['', Validators.required],
       requestedEmployeeId: [''],
@@ -536,5 +537,19 @@ export class WorkServecesReqsComponent implements OnInit {
     replayId:any;
     toggleReplay(commentId:any){
       this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.reqService.updateServiceRequestsComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
     }
 }

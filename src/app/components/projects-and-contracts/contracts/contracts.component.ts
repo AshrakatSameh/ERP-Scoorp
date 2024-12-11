@@ -634,14 +634,6 @@ applySearchFilter() {
     this.commentForm.reset();
     if(parent) this.replayId = '';
   }
-  //Edit Comment
-  editComment(commentId:any,content:any){
-    this.cnotractService.updateContractComment(commentId,{
-      content:this.editedText,
-    }).subscribe((res)=> console.log(res));
-    this.getComments();
-    if(this.editedText) this.editedText ='';this.editId='';
-  }
   
   getComments(){
     this.cnotractService.getContractComments(this.selectedCategory.id).subscribe((res)=>{
@@ -654,6 +646,14 @@ applySearchFilter() {
   }
   editedText:string ='';
   editId:any;
+  //Edit Comment
+  editComment(commentId:any,content:any){
+    this.cnotractService.updateContractComment(commentId,{
+      content:this.editedText,
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    if(this.editedText) this.editedText ='';this.editId='';
+  }
   toggleEdit(commentId:any,text:any){
     this.editId==commentId? this.editId='': this.editId= commentId;
     this.editedText = text;

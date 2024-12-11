@@ -48,7 +48,7 @@ export class SalesInvoicesComponent implements OnInit {
   imgApiUrl= environment.imgApiUrl;
   commentForm:FormGroup;
 
-
+  userId:any;
   constructor(private salesInvoiceService: SalesService, private clientService: ClientsService,
     private representService: RepresentativeService, private fb: FormBuilder, private payService: PaymentPeriodsService,
     private teamService: TeamsService, private itemServices: ItemsService,private renderer: Renderer2,
@@ -57,6 +57,8 @@ export class SalesInvoicesComponent implements OnInit {
     private cdr: ChangeDetectorRef
 
   ) {
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+
     this.salesForm = this.fb.group({
       clientId:  ['', Validators.required],
       representativeId:  ['', Validators.required],
@@ -822,5 +824,19 @@ export class SalesInvoicesComponent implements OnInit {
   replayId:any;
   toggleReplay(commentId:any){
     this.replayId = commentId;
+  }
+  editedText:string ='';
+  editId:any;
+  //Edit Comment
+  editComment(commentId:any,content:any){
+    this.salesInvoiceService.updateSalesInvoiceComment(commentId,{
+      content:this.editedText,
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    if(this.editedText) this.editedText ='';this.editId='';
+  }
+  toggleEdit(commentId:any,text:any){
+    this.editId==commentId? this.editId='': this.editId= commentId;
+    this.editedText = text;
   }
 }

@@ -44,7 +44,7 @@ comments:any[] =[];
 imgApiUrl= environment.imgApiUrl;
 commentForm:FormGroup;
 
-
+userId:any;
 constructor(private salesService:SalesService,private clientService:ClientsService,
     private representServece:RepresentativeService, private fb: FormBuilder, private  http:HttpClient,
     private teamService: TeamsService, private costCenterService:CostCenterService,
@@ -53,6 +53,7 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     private toast: ToastrService,     private cdr: ChangeDetectorRef
 
   ){
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.deliveryVoucherForm= this.fb.group({
     clientId: ['', Validators.required],
     representativeId: ['', Validators.required || null],
@@ -1115,5 +1116,19 @@ resetUpdatedItems() {
     replayId:any;
     toggleReplay(commentId:any){
       this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.salesService.updateDeliveryNotesComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
     }
 }
