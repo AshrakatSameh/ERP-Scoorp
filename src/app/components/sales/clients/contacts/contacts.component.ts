@@ -137,6 +137,7 @@ nationalities:any[]=[];
 
   // Method to handle file selection
   onFileSelected(event: Event): void {
+    this.attachments.clear(); // for uploading only one file
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -148,7 +149,7 @@ nationalities:any[]=[];
         file: [file]  
       };
       // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
+      this.attachments.push(this.fb.control(fileData));
 
       // Reset the input value to allow selecting the same file again
       input.value = '';

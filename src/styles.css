@@ -55,12 +55,15 @@ div .dropdown-menu{
       background-color: none;
       padding: 20px;
       border-radius: 10px;
-      transition: background-color 0.3s ease-in-out;
+      transition: background-color 0.2s ease-in-out;
       color: black !important;
       position: relative;
       height: 75px !important;
    }
-   
+   .ngx-file-drop__content:hover{
+      background-color: rgba(211, 211, 211, 0.416);
+      cursor: pointer;
+   }
    .ngx-file-drop__drop-zone{
       border: none !important;
       height: 75px !important;

@@ -255,32 +255,7 @@
             <div class="container mt-5">
               <h5 class="mb-3">المرفقات</h5>
               <!-- Drag and Drop Zone -->
-              <ngx-file-drop
-                dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
-                (onFileDrop)="dropped($event)"
-                (onFileOver)="fileOver($event)"
-                (onFileLeave)="fileLeave($event)"
-                class="mb-3">
-                <ng-template ngx-file-drop-content-tmp>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="upload-text">
-                      <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
-                      <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
-                    </div>
-                    <div class="icon">
-                      <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
-                    </div>
-                  </div>
-                </ng-template>
-              </ngx-file-drop>
-              <!-- Select File Zone -->
-              <div class="mb-3 mt-2">
-                <button type="button" class="btn btn-primary" (click)="fileInput.click()">
-                  <i class="fa fa-paperclip"></i> أضف ملف
-                </button>
-                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
-              </div>
-            
+              
               <!-- File List -->
               <ul class="list-group mt-3 mb-3">
                 <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
@@ -293,6 +268,34 @@
                   </button>
                 </li>
               </ul>
+              <!-- Select File Zone -->
+              <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                  <i class="fa fa-paperclip"></i> ملف إضافي
+                </button>
+                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+              </div>
+              <ngx-file-drop
+                dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                (onFileDrop)="dropped($event)"
+                (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)"
+                (click)="fileInput.click()"
+                *ngIf="showDragDrop"
+                class="mb-3">
+                <ng-template ngx-file-drop-content-tmp>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="upload-text">
+                      <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                      <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                    </div>
+                  </div>
+                </ng-template>
+                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+              </ngx-file-drop>
             </div>
 
             <div class="row">
@@ -338,9 +341,6 @@
                 الغاء
               </button>
             </div>
-
-
-
           </div>
         </form>
       </div>
@@ -447,7 +447,7 @@
                   
                   <ng-select class="form-select form-control" formControlName="UnitCategoryId" >
                     <!-- The options for the dropdown, each displaying the category name -->
-                     <ng-option [value]="selectedCategory.UnitCategoryId" selected>{{selectedUnitCategoryName}}</ng-option>
+                    <!-- <ng-option [value]="selectedCategory.UnitCategoryId" selected>{{selectedUnitCategoryName}}</ng-option> -->
                     <ng-option *ngFor="let item of unitCategories" [value]="item.id">
                       {{ item.name }}
                     </ng-option>

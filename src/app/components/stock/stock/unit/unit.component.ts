@@ -78,6 +78,7 @@ export class UnitComponent {
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
+      this.toggleDragDrop();
       if (event && event.length) {
         for (const droppedFile of event) {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
@@ -114,6 +115,7 @@ export class UnitComponent {
     }
   // Method to handle file selection
   onFileSelected(event: Event): void {
+    this.toggleDragDrop();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -262,17 +264,16 @@ export class UnitComponent {
 
   // Your existing methods and code
   openModalForSelected() {
+    console.log(this.selectedCategory)
     if (this.selectedCategory) {
-      
       this.unitForm.patchValue({
         name: this.selectedCategory.name,
         localName: this.selectedCategory.localName,
         note: this.selectedCategory.note,
-        UnitCategoryId: this.selectedCategory.UnitCategoryId,
+        UnitCategoryId: this.selectedCategory.unitCategoryId,
         unitCategory: this.selectedCategory.unitCategory,
       });
       this.selectedUnitCategoryName = this.selectedCategory.unitCategory;
-
       this.attachments.clear();
       if (this.selectedCategory.attachments?.length) {
         this.selectedCategory.attachments.forEach((attachment: any) => {
@@ -299,7 +300,10 @@ export class UnitComponent {
     this.unitForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
-    this.resetAttachments();  }
+    this.resetAttachments();
+    this.showDragDrop =true;
+    console.log(this.showDragDrop)
+  }
 
   updateCategory() {
     const updatedCategory = { ...this.unitForm.value, id: this.selectedCategory.id };
@@ -344,6 +348,7 @@ export class UnitComponent {
   }
   resetAttachments(){
     this.attachments.clear();
+    this.showDragDrop = true;
   }
   closeConfirmationModal() {
     this.showConfirmationModal = false;
@@ -591,5 +596,11 @@ export class UnitComponent {
   onSelectChange() {
     const selectedCategory = this.unitCategories.find(category => category.id === this.selectedUnitCategoryId);
     this.selectedUnitCategoryName = selectedCategory ? selectedCategory.name : null;
+  }
+
+// Toggle Drag and Drop
+showDragDrop =true;
+  toggleDragDrop(){
+    this.showDragDrop = !this.showDragDrop;
   }
 }
