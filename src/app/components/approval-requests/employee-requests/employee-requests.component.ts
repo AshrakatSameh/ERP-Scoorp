@@ -207,7 +207,7 @@ userId: any;
       const fileData = control.value;
       if (fileData && fileData.file instanceof File) {
         // Append the actual file object
-        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+        formData.append('attachments', fileData.file, fileData.fileTitle);
       }
     });
 
@@ -276,7 +276,21 @@ userId: any;
         Quantity: this.selectedCategory.Quantity,
         description: this.selectedCategory.description
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('Please select a type to update.');
@@ -287,6 +301,7 @@ userId: any;
     this.employeeRequestForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
+    this.attachments.reset();
   }
 
   isDropdownOpen: boolean = false;

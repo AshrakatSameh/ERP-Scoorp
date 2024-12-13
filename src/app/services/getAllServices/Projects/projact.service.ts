@@ -92,7 +92,23 @@ export class ProjactService {
     formData.append('endDate', updatedCategory.endDate || '');
     formData.append('priority', updatedCategory.priority || '');
     formData.append('size', updatedCategory.size || '');
-   
+    if (updatedCategory.attachments && updatedCategory.attachments.length > 0) {
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+          console.log('Appending existing file reference:', attachment.fileTitle);
+        }
+        if (attachment.file instanceof File) {
+          // For new files, append the actual file object
+          formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+          console.log('Appending new file:', attachment.fileTitle);
+        }
+      });
+    }
+    else{
+      formData.append('attachmentFiles',new Blob(),'empty');
+    }
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}Project/UpdateProject/${id}`, formData, { headers });
   }

@@ -3,7 +3,7 @@ import { ProjactService } from 'src/app/services/getAllServices/Projects/projact
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment.development';
 import { Toast, ToastrService } from 'ngx-toastr';
 import { LocationService } from 'src/app/services/getAllServices/Location/location.service';
@@ -47,7 +47,7 @@ export class ProjectsComponent implements OnInit {
       startDate: [null],
       endDate: [null],
       locations: [],
-
+      attachmentFiles: this.fb.array([]),
       // status: [null, Validators.required],
       priority: [0],
       size: [0],
@@ -132,13 +132,74 @@ export class ProjectsComponent implements OnInit {
     this.selectedButton = index;
   }
 
+//Attachments
+get attachments(): FormArray {
+   return this.projectForm.get('attachmentFiles') as FormArray;
+ }
+    // Method to handle files dropped into the ngx-file-drop zone
+    dropped(event: any): void {
+      if (event && event.length) {
+        for (const droppedFile of event) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+    
+          if (fileEntry.isFile) {
+            fileEntry.file((file: File) => {
+              const fileData = {
+                fileTitle: file.name,
+                fileType: file.type,
+                fileSize: file.size,
+                fileUrl: null, // Placeholder for URL after upload
+                file: file,
+              };
+              this.attachments.push(this.fb.control(fileData));
+            });
+          }
+        }
+      } else {
+        console.error('No files detected in the dropped event:', event);
+      }
+    }
+    
+  
+  
+    // Method to handle when a file is over the drop zone
+    fileOver(event: any): void {
+      console.log('File is over the drop zone:', event);
+    }
+  
+    // Method to handle when a file leaves the drop zone
+    fileLeave(event: any): void {
+      console.log('File has left the drop zone:', event);
+    }
+ // Method to handle file selection
+onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+
+    // Add the selected file to the FormArray as a FormControl
+    const fileData = {
+      fileTitle: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+      fileUrl: null, // Placeholder for URL after upload
+      file: file,
+    };
+    this.attachments.push(this.fb.control(fileData));
+    console.log(this.attachments)
+    // Reset the input value to allow selecting the same file again
+    input.value = '';
+  }
+}
+
+ // Method to remove a file from the attachments FormArray
+ removeAttachment(index: number): void {
+   this.attachments.removeAt(index);
+ }
+
+
 
   // get all
-
-
-
-
-
   getAllProjects() {
     this.projectService.getProjacts(this.pageNumber, this.pageSize)
       .subscribe(data => {
@@ -231,6 +292,13 @@ export class ProjectsComponent implements OnInit {
 
     const headers = new HttpHeaders({
       tenant: localStorage.getItem('tenant') || ''  // Add your tenant value here
+    });
+    this.attachments.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+      }
     });
 
     this.http.post(this.api, formData, { headers })
@@ -345,7 +413,21 @@ export class ProjectsComponent implements OnInit {
         priority: this.selectedCategory.priority,
         size: this.selectedCategory.size,
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -355,6 +437,8 @@ export class ProjectsComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.selectedCategory =null;
+    this.projectForm.reset();
+    this.attachments.reset();
   }
 
   updateCategory() {

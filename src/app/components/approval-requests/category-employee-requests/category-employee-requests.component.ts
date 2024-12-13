@@ -159,7 +159,7 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
       const fileData = control.value;
       if (fileData && fileData.file instanceof File) {
         // Append the actual file object
-        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+        formData.append('attachments', fileData.file, fileData.fileTitle);
       }
     });
     // Log the FormData contents for debugging (optional, FormData doesn't stringify easily, so we won't see the contents directly)
@@ -240,7 +240,21 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
         name: this.selectedCategory.name,
         description: this.selectedCategory.description
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('Please select a type to update.');

@@ -73,6 +73,6 @@ div .dropdown-menu{
 
    /* Fixed Column and Direction */
    .fixed-right{
-      width: 141px;
+      width: 80px;
       text-align: right;
-   }
+   } 
