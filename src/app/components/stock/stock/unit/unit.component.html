@@ -263,10 +263,17 @@
                     <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                     <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
                   </div>
+                  <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                    <audio controls>
+                      <source [src]="attachment.value.audioUrl" type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
                   <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
                     <i class="fa fa-trash"></i> حذف
                   </button>
                 </li>
+                
               </ul>
               <!-- Select File Zone -->
               <div class="mb-3 mt-2" *ngIf="attachments.length>0">
@@ -274,6 +281,23 @@
                   <i class="fa fa-paperclip"></i> ملف إضافي
                 </button>
                 <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+              </div>
+              <div class="audio-recorder m-1" *ngIf="showDragDrop">
+                <span 
+                  class="mic-icon"
+                  *ngIf="!isRecording"
+                  type="button"
+                  (click)="startRecording()">
+                  <i class="fa-solid fa-microphone"></i>
+                </span>
+                <span
+                  class="stop-icon"
+                  *ngIf="isRecording"
+                  type="button"
+                  (click)="stopRecording()">
+                  <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                  <i class="fa-solid fa-stop m-1"></i>
+                </span>
               </div>
               <ngx-file-drop
                 dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
@@ -422,7 +446,6 @@
                 </li>
               </ul>
             </div>
-            
             <!-- Description -->
             <div class="row">
               <div class="col-md-12">
@@ -452,16 +475,6 @@
                       {{ item.name }}
                     </ng-option>
                   </ng-select>
-                  
-
-
-
-
-
-
-
-
-
                 </div>
               </div>
               <div class="col-md-4">
