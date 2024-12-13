@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
 import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
@@ -50,7 +50,7 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     private teamService: TeamsService, private costCenterService:CostCenterService,
     private warehouseService:WarehouseService,private locationService:LocationService,
     private itemService: ItemsService, private renderer: Renderer2,
-    private toast: ToastrService,     private cdr: ChangeDetectorRef
+    private toast: ToastrService,     private cdr: ChangeDetectorRef, private ngZone:NgZone
 
   ){
     this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
@@ -380,6 +380,7 @@ addLocationId() {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    if(this.attachments.length==0) this.toggleDragDrop();
   }
 
   @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -1131,4 +1132,67 @@ resetUpdatedItems() {
       this.editId==commentId? this.editId='': this.editId= commentId;
       this.editedText = text;
     }
+    
+// Toggle Drag and Drop
+showDragDrop =true;
+toggleDragDrop(){
+  this.showDragDrop = !this.showDragDrop;
+}
+
+//Audio
+mediaRecorder: MediaRecorder | null = null;
+audioChunks: Blob[] = [];
+isRecording = false;
+recCount =-1;
+startRecording() {
+  this.isRecording = true;
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    this.mediaRecorder = new MediaRecorder(stream);
+    this.mediaRecorder.start();
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.audioChunks.push(event.data);
+    };
+  }).catch((error) => {
+    console.error("Error accessing microphone:", error);
+  });
+  this.recCount++;
+}
+isSaving = false;
+
+stopRecording() {
+  this.isRecording = false;
+  if (this.mediaRecorder) {
+    this.isSaving = true;
+    this.mediaRecorder.stop();
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.audioChunks = [];
+      this.ngZone.run(() => {
+        this.uploadAudio(audioBlob);
+        this.isSaving = false; // Angular will detect this change
+        this.toggleDragDrop();
+      });
+    };
+  }
+}
+
+async uploadAudio(audioBlob: Blob) {
+  const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+  const fileData = {
+    fileTitle: this.recCount > 0 ? `${audioFile.name.slice(0, 9)}(${this.recCount})${audioFile.name.slice(9)}` : audioFile.name,
+    fileType: audioFile.type,
+    fileName: audioFile.name,
+    fileSize: audioFile.size,
+    file: audioFile,
+  };
+
+  // Create a URL for the audio Blob
+  const audioUrl = URL.createObjectURL(audioBlob);
+
+  // Update the attachment with audio URL
+  this.attachments.push(this.fb.control({ ...fileData, audioUrl }));
+
+  // Trigger change detection
+  // this.changeDetectorRef.detectChanges();
+}
 }

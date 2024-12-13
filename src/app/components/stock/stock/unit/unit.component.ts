@@ -139,6 +139,7 @@ export class UnitComponent {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    if(this.attachments.length==0) this.toggleDragDrop();
   }
 
   onFileChange(event: Event, index: number) {

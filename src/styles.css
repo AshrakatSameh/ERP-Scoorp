@@ -50,6 +50,9 @@ div .dropdown-menu{
 
 /* Drop and Drag File */
 /* Customizing the ngx-file-drop component */
+   .container.mb-5 ,.my-button3 ,.closebutton{
+      margin-top:10px !important;
+   }
    .ngx-file-drop__content {
       border: 3px dotted gainsboro;
       background-color: none;
@@ -79,3 +82,13 @@ div .dropdown-menu{
       width: 80px;
       text-align: right;
    } 
+
+   /* Recording Style */
+  .mic-icon{
+   color: gray;
+   font-size: 18px;
+ }
+ .stop-icon{
+   color: rgba(101, 0, 0, 0.473);
+   font-size: 18px;
+ }
