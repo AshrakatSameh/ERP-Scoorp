@@ -241,13 +241,20 @@ updateSelectAll() {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory)
   if (this.selectedCategory) {
     this.convBoxForm.patchValue({
       covenantBoxName: this.selectedCategory.covenantBoxName,
       code: this.selectedCategory.code,
       description: this.selectedCategory.description,
     });
-
+    this.attachments.clear();
+    if (this.selectedCategory.attachmentFiles?.length) {
+      this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
+        this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+        console.log(this.attachments.controls);
+      });
+    }
     this.isModalOpen = true;
   } else {
     alert('Please select a category to update.');

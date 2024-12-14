@@ -265,6 +265,7 @@ onCheckboxChange(category: any, event: any) {
    this.isModalOpen = false;
    this.selectedCategory =null;
    this.tagForm.reset();
+   this.attachments.clear();
  }
 
  updateCategory() {

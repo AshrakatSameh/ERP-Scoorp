@@ -279,7 +279,8 @@ costCenterss:any[]=[]
 getAllCostCenters() {
   this.costCenterService.getAllCostCaners().subscribe(response => {
     this.costCenterss = response.costCenters;
-    //console.log(this.costCenters);
+    console.log(this.costCenterss);
+    console.log(response);
   }, error => {
     console.error('Error fetching  costCenters:', error)
   })
@@ -319,7 +320,7 @@ addLocationId() {
   fileNames: string[] = []; // Array to store file names
 
   get attachments(): FormArray {
-    return this.deliveryVoucherForm.get('attachments') as FormArray;
+    return this.deliveryVoucherForm.get('attachmentFiles') as FormArray;
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
@@ -649,6 +650,13 @@ openModalForSelected() {
        });
        this.deliveryNoteItems.push(deliveryNoteItem);
      });
+     this.attachments.clear();
+      if (this.selectedCategory.attachmentFiles?.length) {
+        this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     this.isModalOpen = true;
   } else {
     alert('الرجاء تحديد العنصر');

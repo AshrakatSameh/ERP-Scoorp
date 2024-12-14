@@ -303,7 +303,7 @@
     <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
         <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
-        <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+        <span>{{ attachment.value?.fileTitle || 'Unnamed File' }}</span>
       </div>
       <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
         <audio controls>
@@ -511,7 +511,7 @@
                 <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
                     <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
-                    <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                    <span>{{ attachment.value?.fileTitle || 'Unnamed File' }}</span>
                   </div>
                   <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
                     <audio controls>

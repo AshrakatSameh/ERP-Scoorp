@@ -133,25 +133,27 @@ export class ReceivedCovenantComponent implements OnInit {
     fileLeave(event: any): void {
       console.log('File has left the drop zone:', event);
     }
-  onFileSelected(event: Event): void {
-    this.toggleDragDrop();
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-  
-      const fileData = new FormControl({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        file: file // Store the file itself for FormData usage
-      });
-  
-      this.attachments.push(fileData);
-  
-      // Reset the input value to allow selecting the same file again
-      input.value = '';
-    }
+ // Method to handle file selection
+ onFileSelected(event: Event): void {
+  this.toggleDragDrop();
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+
+    // Add the selected file to the FormArray as a FormControl
+    const fileData = {
+      fileTitle: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+      fileUrl: null, // Placeholder for URL after upload
+      file: file,
+    };
+    this.attachments.push(this.fb.control(fileData));
+    console.log(this.attachments)
+    // Reset the input value to allow selecting the same file again
+    input.value = '';
   }
+}
   
  
    // Method to remove a file from the attachments FormArray
@@ -181,7 +183,7 @@ export class ReceivedCovenantComponent implements OnInit {
     this.attachments.controls.forEach((control: AbstractControl) => {
       const fileData = control.value.file; // Access the actual file
       if (fileData) {
-        formData.append('AttachmentFiles', fileData);
+        formData.append('attachmentFiles', fileData);
       }
     });
   

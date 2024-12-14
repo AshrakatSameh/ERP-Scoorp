@@ -214,7 +214,13 @@ openModalForSelected() {
       description: this.selectedCategory.description,
     
     });
-
+    this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     // Set the selectedUnitCategory for the placeholder
     this.selectedUnitCategory = this.selectedCategory.unitCategory || ''; // Ensure it is not undefined
 
@@ -229,6 +235,7 @@ closeModal() {
   this.paymentForm.reset();
   this.selectedCategory =null;
   this.isModalOpen = false;
+  this.attachments.clear();
 }
 
 updateCategory() {

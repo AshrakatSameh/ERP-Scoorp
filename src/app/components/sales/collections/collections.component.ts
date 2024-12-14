@@ -392,6 +392,7 @@ onCheckboxChange(category: any) {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory)
   if (this.selectedCategory) {
     this.collectionForm.patchValue({
       code: this.selectedCategory.code,
@@ -406,8 +407,8 @@ openModalForSelected() {
       value: this.selectedCategory.value
     });
     this.attachmentFiles.clear();
-      if (this.selectedCategory.attachments?.length) {
-        this.selectedCategory.attachments.forEach((attachment: any) => {
+      if (this.selectedCategory.attachmentFiles?.length) {
+        this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
           this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
           console.log(this.attachmentFiles.controls);
         });

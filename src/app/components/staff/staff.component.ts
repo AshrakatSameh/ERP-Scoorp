@@ -222,7 +222,7 @@ export class StaffComponent {
        file: [file]  
      };
      // Add the selected file to the FormArray as a FormControl
-     this.attachedFiles.push(this.fb.control(file));
+     this.attachedFiles.push(this.fb.control(fileData));
 
      // Reset the input value to allow selecting the same file again
      input.value = '';
@@ -285,12 +285,14 @@ export class StaffComponent {
     formData.append('nationality', nationality);
     formData.append('borderNumber', borderNumber);
     formData.append('genderType', genderType);
-    const attachedFiles = this.employeeForm.get('attachedFiles')?.value; // Assuming `attachedFiles` is a FormArray
-  if (attachedFiles && attachedFiles.length > 0) {
-    attachedFiles.forEach((file: File, index: number) => {
-      formData.append(`AttachmentFiles`, file, file.name);
+    console.log(this.attachedFiles)
+    this.attachedFiles.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+      }
     });
-  }
     const tenantId = localStorage.getItem('tenant');
     const headers = new HttpHeaders({
       tenant: tenantId || ''
@@ -392,6 +394,7 @@ onDeselectAll(): void {
     this.selectedCategory = category;  // Store the selected category data
   }
   openModalForSelected() {
+    console.log(this.selectedCategory)
     if (this.selectedCategory) {
       this.employeeForm.patchValue({
         name: this.selectedCategory.name,
@@ -414,6 +417,7 @@ onDeselectAll(): void {
     this.isModalOpen = false;
     this.selectedCategory =null;
     this.employeeForm.reset();
+    this.attachedFiles.clear();
   }
 
   updateCategory() {
