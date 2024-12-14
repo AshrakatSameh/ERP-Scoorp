@@ -111,6 +111,7 @@ get attachments(): FormArray {
       console.log('File has left the drop zone:', event);
     }
     onFileSelected(event: Event): void {
+      this.toggleDragDrop();
       const input = event.target as HTMLInputElement;
       if (input.files && input.files.length > 0) {
         const file = input.files[0];
@@ -293,12 +294,13 @@ private removeDocumentClickListener(): void {
   }
 
   openModalForSelected() {
+    console.log(this.selectedCategory);
     if (this.selectedCategory) {
       this.storeHouseForm.patchValue({
         name: this.selectedCategory.name,
         localName: this.selectedCategory.localName,
-        description: this.selectedCategory.clientId,
-        warehouseCategoryId: this.selectedCategory.assignedToId
+        description: this.selectedCategory.description,
+        warehouseCategoryId: this.selectedCategory.warehouseCategoryId
       });
       this.attachments.clear();
       if (this.selectedCategory.attachments?.length) {

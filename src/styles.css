@@ -50,7 +50,7 @@ div .dropdown-menu{
 
 /* Drop and Drag File */
 /* Customizing the ngx-file-drop component */
-   .container.mb-5 ,.my-button3 ,.closebutton{
+   .my-button3 ,.closebutton{
       margin-top:10px !important;
    }
    .ngx-file-drop__content {

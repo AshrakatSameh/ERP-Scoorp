@@ -112,19 +112,27 @@ export class ItemcategoryService {
         formData.append(`itemWarehouses[${index}].unit`, item.unit || '');
       // API call with PUT method using the FormData and headers
     });
-    console.log('Full attachments:', updatedCategory.attachments);
+    console.log("Form Service", updatedCategory.attachments);
+    if(updatedCategory.attachments){
     updatedCategory.attachments.forEach((attachment: any) => {
-      if (attachment.fileUrl) {
-        // For existing files, use a metadata representation (fileUrl or any reference)
-        formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
-        console.log('Appending existing file reference:', attachment.fileTitle);
-      }
-      if (attachment.file instanceof File) {
+      if (attachment.file) {
         // For new files, append the actual file object
-        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
-        console.log('Appending new file:', attachment.fileTitle);
-      }
-    });
+        if (attachment.file instanceof File) {
+          formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+          console.log('Appending new file:', attachment.fileTitle);
+        }
+        if (attachment.file.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+          console.log('Appending existing file reference:', attachment.file.fileTitle);
+        }
+      } 
+      });
+    }
+    else{
+      formData.append('attachmentFiles', updatedCategory.attachments);
+    }
+    console.log(formData.get("attachmentFiles"))
 
     return this.http.put(`${this.apiUrl}Items/${id}`, formData, { headers });
 

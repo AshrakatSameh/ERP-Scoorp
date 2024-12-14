@@ -158,6 +158,7 @@ export class StorehouseTransportationComponent implements OnInit {
   }
    // Method to handle file selection
     onFileSelected(event: Event): void {
+      this.toggleDragDrop();
       const input = event.target as HTMLInputElement;
       if (input.files && input.files.length > 0) {
         const file = input.files[0];
@@ -323,6 +324,7 @@ onCheckboxChange(category: any, event: any) {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory);
   if (this.selectedCategory) {
     this.transportForm.patchValue({
       name: this.selectedCategory.name,
@@ -359,7 +361,7 @@ resetAttachments(){
 updateCategory() {
   if (this.transportForm.valid) {
     const updatedCategory = { ...this.transportForm.value, id: this.selectedCategory.id };
-
+    console.log(updatedCategory); 
     // Call the update service method using the category's id
     this.wareTrans.updateTransport(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {
