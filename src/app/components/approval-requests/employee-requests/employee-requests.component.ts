@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild 
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { EmpRequestCategService } from 'src/app/services/getAllServices/EmployeeRequestCategory/emp-request-categ.service';
 import { EmpRequestsService } from 'src/app/services/getAllServices/EmployeeRequests/emp-requests.service';
 import { EmpRequestTypeService } from 'src/app/services/getAllServices/EmployeeRequestType/emp-request-type.service';
 import { environment } from 'src/environments/environment.development';
@@ -18,11 +19,13 @@ export class EmployeeRequestsComponent implements OnInit {
   apiUrl = environment.apiUrl;
 
   constructor(private empService: EmpRequestsService, private fb: FormBuilder, private empType: EmpRequestTypeService,
-    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef
+    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef,
+    private empCategory: EmpRequestCategService
   ) {
     this.employeeRequestForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
+      categoryId:[''],
       requestTypeId: ['', Validators.required],
       startDate: [''],
       endDate: [''],
@@ -36,6 +39,7 @@ export class EmployeeRequestsComponent implements OnInit {
   ngOnInit(): void {
     this.getAllEmployeeRequests();
     this.getAllEmpRequestTypes();
+    this.getAllEmpRequestCategory();
   }
 
   totalCount: number = 0; // Total count of items from the API
@@ -78,6 +82,26 @@ export class EmployeeRequestsComponent implements OnInit {
         console.error('Error fetching types section:', error); // Handle errors
       }
     );
+  }
+  getTypeById(requestTypeId: number): string {
+    const type = this.types.find(c => c.id === requestTypeId);
+    return type ? type.name : '';
+  }
+  categories:any[]=[];
+  getAllEmpRequestCategory() {
+    this.empCategory.getEmployeeReqCategory().subscribe(
+      (response) => {
+        this.categories = response.categories; // Assign the fetched Warehouses
+        // console.log('categories : ' , this.categories)
+      },
+      (error) => {
+        console.error('Error fetching :', error); // Handle errors
+      }
+    );
+  }
+  getCategoryNameById(categoryId: number): string {
+    const category = this.categories.find(c => c.id === categoryId);
+    return category ? category.name : '';
   }
 
   // handle array of attachments
@@ -180,6 +204,7 @@ export class EmployeeRequestsComponent implements OnInit {
     formData.append('name', this.employeeRequestForm.get('name')?.value || '');
     formData.append('description', this.employeeRequestForm.get('description')?.value || '');
     formData.append('requestTypeId', this.employeeRequestForm.get('requestTypeId')?.value || '');
+    formData.append('categoryId', this.employeeRequestForm.get('categoryId')?.value || '');
     formData.append('startDate', this.employeeRequestForm.get('startDate')?.value || '');
     formData.append('endDate', this.employeeRequestForm.get('endDate')?.value || '');
     formData.append('RequestValue', this.employeeRequestForm.get('RequestValue')?.value || '');
@@ -253,6 +278,7 @@ export class EmployeeRequestsComponent implements OnInit {
       this.employeeRequestForm.patchValue({
         name: this.selectedCategory.name,
         requestTypeId: this.selectedCategory.requestTypeId,
+        categoryId:this.selectedCategory.categoryId,
         startDate: this.selectedCategory.startDate,
         endDate: this.selectedCategory.endDate,
         RequestValue: this.selectedCategory.RequestValue,

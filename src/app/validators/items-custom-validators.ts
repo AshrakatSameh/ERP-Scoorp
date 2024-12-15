@@ -10,4 +10,15 @@ export function twoOutOfThreeValidator(): ValidatorFn {
 
     return trueCount >= 1 ? null : { twoOutOfThree: true }; // Return error if fewer than 2 are true
   };
+
+  
+}
+
+export function minSelectedValidator(min: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value && control.value.length >= min) {
+      return null; // Valid
+    }
+    return { minSelected: true }; // Invalid
+  };
 }

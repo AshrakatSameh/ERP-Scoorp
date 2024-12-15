@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -18,7 +18,7 @@ export class TagComponent implements OnInit{
   apiUrl= environment.apiUrl;
   imgApiUrl= environment.apiUrl;
   constructor(private tagService: TagService, private fb: FormBuilder,
-    private http: HttpClient, private toast:ToastrService, private renderer:Renderer2
+    private http: HttpClient, private toast:ToastrService, private renderer:Renderer2,private cdr: ChangeDetectorRef
   ){
     this.tagForm= this.fb.group({
       name:['', Validators.required],
@@ -125,7 +125,15 @@ ngAfterViewInit(): void {
   });
 }
 onSubmitAdd(): void {
-
+  const nameControl = this.tagForm.get('name');
+  
+  if (!nameControl || nameControl.invalid) {
+    console.log('Form is invalid because the name field is invalid.');
+    console.log('Name field errors:', nameControl?.errors);
+    this.tagForm.markAllAsTouched();
+    this.cdr.detectChanges();
+    return; // Stop submission if the name field is invalid
+  }
   const formData = new FormData();
   formData.append('name', this.tagForm.get('name')?.value);
   formData.append('description', this.tagForm.get('description')?.value);
@@ -265,8 +273,17 @@ onCheckboxChange(category: any, event: any) {
  }
 
  updateCategory() {
-   if (this.tagForm.valid) {
-     const updatedCategory = { ...this.tagForm.value, id: this.selectedCategory.id };
+  const nameControl = this.tagForm.get('name');
+  
+  if (!nameControl || nameControl.invalid) {
+    console.log('Form is invalid because the name field is invalid.');
+    console.log('Name field errors:', nameControl?.errors);
+    this.tagForm.markAllAsTouched();
+    this.cdr.detectChanges();
+    return; // Stop submission if the name field is invalid
+  }
+  
+  const updatedCategory = { ...this.tagForm.value, id: this.selectedCategory.id };
 
      // Call the update service method using the category's id
      this.tagService.updateTag(this.selectedCategory.id, updatedCategory).subscribe(
@@ -290,9 +307,7 @@ onCheckboxChange(category: any, event: any) {
          this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
        }
      );
-   } else {
-     this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
-   }
+  
  }
 
  isDropdownOpen: boolean = false;
@@ -393,9 +408,14 @@ onCheckboxChange(category: any, event: any) {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllTags();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.tags.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllTags(); 
+      } else {
+        this.getAllTags();
+      }
     }
   }
   totalCount: number = 0; // Total count of items from the API

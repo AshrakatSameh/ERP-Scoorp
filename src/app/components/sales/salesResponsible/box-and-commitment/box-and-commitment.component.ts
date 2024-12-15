@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -25,11 +25,10 @@ export class BoxAndCommitmentComponent implements OnInit{
   // }
   convBoxForm:FormGroup;
   constructor(private convenantBox:ConvenantBoxService,private http:HttpClient,
-     private fb:FormBuilder, private toast:ToastrService){
+     private fb:FormBuilder, private toast:ToastrService,  private cdr: ChangeDetectorRef){
     this.convBoxForm= this.fb.group({
       covenantBoxName: ['', Validators.required],
-      code: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
   });
@@ -131,9 +130,17 @@ closeDropdown() {
   }
 
 onSubmit() {
+  const nameControl = this.convBoxForm.get('covenantBoxName');
+  
+  if (!nameControl || nameControl.invalid) {
+    console.log('Form is invalid because the name field is invalid.');
+    console.log('Name field errors:', nameControl?.errors);
+    this.convBoxForm.markAllAsTouched();
+    this.cdr.detectChanges();
+    return; // Stop submission if the name field is invalid
+  }
   const formData = new FormData();
   formData.append('covenantBoxName', this.convBoxForm.get('covenantBoxName')?.value);
-  formData.append('code', this.convBoxForm.get('code')?.value);
   formData.append('description', this.convBoxForm.get('description')?.value);
     // Append each attachment file
     this.attachments.controls.forEach((control) => {
@@ -257,9 +264,16 @@ closeModal() {
 }
 
 updateCategory() {
-  if (this.convBoxForm.valid) {
     const updatedCategory = { ...this.convBoxForm.value, id: this.selectedCategory.id };
-
+    const nameControl = this.convBoxForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.convBoxForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     // Call the update service method using the category's id
     this.convenantBox.update(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {
@@ -281,7 +295,7 @@ updateCategory() {
         this.toast.error('An error occurred while updating the item type .')
       }
     );
-    }
+    
   }
 
 deleteItemType(){
@@ -344,9 +358,14 @@ finalizeDeletion(successfulDeletions: number[], failedDeletions: { id: number; e
     this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
     this.getAllConvenantBoxesWithpaging();
     this.closeConfirmationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    if (this.filteredConvenentBoxes.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getAllConvenantBoxesWithpaging(); 
+    } else {
+      this.getAllConvenantBoxesWithpaging();
+    }
   }
 }
 showConfirmationModal = false;

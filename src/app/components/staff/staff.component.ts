@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -52,18 +52,18 @@ export class StaffComponent {
   constructor(private employeeService: EmployeeService, private fb: FormBuilder,
     private departmentService: DepartmentService, private supervisorService: SupervisorService,
     private managerService: ManagerService, private http: HttpClient, private toast: ToastrService,
-    private nationality: NationalityService, private locationServ: LocationService
+    private nationality: NationalityService, private locationServ: LocationService, private cdr: ChangeDetectorRef
   ) {
 
     this.employeeForm = this.fb.group({
       name: ['', Validators.required],
-      localName: ['', Validators.required],
-      jobTitle: ['', Validators.required],
+      localName: [''],
+      jobTitle: [''],
       departmentSupervisorId: ['', Validators.required],
       departmentManagerId: ['', Validators.required],
       departmentId: ['', Validators.required],
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
+      endDate: [''],
       passportNumber: [''],
       passportExpiryDate: [''],
       driverLicenseNumber: [''],
@@ -243,6 +243,51 @@ export class StaffComponent {
  }
     
   onSubmit() {
+    const nameControl = this.employeeForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.employeeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const depControl = this.employeeForm.get('departmentId');
+  
+    if (!depControl || depControl.invalid) {
+      console.log('Form is invalid because the departmentId field is invalid.');
+      console.log('departmentId field errors:', depControl?.errors);
+      this.employeeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const supervControl = this.employeeForm.get('departmentSupervisorId');
+  
+    if (!supervControl || supervControl.invalid) {
+      console.log('Form is invalid because the departmentSupervisorId field is invalid.');
+      console.log('departmentSupervisorId field errors:', supervControl?.errors);
+      this.employeeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const dateControl = this.employeeForm.get('startDate');
+  
+    if (!dateControl || dateControl.invalid) {
+      console.log('Form is invalid because the startDate field is invalid.');
+      console.log('startDate field errors:', dateControl?.errors);
+      this.employeeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const managerControl = this.employeeForm.get('departmentManagerId');
+    
+    if (!managerControl || managerControl.invalid) {
+      console.log('Form is invalid because the departmentManagerId field is invalid.');
+      console.log('departmentManagerId field errors:', managerControl?.errors);
+      this.employeeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     const name = this.employeeForm.get('name')!.value;
     const localName = this.employeeForm.get('localName')!.value;
@@ -260,13 +305,7 @@ export class StaffComponent {
     const borderNumber = this.employeeForm.get('borderNumber')!.value;
     const homeLocationIds = this.employeeForm.get('homeLocationIds')!.value; // Array of IDs
     const genderType = this.employeeForm.get('genderType')!.value;
-   
-    // Check for required fields
-    // if (!name || !localName || !jobTitle || !departmentSupervisorId || !departmentManagerId || !departmentId) {
-    //   console.error('One or more form fields are missing');
-    //   return;
-    // }
-  
+
     // Adding values to FormData
     formData.append('name', name);
     formData.append('localName', localName);
@@ -415,7 +454,51 @@ onDeselectAll(): void {
 
   updateCategory() {
       const updatedCategory = { ...this.employeeForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.employeeForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.employeeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const depControl = this.employeeForm.get('departmentId');
+    
+      if (!depControl || depControl.invalid) {
+        console.log('Form is invalid because the departmentId field is invalid.');
+        console.log('departmentId field errors:', depControl?.errors);
+        this.employeeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const supervControl = this.employeeForm.get('departmentSupervisorId');
+    
+      if (!supervControl || supervControl.invalid) {
+        console.log('Form is invalid because the departmentSupervisorId field is invalid.');
+        console.log('departmentSupervisorId field errors:', supervControl?.errors);
+        this.employeeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const dateControl = this.employeeForm.get('startDate');
+    
+      if (!dateControl || dateControl.invalid) {
+        console.log('Form is invalid because the startDate field is invalid.');
+        console.log('startDate field errors:', dateControl?.errors);
+        this.employeeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const managerControl = this.employeeForm.get('departmentManagerId');
+    
+      if (!managerControl || managerControl.invalid) {
+        console.log('Form is invalid because the departmentManagerId field is invalid.');
+        console.log('departmentManagerId field errors:', managerControl?.errors);
+        this.employeeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.employeeService.updateEmployee(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -503,9 +586,14 @@ onDeselectAll(): void {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllEmployees();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredEmployee.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllEmployees(); 
+      } else {
+        this.getAllEmployees();
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -16,12 +16,12 @@ export class TypeOfContractsComponent {
   pageSize: number = 10;
 contractTypes:any[]=[];
   constructor(private http: HttpClient, private fb:FormBuilder,private contractService:ContractTypeService,
-    private toast: ToastrService, private renderer:Renderer2
+    private toast: ToastrService, private renderer:Renderer2,private cdr: ChangeDetectorRef
   ){
     this.contractTypeForm= this.fb.group({
       name:['', Validators.required],
-      localName:['', Validators.required],
-      description:['', Validators.required],
+      localName:[''],
+      description:[''],
       //colorId:['',Validators.required]
     });
     this.getAllContractTypes();
@@ -51,6 +51,15 @@ contractTypes:any[]=[];
   }
   onSubmitAdd(): void {
      
+    const nameControl = this.contractTypeForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.contractTypeForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
       // Call the service to post the data
       const formData = this.contractTypeForm.value; // Get the form data
       this.contractService.createContractType(formData).subscribe(
@@ -275,7 +284,16 @@ updateSelectAll() {
   }
 
   updateCategory() {
-    if (this.contractTypeForm.valid) {
+    const nameControl = this.contractTypeForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.contractTypeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      
       const updatedCategory = { ...this.contractTypeForm.value, id: this.selectedCategory.id };
 
       // Call the update service method using the category's id
@@ -300,9 +318,7 @@ updateSelectAll() {
           this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
         }
       );
-    } else {
-      this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
-    }
+   
   }
 
   deleteItemType(){
@@ -365,9 +381,14 @@ updateSelectAll() {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllContractTypes();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredTypeContracts.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllContractTypes(); 
+      } else {
+        this.getAllContractTypes();
+      }
     }
   }
   

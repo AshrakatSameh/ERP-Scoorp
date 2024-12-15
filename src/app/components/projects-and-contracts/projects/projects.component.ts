@@ -1,9 +1,9 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ProjactService } from 'src/app/services/getAllServices/Projects/projact.service';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment.development';
 import { Toast, ToastrService } from 'ngx-toastr';
 import { LocationService } from 'src/app/services/getAllServices/Location/location.service';
@@ -11,6 +11,12 @@ import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.
 import { UserService } from 'src/app/services/getAllServices/Users/user.service';
 import { TeamsService } from 'src/app/services/getAllServices/Teams/teams.service';
 import * as bootstrap from 'bootstrap';
+import { ContractService } from 'src/app/services/getAllServices/Contracts/contract.service';
+import { EquipmentService } from 'src/app/services/getAllServices/Equipment/equipment.service';
+import { ContactsService } from 'src/app/services/getAllServices/Contacts/contacts.service';
+import { NationalityService } from 'src/app/services/getAllServices/Nationality/nationality.service';
+import { ProjectTypeService } from 'src/app/services/getAllServices/ProjectTypes/project-type.service';
+import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
 
 @Component({
   selector: 'app-projects',
@@ -25,32 +31,56 @@ export class ProjectsComponent implements OnInit {
   names: any[] = [];
   projectForm: FormGroup;
   apiUrl = environment.apiUrl;
+  dropdownSettings = {};
+  ContactdropdownSettings: any;
+  ContractsdropdownSettings: any;
+  EquipdropdownSettings: any;
+  contactForm:FormGroup;
 
 
   constructor(private projectService: ProjactService, private http: HttpClient,
     private fb: FormBuilder, private toast: ToastrService, private locationServ: LocationService,
     private clientService: ClientsService, private userServ: UserService, private renderer: Renderer2,
-    private teamServ: TeamsService
+    private teamServ: TeamsService, private contractService: ContractService, private equipService: EquipmentService,
+    private cdr: ChangeDetectorRef, private contactS: ContactsService, private locationService: LocationService,
+    private nationality: NationalityService, private projectTypeService: ProjectTypeService,
+    private costCenter: CostCenterService
   ) {
 
 
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
-      clientId: [''],
-      assignedToId: [''],
+      description:[''],
+      clientId: ['', null],
+      assignedToId: ['', Validators.required],
       teamId: [''],
-      userIds: this.fb.array([]),
-      startDate: [null],
-      endDate: [null],
-      locations: [],
-
-      // status: [null, Validators.required],
+      userIds: this.fb.array([], Validators.required),
+      startDate: [''],
+      endDate: [''],
+      projectTypeId:[''], 
+      costCenterId:[''],
+      contractIds:this.fb.array([]),
+      equipmentIds:this.fb.array([]),
+      contactIds:this.fb.array([]),
+      locationsIds: [],
       priority: [0],
-      size: [0],
+      size: [0]
+    });
 
-
-
+    this.contactForm = this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      phoneNumber1: [''],
+      phoneNumber2: [''],
+      jobTitle: [''],
+      email: [''],
+      locationLinks: [''],
+      nationality: [''],
+      clientId: [''],
+      supplier: [''],
+      description:[''],
+      attachments: this.fb.array([]),
     });
   }
 
@@ -61,8 +91,59 @@ export class ProjectsComponent implements OnInit {
     this.getAllClients();
     this.getAllTeams();
     this.getAllUsers();
+    this.getAllEquipments();
+    this.getAllContracts();
+    this. getAllContacts();
+    this.initializeDropdownSettings();
+    this.initializeEquipDropdownSettings();
+    this.initializeContactDropdownSettings();
+    this.getLocations();
+    this.getNationalities();
+    this.getAllCostCenters();
+    this.getAllProjectType();
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Replace 'id' with the key from your user object
+      textField: 'userName', // Replace 'name' with the key for user name
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true, // Enable search
+    };
   }
 
+  // Handle item selection
+  onItemSelect(item: any) {
+    const userIds = this.projectForm.get('userIds') as FormArray;
+    userIds.push(this.fb.control(item.id)); // Push selected ID into FormArray
+  }
+
+  // Handle item deselection
+  onItemDeselect(item: any) {
+    const userIds = this.projectForm.get('userIds') as FormArray;
+    const index = userIds.controls.findIndex((control) => control.value === item.id);
+    if (index !== -1) {
+      userIds.removeAt(index); // Remove deselected ID from FormArray
+    }
+  }
+
+  // Handle "Select All"
+  onSelectAll(items: any[]) {
+    const userIds = this.projectForm.get('userIds') as FormArray;
+    items.forEach((item) => {
+      if (!userIds.controls.some((control) => control.value === item.id)) {
+        userIds.push(this.fb.control(item.id)); // Add all IDs to FormArray
+      }
+    });
+  }
+
+  // Handle "Deselect All"
+  onDeselectAll() {
+    const userIds = this.projectForm.get('userIds') as FormArray;
+    while (userIds.length) {
+      userIds.removeAt(0); // Clear all IDs from FormArray
+    }
+  }
   isMapView = false;
 
   toggleMap() {
@@ -101,19 +182,7 @@ export class ProjectsComponent implements OnInit {
     this.iscardsview = true;
   }
 
-  // isDropdownOpen = false;
-  // isRowRemoved = false;
 
-  // openDropdown() {
-  //   this.isDropdownOpen = !this.isDropdownOpen;
-  //   if (this.isDropdownOpen) {
-  //     this.removeRow();
-  //   }
-  // }
-
-  // removeRow() {
-  //   this.isRowRemoved = true;
-  // }
 
   buttons = ['التفاصيل', 'المهام', 'الاستبيانات', 'التعليقات', 'مالية المشروع']
 
@@ -123,13 +192,6 @@ export class ProjectsComponent implements OnInit {
   showContent(index: number): void {
     this.selectedButton = index;
   }
-
-
-  // get all
-
-
-
-
 
   getAllProjects() {
     this.projectService.getProjacts(this.pageNumber, this.pageSize)
@@ -156,6 +218,57 @@ export class ProjectsComponent implements OnInit {
       }
     );
   }
+  contracts: any[] = [];
+  getAllContracts() {
+    this.contractService.getAllContracts().subscribe(
+      (response) => {
+        this.contracts = response.contracts; // Assign the fetched Warehouses
+        // console.log('contracts :', this.locations);
+      },
+      (error) => {
+        console.error('Error fetching contracts:', error); // Handle errors
+      }
+    );
+  }
+  initializeDropdownSettings() {
+    this.ContractsdropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Adjust according to your API response field
+      textField: 'name', // Adjust according to your API response field
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true,
+    };
+  }
+  onContractSelect(item: any) {
+    const contractIds = this.projectForm.get('contractIds') as FormArray;
+    contractIds.push(this.fb.control(item.id));
+  }
+
+  // Remove deselected contract from the form array
+  onContractDeselect(item: any) {
+    const contractIds = this.projectForm.get('contractIds') as FormArray;
+    const index = contractIds.controls.findIndex((control) => control.value === item.id);
+    if (index >= 0) {
+      contractIds.removeAt(index);
+    }
+  }
+
+  // Select all contracts
+  onContractSelectAll(items: any[]) {
+    const contractIds = this.projectForm.get('contractIds') as FormArray;
+    contractIds.clear(); // Clear previous selections
+    items.forEach((item) => {
+      contractIds.push(this.fb.control(item.id));
+    });
+  }
+
+  // Deselect all contracts
+  onContractDeselectAll() {
+    const contractIds = this.projectForm.get('contractIds') as FormArray;
+    contractIds.clear();
+  }
   teamss: any[] = [];
   getAllTeams() {
     this.teamServ.getTeams().subscribe(
@@ -180,16 +293,144 @@ export class ProjectsComponent implements OnInit {
       }
     );
   }
-  users: any[] = [];
-  getAllUsers() {
-    this.userServ.getUsers().subscribe(
+  costCenters: any[] = [];
+  getAllCostCenters() {
+    this.costCenter.getAllCostCaners().subscribe(
       (response) => {
-        this.users = response;
+        this.costCenters = response.costCenters;
+        
       },
       (error) => {
         console.error('Error fetching users section:', error); // Handle errors
       }
     )
+  }
+  projectTypes: any[] = [];
+  getAllProjectType() {
+    this.projectTypeService.getAllProjectTypesNoPaging().subscribe(
+      (response) => {
+        this.projectTypes = response.data;
+        
+      },
+      (error) => {
+        console.error('Error fetching users section:', error); // Handle errors
+      }
+    )
+  }
+  users: any[] = [];
+  getAllUsers() {
+    this.userServ.getUsers().subscribe(
+      (response) => {
+        this.users = response;
+        console.log('users:' , this.users)
+      },
+      (error) => {
+        console.error('Error fetching users section:', error); // Handle errors
+      }
+    )
+  }
+  equips: any[] = [];
+  getAllEquipments() {
+    this.equipService.getEquipments().subscribe(
+      (response) => {
+        this.equips = response.data;
+        console.log('equipments:' , this.users)
+      },
+      (error) => {
+        console.error('Error fetching equipments:', error); // Handle errors
+      }
+    )
+  }
+    initializeEquipDropdownSettings() {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Adjust according to your API response field
+      textField: 'name', // Adjust according to your API response field
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true,
+    };
+  }
+  onEquipmentSelect(item: any) {
+    const equipmentIds = this.projectForm.get('equipmentIds') as FormArray;
+    equipmentIds.push(this.fb.control(item.id));
+  }
+
+  // Remove deselected equipment from the form array
+  onEquipmentDeselect(item: any) {
+    const equipmentIds = this.projectForm.get('equipmentIds') as FormArray;
+    const index = equipmentIds.controls.findIndex((control) => control.value === item.id);
+    if (index >= 0) {
+      equipmentIds.removeAt(index);
+    }
+  }
+
+  // Select all equipment
+  onEquipmentSelectAll(items: any[]) {
+    const equipmentIds = this.projectForm.get('equipmentIds') as FormArray;
+    equipmentIds.clear(); // Clear previous selections
+    items.forEach((item) => {
+      equipmentIds.push(this.fb.control(item.id));
+    });
+  }
+
+  // Deselect all equipment
+  onEquipmentDeselectAll() {
+    const equipmentIds = this.projectForm.get('equipmentIds') as FormArray;
+    equipmentIds.clear();
+  }
+
+  contacts: any[] = [];
+  getAllContacts() {
+    this.contactS.getAllContactsWithoutPaging().subscribe(
+      (response) => {
+        this.contacts = response.contacts; // Assign the fetched Warehouses
+        // console.log('contacts :', this.locations);
+      },
+      (error) => {
+        console.error('Error fetching contacts:', error); // Handle errors
+      }
+    );
+  }
+  initializeContactDropdownSettings() {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Adjust according to your API response field
+      textField: 'name', // Adjust according to your API response field
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true,
+    };
+  }
+  onContactSelect(item: any) {
+    const contactIds = this.projectForm.get('contactIds') as FormArray;
+    contactIds.push(this.fb.control(item.id));
+  }
+
+  // Remove deselected contact from the form array
+  onContactDeselect(item: any) {
+    const contactIds = this.projectForm.get('contactIds') as FormArray;
+    const index = contactIds.controls.findIndex((control) => control.value === item.id);
+    if (index >= 0) {
+      contactIds.removeAt(index);
+    }
+  }
+
+  // Select all contacts
+  onContactSelectAll(items: any[]) {
+    const contactIds = this.projectForm.get('contactIds') as FormArray;
+    contactIds.clear(); // Clear previous selections
+    items.forEach((item) => {
+      contactIds.push(this.fb.control(item.id));
+    });
+  }
+
+  // Deselect all contacts
+  onContactDeselectAll() {
+    const contactIds = this.projectForm.get('contactIds') as FormArray;
+    contactIds.clear();
   }
 
   @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -201,7 +442,55 @@ export class ProjectsComponent implements OnInit {
     });
   }
   api = environment.apiUrl + 'Project/CreateProject';
+  initializeProjectForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      description:[''],
+      clientId: ['', null],
+      assignedToId: ['', Validators.required],
+      teamId: [''],
+      userIds: this.fb.array([], Validators.required),
+      startDate: [''],
+      endDate: [''],
+      projectTypeId:[''], 
+      costCenterId:[''],
+      contractIds:this.fb.array([]),
+      equipmentIds:this.fb.array([]),
+      contactIds:[''],
+      locationsIds: [],
+      priority: [0],
+      size: [0],
+    });
+  }
   onSubmit() {
+    const nameControl = this.projectForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.projectForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const assignControl = this.projectForm.get('assignedToId');
+  
+    if (!assignControl || assignControl.invalid) {
+      console.log('Form is invalid because the assignedToId field is invalid.');
+      console.log('assignedToId field errors:', assignControl?.errors);
+      this.projectForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const userControl = this.projectForm.get('userIds');
+  
+    if (!userControl || userControl.invalid) {
+      console.log('Form is invalid because the userIds field is invalid.');
+      console.log('userIds field errors:', userControl?.errors);
+      this.projectForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
 
     formData.append('name', this.projectForm.get('name')?.value);
@@ -230,7 +519,7 @@ export class ProjectsComponent implements OnInit {
         console.log('Response:', response);
         this.toast.success("تم الإضافة بنجاح");
         this.getAllProjects();
-        this.projectForm.reset();
+        this.projectForm= this.initializeProjectForm();
         const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
         if (modalInstance) {
           modalInstance.hide();
@@ -336,8 +625,11 @@ export class ProjectsComponent implements OnInit {
         endDate: this.selectedCategory.endDate,
         priority: this.selectedCategory.priority,
         size: this.selectedCategory.size,
+        locationsIds: this.selectedCategory.locationsIds,
       });
-
+      this.patchArrayValues('contractIds', this.selectedCategory.contractIds);
+      this.patchArrayValues('equipmentIds', this.selectedCategory.equipmentIds);
+      this.patchArrayValues('contactIds', this.selectedCategory.contactIds);
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -347,11 +639,46 @@ export class ProjectsComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
   }
+  patchArrayValues(arrayName: string, values: any[]) {
+    const formArray = this.projectForm.get(arrayName) as FormArray;
+    formArray.clear(); // Clear existing values in the array
+  
+    if (values && Array.isArray(values)) {
+      values.forEach((value) => {
+        formArray.push(this.fb.control(value)); // Add each value as a form control
+      });
+    }
+  }
 
   updateCategory() {
-    if (this.projectForm.valid) {
       const updatedCategory = { ...this.projectForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.projectForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.projectForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const assignControl = this.projectForm.get('assignedToId');
+    
+      if (!assignControl || assignControl.invalid) {
+        console.log('Form is invalid because the assignedToId field is invalid.');
+        console.log('assignedToId field errors:', assignControl?.errors);
+        this.projectForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const userControl = this.projectForm.get('userIds');
+    
+      if (!userControl || userControl.invalid) {
+        console.log('Form is invalid because the userIds field is invalid.');
+        console.log('userIds field errors:', userControl?.errors);
+        this.projectForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.projectService.updateProject(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -374,7 +701,7 @@ export class ProjectsComponent implements OnInit {
           this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
         }
       );
-    }
+    
   }
 
 
@@ -458,9 +785,14 @@ export class ProjectsComponent implements OnInit {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllProjects();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredProjects.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllProjects(); 
+      } else {
+        this.getAllProjects();
+      }
     }
   }
 
@@ -540,5 +872,104 @@ applySearchFilter() {
     this.filteredProjects = this.try;
   }
 }
+  // handle array of attachments
+  fileNames: string[] = []; // Array to store file names
 
+  get attachments(): FormArray {
+    return this.contactForm.get('attachments') as FormArray;
+  }
+
+  // Method to handle file selection
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const fileData = {
+        fileTitle: [file.name],
+        fileType: [file.type],
+        fileSize: [file.size],
+        fileUrl: [null],  // URL will be set after uploading
+        file: [file]  
+      };
+      // Add the selected file to the FormArray as a FormControl
+      this.attachments.push(this.fb.control(file));
+
+      // Reset the input value to allow selecting the same file again
+      input.value = '';
+    }
+  }
+
+  // Method to remove a file from the attachments FormArray
+  removeAttachment(index: number): void {
+    this.attachments.removeAt(index);
+  }
+onSubmitContact() {
+    const formData = new FormData();
+    formData.append('name', this.contactForm.get('name')?.value);
+    formData.append('localName', this.contactForm.get('localName')?.value);
+    formData.append('phoneNumber1', this.contactForm.get('phoneNumber1')?.value);
+    formData.append('phoneNumber2', this.contactForm.get('phoneNumber2')?.value);
+    formData.append('jobTitle', this.contactForm.get('jobTitle')?.value);
+    formData.append('email', this.contactForm.get('email')?.value);
+    formData.append('locationLinks', this.contactForm.get('locationLinks')?.value);
+    formData.append('nationality', this.contactForm.get('nationality')?.value);
+    formData.append('clientId', this.contactForm.get('clientId')?.value);
+    formData.append('supplier', this.contactForm.get('supplier')?.value);
+    formData.append('description', this.contactForm.get('description')?.value);
+    this.attachments.controls.forEach((control) => {
+      const file = control.value;
+      if (file) {
+        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+      }
+    });
+
+  
+    const headers = new HttpHeaders({
+      'tenant': localStorage.getItem('tenant')||''  // Add your tenant value here
+    });
+  
+    this.http.post(this.apiUrl, formData, { headers })
+      .subscribe(response => {
+        console.log('Response:', response);
+        // alert('submit successfully');
+        this.toast.success('تم الإضافة بنجاح');
+        const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+        // Ensure proper cleanup after modal closure
+        setTimeout(() => {
+          document.body.classList.remove('modal-open');
+          
+          document.body.style.overflow = '';
+        }, 300);
+        this.getAllContacts();
+        this.contactForm.reset();
+        this.attachments.clear();
+      }, error => {
+        console.error('Error:', error);
+        this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
+
+      });
+  }
+  location:any[]=[];
+  getLocations() {
+    this.locationService.getLocations()
+      .subscribe(data => {
+        this.location = data.data;
+        console.log(this.location);
+      }, error => {
+        console.error('Error fetching location data:', error);
+      });
+  }
+nationalities:any[]=[];
+  getNationalities() {
+    this.nationality.getAllNationalities()
+      .subscribe(data => {
+        this.nationalities = data;
+        // console.log(this.nationalities);
+      }, error => {
+        console.error('Error fetching nationalities data:', error);
+      });
+  }
 }

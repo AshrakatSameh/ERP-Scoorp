@@ -138,14 +138,13 @@
                     >
                       <thead>
                         <tr class="firstcol">
-                          <th class="firstcolleft position-relative">
+                          <!-- <th class="firstcolleft position-relative">
                             <i
                               class="fa-solid fa-right-left"
                               (click)="openDropdown()"
                               style="cursor: pointer"
                             ></i>
   
-                            <!-- Custom Dropdown -->
                             <ul
                               class="dropdown-menu"
                               [ngClass]="{ show: isDropdownOpen }"
@@ -183,7 +182,7 @@
                               </a>
                             </li>
                             </ul>
-                          </th>
+                          </th> -->
                          
                           <th>وصف</th>
                           <th> لون النوع</th>
@@ -209,7 +208,6 @@
                       </thead>
                       <tbody >
                         <tr *ngFor="let item of filteredTypeProjects, let i= index">
-                          <td></td>
   
                           <td>{{item.description}}</td>
                           <td>{{item.colorId}}</td>
@@ -217,8 +215,8 @@
                           <td>{{item.localName}}</td>
                           <td>{{item.name}}</td>
                           <td class="fixed-right">{{i+1}}</td>
-                          <td class="firstcolright fixed-right">
-                            <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item, $event)" class="large-checkbox mx-4" />
+                          <td class=" fixed-right">
+                            <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item, $event)" class="large-checkbox mx-1" />
                           </td>
                         </tr>
                         
@@ -346,8 +344,17 @@
                       type="text"
                       id="name"
                       formControlName="name" class="form-control custom-input"
-                      placeholder="اسم نوع المشروع باللغه المحليه"
+                      placeholder="اسم نوع المشروع "
                     />
+                    <div
+                    *ngIf="
+                      projectTypeForm.get('name')?.invalid &&
+                      projectTypeForm.get('name')?.touched
+                    "
+                    class="text-danger"
+                  >
+                    اسم نوع المشروع مطلوب.
+                  </div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -408,7 +415,7 @@
             </div>
           </form>
         </div>
-      </div>
+      </div> 
     </div>
   </div>
   
@@ -452,6 +459,15 @@
                        formControlName="localName" class="form-control custom-input"
                       placeholder="section"
                     />
+                    <div
+                    *ngIf="
+                      projectTypeForm.get('name')?.invalid &&
+                      projectTypeForm.get('name')?.touched
+                    "
+                    class="text-danger"
+                  >
+                    اسم نوع المشروع مطلوب.
+                  </div>
                   </div>
                 </div>
               </div>

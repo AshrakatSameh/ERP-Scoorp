@@ -123,8 +123,8 @@
                                     <thead>
                                         <tr class="firstcol">
 
-                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                                            </th>
+                                            <!-- <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th> -->
                                             <th>ملف</th>
                                             <th>وصف فترة السداد</th>
                                     
@@ -142,14 +142,14 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let item of tags, let i =index">
-                                            <td> </td>
+                                            <!-- <td> </td> -->
                                             <td> </td>
                                             <td>{{item.description}}</td>
                                        
                                             <td>{{item.name}}</td>
                                             <td class="fixed-right">{{i+1}}</td>
                                             <td class="fixed-right">   <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                                                class="large-checkbox mx-4" />
+                                                class="large-checkbox mx-1" />
                                             </td>
                                         </tr>
 
@@ -206,6 +206,15 @@
                                 <div class="form-group">
                                     <label for="field4 text-end"> اسم الوسم</label>
                                     <input type="text" id="name" formControlName="name" class="form-control" placeholder="اسم الوسم" />
+                                    <div
+                                    *ngIf="
+                                      tagForm.get('name')?.invalid &&
+                                      tagForm.get('name')?.touched
+                                    "
+                                    class="text-danger"
+                                  >
+                                    اسم الوسم مطلوب.
+                                  </div>
                                 </div>
                             </div>
 
@@ -327,6 +336,15 @@
                                 <div class="form-group">
                                     <label for="field4 text-end"> اسم الوسم</label>
                                     <input type="text" id="name" formControlName="name" class="form-control" placeholder="اسم الوسم" />
+                                    <div
+                                    *ngIf="
+                                      tagForm.get('name')?.invalid &&
+                                      tagForm.get('name')?.touched
+                                    "
+                                    class="text-danger"
+                                  >
+                                    اسم الوسم مطلوب.
+                                  </div>
                                 </div>
                             </div>
 

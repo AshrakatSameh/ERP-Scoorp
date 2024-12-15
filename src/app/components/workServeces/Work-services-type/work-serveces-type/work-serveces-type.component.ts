@@ -18,6 +18,7 @@ export class WorkServecesTypeComponent implements OnInit {
   users: any[] = [];
   serviceTypeForm: FormGroup;
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
 
   dropdownSettings = {};
   dropdownSettingsList: any[] = [];

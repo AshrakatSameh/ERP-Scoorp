@@ -259,3 +259,13 @@ select.form-select{
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+.overlay {
+  position: fixed; /* Positioning and size */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(78, 78, 78, 0.5); /* color */
+  display: none; /* making it hidden by default */
+}

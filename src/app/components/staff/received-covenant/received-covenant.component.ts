@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -24,14 +24,16 @@ export class ReceivedCovenantComponent implements OnInit {
   api = environment.apiUrl + 'Covenants/CreateCovenant'
   constructor(private ConvenantService: ConvenantService, private fb: FormBuilder,
     private employeeService: EmployeeService, private equipService: EquipmentService,
-    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2) {
+    private http: HttpClient, private toast: ToastrService, private renderer: Renderer2,
+      private cdr: ChangeDetectorRef
+  ) {
     this.convenantForm = this.fb.group({
       name: ['', Validators.required],
-      localName: ['', Validators.required],
+      localName: [''],
       receivingStartDate: ['', Validators.required],
-      receivingEndDate: ['', Validators.required],
+      receivingEndDate: [''],
       employeeId: ['', Validators.required],
-      equipmentId: ['', Validators.required],
+      equipmentId: [''],
       description: [],
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
@@ -167,6 +169,33 @@ export class ReceivedCovenantComponent implements OnInit {
      });
    }
    onSubmit(): void {
+    const nameControl = this.convenantForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.convenantForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const EmpControl = this.convenantForm.get('employeeId');
+
+    if (!EmpControl || EmpControl.invalid) {
+      console.log('Form is invalid because the employee field is invalid.');
+      console.log('employee field errors:', EmpControl?.errors);
+      this.convenantForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const dateControl = this.convenantForm.get('receivingStartDate');
+
+    if (!dateControl || dateControl.invalid) {
+      console.log('Form is invalid because the receivingStartDate field is invalid.');
+      console.log('receivingStartDate field errors:', dateControl?.errors);
+      this.convenantForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.convenantForm.get('name')!.value);
     formData.append('localName', this.convenantForm.get('localName')!.value);
@@ -358,7 +387,33 @@ export class ReceivedCovenantComponent implements OnInit {
  
    updateCategory() {
        const updatedCategory = { ...this.convenantForm.value, id: this.selectedCategory.id };
- 
+       const nameControl = this.convenantForm.get('name');
+  
+       if (!nameControl || nameControl.invalid) {
+         console.log('Form is invalid because the name field is invalid.');
+         console.log('Name field errors:', nameControl?.errors);
+         this.convenantForm.markAllAsTouched();
+         this.cdr.detectChanges();
+         return; // Stop submission if the name field is invalid
+       }
+       const EmpControl = this.convenantForm.get('employeeId');
+  
+       if (!EmpControl || EmpControl.invalid) {
+         console.log('Form is invalid because the employee field is invalid.');
+         console.log('employee field errors:', EmpControl?.errors);
+         this.convenantForm.markAllAsTouched();
+         this.cdr.detectChanges();
+         return; // Stop submission if the name field is invalid
+       }
+       const dateControl = this.convenantForm.get('receivingStartDate');
+  
+       if (!dateControl || dateControl.invalid) {
+         console.log('Form is invalid because the receivingStartDate field is invalid.');
+         console.log('receivingStartDate field errors:', dateControl?.errors);
+         this.convenantForm.markAllAsTouched();
+         this.cdr.detectChanges();
+         return; // Stop submission if the name field is invalid
+       }
        // Call the update service method using the category's id
        this.ConvenantService.updateCoveant(this.selectedCategory.id, updatedCategory).subscribe(
          (response) => {
@@ -456,9 +511,14 @@ export class ReceivedCovenantComponent implements OnInit {
        this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
        this.getAllConvenants();
        this.closeConfirmationModal();
-       setTimeout(() => {
-         window.location.reload();
-       }, 1000);
+       if (this.filteredConvenant.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllConvenants(); 
+      } else {
+        this.getAllConvenants();
+      }
      }
    }
 

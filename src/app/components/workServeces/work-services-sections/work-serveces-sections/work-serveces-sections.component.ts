@@ -15,6 +15,8 @@ export class WorkServecesSectionsComponent implements OnInit {
 
   apiUrl = environment.apiUrl;
   serviceDepForm: FormGroup;
+  imgApiUrl= environment.imgApiUrl;
+  
   constructor(private serDep: ServiceDepartmentService, private fb: FormBuilder, private http: HttpClient,
     private toast: ToastrService, private cdr: ChangeDetectorRef
   ) {

@@ -209,3 +209,10 @@ select.form-select{
     cursor: pointer;
     margin-bottom: 10px;
   }
+
+  .overlay {
+    position: fixed; /* Positioning and size */
+  
+    background-color: rgba(78, 78, 78, 0.5); /* color */
+    display: none; /* making it hidden by default */
+  }

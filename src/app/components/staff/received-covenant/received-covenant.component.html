@@ -121,8 +121,8 @@
                   <table id="basic-datatables" class="display table table-striped table-hover">
                     <thead>
                       <tr class="firstcol">
-                        <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                        </th>
+                        <!-- <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        </th> -->
                         <th>الموظف المستلم</th>
                         <th>تاريخ الانشاء</th>
                         <th>اسم العهده باللغة المحلية</th>
@@ -140,7 +140,7 @@
                     </thead>
                     <tbody>
                       <tr *ngFor="let item of filteredConvenant , let i = index">
-                        <td> </td>
+                        <!-- <td> </td> -->
                         <td>{{item.employeeName}}</td>
                         <td>{{item.receivingStartDate | date: 'yyyy-MM-dd'}}</td>
                         <td>{{item.localName}}</td>
@@ -148,7 +148,7 @@
                         <td class="fixed-right">{{i+1}}</td>
                         <td class="firstcolright fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                          class="large-checkbox mx-4" />                      </td>
+                          class="large-checkbox mx-1" />                      </td>
                       </tr>
 
                     </tbody>
@@ -206,6 +206,15 @@
                 <div class="form-group">
                   <label for="name text-end"> اسم العهده</label>
                   <input type="text" id="name" formControlName="name" class="form-control custom-input" placeholder="اسم العهده" />
+                  <div
+                  *ngIf="
+                    convenantForm.get('name')?.invalid &&
+                    convenantForm.get('name')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم العهده مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -217,22 +226,9 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="receivingStartDate "> تاريخ الانشاء </label>
-                  <input disabled type="date" id="field2" class="form-control custom-input" placeholder="قم باختيار التاريخ" />
-                </div>
-              </div>
-            </div>
 
             <div class="row ">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field3"> المنشأ</label>
-                  <input disabled type="text" id="field3" class="form-control custom-input" placeholder="اسم العهده" />
-                </div>
-              </div>
+             
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="location" class="form-label">الموظف المستلم</label>
@@ -244,6 +240,15 @@
                          
                       </select>
                   </div>
+                  <div
+                  *ngIf="
+                    convenantForm.get('employeeId')?.invalid &&
+                    convenantForm.get('employeeId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم الموظف مطلوب.
+                </div>
               </div>
               </div>
             </div>
@@ -256,6 +261,15 @@
                   <label for="field5">تاريخ بدايه استلام العهده</label>
                   <input type="date" id="receivingStartDate" formControlName="receivingStartDate" class="form-control custom-input" placeholder="قم باختيار التاريخ" />
                 </div>
+                <div
+                *ngIf="
+                  convenantForm.get('receivingStartDate')?.invalid &&
+                  convenantForm.get('receivingStartDate')?.touched
+                "
+                class="text-danger"
+              >
+                تاريخ البداية مطلوب.
+              </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
@@ -388,6 +402,15 @@
                   <label for="name text-end"> اسم العهده</label>
                   <input type="text" id="name" formControlName="name" class="form-control custom-input" placeholder="اسم العهده" />
                 </div>
+                <div
+                *ngIf="
+                  convenantForm.get('name')?.invalid &&
+                  convenantForm.get('name')?.touched
+                "
+                class="text-danger"
+              >
+                اسم العهده مطلوب.
+              </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
@@ -425,6 +448,15 @@
                          
                       </select>
                   </div>
+                  <div
+                  *ngIf="
+                    convenantForm.get('employeeId')?.invalid &&
+                    convenantForm.get('employeeId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم الموظف مطلوب.
+                </div>
               </div>
               </div>
             </div>
@@ -436,6 +468,15 @@
                 <div class="form-group">
                   <label for="field5">تاريخ بدايه استلام العهده</label>
                   <input type="date" id="receivingStartDate" formControlName="receivingStartDate" class="form-control custom-input" placeholder="قم باختيار التاريخ" />
+                  <div
+                *ngIf="
+                  convenantForm.get('receivingStartDate')?.invalid &&
+                  convenantForm.get('receivingStartDate')?.touched
+                "
+                class="text-danger"
+              >
+                تاريخ البداية مطلوب.
+              </div>
                 </div>
               </div>
               <div class="col-md-6">

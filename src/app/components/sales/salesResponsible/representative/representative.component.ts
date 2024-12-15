@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { error } from 'jquery';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,7 @@ import { TestService } from 'src/app/services/getAllServices/Test/test.service';
 import { UserTypesService } from 'src/app/services/getAllServices/UserTypes/user-types.service';
 import { environment } from 'src/environments/environment.development';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
+import * as bootstrap from 'bootstrap';
 
 
 @Component({
@@ -43,18 +44,17 @@ export class RepresentativeComponent implements OnInit {
   constructor(private representService: RepresentativeService, private teamService: TeamsService,
     private userTypeService: UserTypesService,
     private http: HttpClient, private fb: FormBuilder, private testService: TestService,
-    private empService: EmployeeService, private toast: ToastrService) {
+    private empService: EmployeeService, private toast: ToastrService,private cdr: ChangeDetectorRef) {
     this.representativeForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.required],
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      // userTypeId: ['', Validators.required],
-      description: [],
-      jobType: [],
-      accessTypes: this.fb.array([]),
-      employeeId: [''] // Initialize accessTypes as a FormArray
+      endDate: [''],
+      description: [''],
+      jobType: ['', Validators.required],
+      accessTypes: this.fb.array([], Validators.required),
+      employeeId: ['', Validators.required] // Initialize accessTypes as a FormArray
 
     });
 
@@ -175,7 +175,7 @@ export class RepresentativeComponent implements OnInit {
     }
   }
 
- 
+
 
   // Handle item deselection in dropdown
   onItemDeselect(item: any): void {
@@ -194,50 +194,86 @@ export class RepresentativeComponent implements OnInit {
   }
 
   // select checkbox
-selectAll = false;
+  selectAll = false;
 
-selectedCount = 0;
+  selectedCount = 0;
 
-toggleAllCheckboxes() {
-  // Set each item's checked status to match selectAll
-  this.representative.forEach(item => (item.checked = this.selectAll));
-  // Update the selected count
-  this.selectedCount = this.selectAll ? this.representative.length : 0;
-}
-
-updateSelectAll() {
-  // Update selectAll if all items are checked
-  this.selectAll = this.representative.every(item => item.checked);
-  // Calculate the number of selected items
-  this.selectedCount = this.representative.filter(item => item.checked).length;
-}
-
-selectedCategory: any = null;
-
-onCheckboxChange(category: any) {
-  // this.updateSelectAll();
-  // this.selectedCategory = category;  
-  //--------------------------------------------------------------------------
-  this.updateSelectAll();
-
-  if (category.checked) {
-    // If the checkbox is checked, set the selected category
-    this.selectedCategory = category;
-  } else {
-    // If the checkbox is unchecked, clear the selected category
-    this.selectedCategory = null;
+  toggleAllCheckboxes() {
+    // Set each item's checked status to match selectAll
+    this.representative.forEach(item => (item.checked = this.selectAll));
+    // Update the selected count
+    this.selectedCount = this.selectAll ? this.representative.length : 0;
   }
-}
+
+  updateSelectAll() {
+    // Update selectAll if all items are checked
+    this.selectAll = this.representative.every(item => item.checked);
+    // Calculate the number of selected items
+    this.selectedCount = this.representative.filter(item => item.checked).length;
+  }
+
+  selectedCategory: any = null;
+
+  onCheckboxChange(category: any) {
+    // this.updateSelectAll();
+    // this.selectedCategory = category;  
+    //--------------------------------------------------------------------------
+    this.updateSelectAll();
+
+    if (category.checked) {
+      // If the checkbox is checked, set the selected category
+      this.selectedCategory = category;
+    } else {
+      // If the checkbox is unchecked, clear the selected category
+      this.selectedCategory = null;
+    }
+  }
+  @ViewChild('myModal', { static: false }) modal!: ElementRef;
+  ngAfterViewInit(): void {
+    this.modal.nativeElement.addEventListener('hidden.bs.modal', () => {
+      // Fallback cleanup in case Bootstrap doesn't properly clean up
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    });
+  }
+  initializeRepreForm(): FormGroup {
+    return this.fb.group({
+      username: ['', Validators.required],
+      email: ['', Validators.required],
+      password: ['', Validators.required],
+      startDate: ['', Validators.required],
+      endDate: [''],
+      description: [''],
+      jobType: ['', Validators.required],
+      accessTypes: this.fb.array([], Validators.required),
+      employeeId: ['', Validators.required]
+    });
+  }
   onSubmitAdd(): void {
-    if (this.representativeForm.valid) {
-      const formData = this.representativeForm.value; // Get the form data
+
+    this.representativeForm.markAllAsTouched();
+    this.cdr.detectChanges();
+    const formData = this.representativeForm.value; // Get the form data
 
       console.log("Form Data before submission:", formData); // Debug log
 
       this.representService.createRepresentative(formData).subscribe(
         response => {
           console.log('Representative created successfully!', response);
-          this.toast.success("Representative created successfully!", 'Success');
+          this.toast.success("تمت الإضافة بنجاح");
+          // Close the modal programmatically
+          const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+          // Ensure proper cleanup after modal closure
+          setTimeout(() => {
+            document.body.classList.remove('modal-open');
+
+            document.body.style.overflow = '';
+          }, 300);
+          this.representativeForm= this.initializeRepreForm();
+          this.getAllRepresentatives();
         },
         (error) => {
           console.error('Error creating Representative:', error);
@@ -245,10 +281,7 @@ onCheckboxChange(category: any) {
           this.toast.error(errorMessage, 'Error');
         }
       );
-    } else {
-      console.log("Form validation failed:", this.representativeForm);
-      this.toast.error('Form is not valid');
-    }
+ 
   }
 
   // Method for handling item selection
@@ -259,45 +292,45 @@ onCheckboxChange(category: any) {
   }
 
 
-   // Filter data based on search term
-   filteredRepresentative: any[] = [];   // Holds the filtered results (used for search)
-   searchQuery: string = '';          // Holds the search query
-   totalRecords: number = 0;
-   offers: any[] = [];
+  // Filter data based on search term
+  filteredRepresentative: any[] = [];   // Holds the filtered results (used for search)
+  searchQuery: string = '';          // Holds the search query
+  totalRecords: number = 0;
+  offers: any[] = [];
 
-   // Method to fetch and display data based on search condition
-   fetchSaleOffers() {
-     // Check if there's a search query that is not empty
-     if (this.searchQuery && this.searchQuery.trim() !== '') {
-       // If there's a search query, fetch all data without pagination
-       this.getAllRepresentatives();
-     } else {
-       // If no search query, fetch paginated data
-       this.getAllRepresentatives();
-     }
-   }
-   // Method to trigger search when the user types or submits the search query
-   onSearchInputChange(event: Event) {
-     const input = event.target as HTMLInputElement;
-     this.searchQuery = input.value;
-     this.fetchSaleOffers();
-   }
- 
-   // Method to apply search filter on the full data
-   applySearchFilter() {
-     if (this.searchQuery.trim()) {
-       // Filter the data based on the search query
-       this.filteredRepresentative = this.representative.filter(item =>
-         (item.userName && item.userName.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-         (item.email && item.email.toUpperCase().includes(this.searchQuery.toUpperCase()))
-       )
- 
-     } else {
-       // If no search query, reset to show all fetched data
-       this.filteredRepresentative = this.representative;
-     }
-   }
+  // Method to fetch and display data based on search condition
+  fetchSaleOffers() {
+    // Check if there's a search query that is not empty
+    if (this.searchQuery && this.searchQuery.trim() !== '') {
+      // If there's a search query, fetch all data without pagination
+      this.getAllRepresentatives();
+    } else {
+      // If no search query, fetch paginated data
+      this.getAllRepresentatives();
+    }
+  }
+  // Method to trigger search when the user types or submits the search query
+  onSearchInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery = input.value;
+    this.fetchSaleOffers();
+  }
 
-   
+  // Method to apply search filter on the full data
+  applySearchFilter() {
+    if (this.searchQuery.trim()) {
+      // Filter the data based on the search query
+      this.filteredRepresentative = this.representative.filter(item =>
+        (item.userName && item.userName.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+        (item.email && item.email.toUpperCase().includes(this.searchQuery.toUpperCase()))
+      )
+
+    } else {
+      // If no search query, reset to show all fetched data
+      this.filteredRepresentative = this.representative;
+    }
+  }
+
+
 
 }

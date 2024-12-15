@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';  // Import HttpClient
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -28,12 +28,12 @@ export class SectionsComponent {
     private departmentService: DepartmentService,
     private fb: FormBuilder,
     private http: HttpClient ,
-    private toast: ToastrService // Inject HttpClient here
+    private toast: ToastrService ,private cdr: ChangeDetectorRef
   ) {
     this.depForm = this.fb.group({
       name: ['', Validators.required],
-      localName: ['', Validators.required],
-      description: ['', Validators.required]
+      localName: [''],
+      description: ['']
     });
   }
 
@@ -122,7 +122,15 @@ updateSelectAll() {
 
   updateCategory() {
       const updatedCategory = { ...this.depForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.depForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.depForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.departmentService.updateDepartment(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -208,9 +216,14 @@ updateSelectAll() {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllDeps();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredDeps.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllDeps(); 
+      } else {
+        this.getAllDeps();
+      }
     }
   }
   showConfirmationModal = false;
@@ -261,6 +274,15 @@ updateSelectAll() {
     });
   }
   onSubmitAdd() {
+    const nameControl = this.depForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.depForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.depForm.get('name')?.value);
     formData.append('localName', this.depForm.get('localName')?.value);

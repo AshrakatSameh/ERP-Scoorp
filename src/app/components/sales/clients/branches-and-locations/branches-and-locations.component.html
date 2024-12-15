@@ -116,42 +116,48 @@
                                 <table id="basic-datatables" class="display table table-striped table-hover">
                                     <thead>
                                         <tr class="firstcol">
-
+<!-- 
                                             <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                                            </th>
+                                            </th> -->
                                             <th>كود الفرع</th>
                                             <th>العميل</th>
                                             <th>المورد</th>
                                             <th>اسم الفرع/ الموقع باللغة المحلية</th>
                                             <th>اسم الفرع/ الموقع</th>
-                                            <th class="firstcolright">
-                                                <input type="checkbox" class="large-checkbox" />
-                                            </th>
+                                            <th class="fixed-right">
+                                            
+                                              <input 
+                                                type="checkbox" 
+                                              
+                                                class="large-checkbox mx-1" 
+                                              />                      </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
 
-                                            <td> </td>
+                                            <!-- <td> </td> -->
                                             <td>48</td>
                                             <td>San Francisco</td>
                                             <td>Chief Operating Officer (COO)</td>
                                             <td>2010/03/11</td>
                                             <td>Fiona Green</td>
-                                            <td> <input type="checkbox" class="large-checkbox" />
-                                            </td>
+                                            <td class=" fixed-right">
+                                                <input type="checkbox" class="large-checkbox mx-1" />
+                                              </td>
 
                                         </tr>
                                         <tr>
-                                            <td> </td>
+                                            <!-- <td> </td> -->
                                             <td>Shou Itou</td>
                                             <td>2011/08/14</td>
                                             <td>Regional Marketing</td>
                                             <td>Tokyo</td>
                                             <td>20</td>
 
-                                            <td> <input type="checkbox" class="large-checkbox" />
-                                            </td>
+                                            <td class=" fixed-right">
+                                                <input type="checkbox" class="large-checkbox mx-1" />
+                                              </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -295,9 +301,9 @@
                         </div>
                     </div>
                     <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
-                        <button class="btn btn-primary locationButton" type="button">
+                        <button class="btn btn-primary locationButton" type="button" (click)="toggleMap()">
                             <i class="fas fa-map-marker-alt"></i> أضف موقع
-                        </button>
+                          </button>
                     </div>
                 </div>
 
@@ -305,52 +311,58 @@
                 <!-- Buttons for actions -->
                 <div class="row mb-4">
                     <div class="col-md-12 text-start">
-                        <button class="btn btn-outline-primary me-3">الغاء</button>
-                        <button class="btn btn-primary m-2">حفظ</button>
+                        <button type="button" class="btn btn-outline-primary m-2" (click)="closeMap()">الغاء</button>
+                        <button type="button" class="btn btn-primary m-2">حفظ</button>
                     </div>
                 </div>
 
                 <!-- Input Fields for Site Information -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
+                <div *ngIf="isMapView">
+                    <div class="row align-items-center">
+                      <div class="col-md-9">
+                        <label for="location" class="form-label">عرض الخريطه</label>
+  
+                      </div>
+                      <!-- <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+                      
+                      </div> -->
+                    </div>
+  
+                    <!-- Input Fields for Site Information -->
+                    <div class="row mb-4">
+                      <div class="col-md-3">
                         <label for="siteName" class="form-label">اسم الموقع</label>
                         <input type="text" class="form-control" id="siteName" placeholder="قم بكتابة اسم الموقع">
-                    </div>
-                    <div class="col-md-3">
+                      </div>
+                      <div class="col-md-3">
                         <label for="line1" class="form-label">خط الطول</label>
                         <input type="text" class="form-control" id="line1" placeholder="قم بكتابة خط الطول">
-                    </div>
-                    <div class="col-md-3">
+                      </div>
+                      <div class="col-md-3">
                         <label for="line2" class="form-label">خط العرض</label>
                         <input type="text" class="form-control" id="line2" placeholder="قم بكتابة خط العرض">
-                    </div>
-                    <div class="col-md-3">
+                      </div>
+                      <div class="col-md-3">
                         <label for="line3" class="form-label">العنوان</label>
                         <input type="text" class="form-control" id="line3" placeholder="قم بكتابة خط العرض">
+                      </div>
                     </div>
-                </div>
-
-                <!-- Map Display Section -->
-                <div class="row mb-4">
-                    <div class="col-md-12 text-center">
+  
+                    <!-- Map Display Section -->
+                    <div class="row mb-4">
+                      <div class="col-md-12 text-center">
                         <h5 class="mb-4">عرض الخريطة</h5>
-                        <div class="map-container"
-                            style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-                            <iframe
-                                src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                                width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
-                                aria-hidden="false" tabindex="0">
-                            </iframe>
+                        <div class="map-container" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                          <iframe
+                            src="https://maps.google.com/maps?q=2972%20Westheimer%20Rd,%20Santa%20Ana,%20Elmas%2089846&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                            width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
+                            aria-hidden="false" tabindex="0">
+                          </iframe>
                         </div>
+                      </div>
                     </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-12 ">
-                        <label for="Textarea1">وصف الموقع</label>
-                        <textarea class="form-control" id="Textarea1" rows="3" placeholder="اضف وصف الموقع"></textarea>
-                    </div>
-                </div>
+  
+                  </div>
                 <!-- ألمرفقات -->
                 <div class="container mt-5">
                     <h5 class="mb-3">المرفقات</h5>

@@ -121,7 +121,7 @@
                       <tr class="firstcol">
                         <th class="firstcolleft">وصف الطلب</th>
                         <th>فئه الطلب</th>
-                        <th>تاريخ الإنشاء</th>
+                       
                         <th>نوع الطلب</th>
                         <th>اسم الطلب</th>
                         <th class="fixed-right">المسلسل</th>
@@ -144,14 +144,14 @@
                     <tbody>
                       <tr *ngFor="let item of filteredEmpRequest, let i= index">
                         <td>{{item.description}}</td>
-                        <td>Chief Operating Officer (COO)</td>
-                        <td>{{item.createdDate | date: 'yy/MM/dd'}}</td>
-                        <td></td>
+                        <td>{{ getCategoryNameById(item.categoryId) }}</td>
+                        <!-- <td>{{item.createdDate | date: 'yy/MM/dd'}}</td> -->
+                        <td>{{ getTypeById(item.requestTypeId)}}</td>
                         <td>{{item.name}}</td>
                         <td class="fixed-right">{{i+1}}</td>
-                        <td class="firstcolright fixed-right">
+                        <td class=" fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                          class="large-checkbox mx-4" />
+                          class="large-checkbox mx-" />
                         </td>
                       </tr>
 
@@ -225,26 +225,23 @@
                 <div class="form-group">
                   <label for="field2 text-end">نوع الطلب </label>
                   <select formControlName="requestTypeId" class="form-control form-select">
-                    <option [value]="" disabled selected>قم باختيار نوع الطلب</option>
+                    <option value="" disabled selected>قم باختيار نوع الطلب</option>
                     <option *ngFor="let item of types" [value]="item.id">{{item.name}}</option>
                   </select>
                 </div>
                 <div *ngIf="employeeRequestForm.get('requestTypeId')?.invalid && employeeRequestForm.get('requestTypeId')?.touched" class="text-danger">
-                  ،نوع الطلب مطلوب.
+                  نوع الطلب مطلوب.
                 </div>
               </div>
-              <!-- <div class="col-md-6">
+              <div class="col-md-6">
                 <div class="form-group">
-                  <label for="field1 text-end"> فئه الطلب</label>
-                  <input
-                    type="text"
-                    id="field1"
-                    
-                    class="form-control custom-input"
-                    placeholder=" قم باختيار فئه الطلب"
-                  />
+                  <label for=" text-end">فئة الطلب </label>
+                  <select formControlName="categoryId" class="form-control form-select">
+                    <option value="" disabled selected>قم باختيار فئة الطلب</option>
+                    <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
+                  </select>
                 </div>
-              </div> -->
+              </div>
             </div>
 
             <div class="row">
@@ -510,18 +507,15 @@
                   </select>
                 </div>
               </div>
-              <!-- <div class="col-md-6">
+              <div class="col-md-6">
                 <div class="form-group">
-                  <label for="field1 text-end"> فئه الطلب</label>
-                  <input
-                    type="text"
-                    id="field1"
-                    
-                    class="form-control custom-input"
-                    placeholder=" قم باختيار فئه الطلب"
-                  />
+                  <label for=" text-end">فئة الطلب </label>
+                  <select formControlName="categoryId" class="form-control form-select">
+                    <option [value]="" disabled selected>قم باختيار فئة الطلب</option>
+                    <option *ngFor="let item of categories" [value]="item.id">{{item.name}}</option>
+                  </select>
                 </div>
-              </div> -->
+              </div>
             </div>
 
             <div class="row">
@@ -588,7 +582,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="field2 text-end">قيمه الطلب </label>
-                  <input type="number" min="0" id="field2" formControlName="RequestValue"
+                  <input type="number" min="0"  formControlName="RequestValue" 
                     class="form-control custom-input" placeholder="قم بكتابه قيمه الطلب" />
                 </div>
               </div>
