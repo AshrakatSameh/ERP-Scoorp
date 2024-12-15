@@ -92,20 +92,23 @@ export class UnitService {
     formData.append('UnitCategoryId', updatedCategory.UnitCategoryId || '');
     console.log('Full attachments:', updatedCategory.attachments);
 
-    
-    updatedCategory.attachments.forEach((attachment: any) => {
-      if (attachment.fileUrl) {
-        // For existing files, use a metadata representation (fileUrl or any reference)
-        formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
-        console.log('Appending existing file reference:', attachment.fileTitle);
-      }
-      if (attachment.file instanceof File) {
-        // For new files, append the actual file object
-        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
-        console.log('Appending new file:', attachment.fileTitle);
-      }
-    });
-    
+    if(updatedCategory.attachments){
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+          console.log('Appending existing file reference:', attachment.fileTitle);
+        }
+        if (attachment.file instanceof File) {
+          // For new files, append the actual file object
+          formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+          console.log('Appending new file:', attachment.fileTitle);
+        }
+      });
+    }
+    else{
+      formData.append('attachmentFiles',updatedCategory.attachments);
+    }
     for (const [key, value] of (formData as any).entries()) {
       if (value instanceof File) {
         console.log(`${key}:`, value.name); // Log file name

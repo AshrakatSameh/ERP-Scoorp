@@ -432,3 +432,14 @@ tr, th, tr {
   color: gray;
   font-size: 12px;
 }
+
+
+/* Recording Style */
+  .mic-icon{
+    color: gray;
+    font-size: 18px;
+  }
+  .stop-icon{
+    color: rgba(101, 0, 0, 0.473);
+    font-size: 18px;
+  }

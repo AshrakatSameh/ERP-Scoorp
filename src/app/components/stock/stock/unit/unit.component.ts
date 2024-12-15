@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -22,6 +22,7 @@ export class UnitComponent {
 
   constructor(private unitService: UnitService, private fb: FormBuilder, private toast: ToastrService,
     private unitCat: StoresSectionService, private http: HttpClient, private renderer: Renderer2,
+    private ngZone:NgZone
   ) {
     this.unitForm = this.fb.group({
       name: ['', Validators.required],
@@ -78,6 +79,7 @@ export class UnitComponent {
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
+      this.toggleDragDrop();
       if (event && event.length) {
         for (const droppedFile of event) {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
@@ -114,6 +116,7 @@ export class UnitComponent {
     }
   // Method to handle file selection
   onFileSelected(event: Event): void {
+    this.toggleDragDrop();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -136,6 +139,7 @@ export class UnitComponent {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    if(this.attachments.length==0) this.toggleDragDrop();
   }
 
   onFileChange(event: Event, index: number) {
@@ -262,17 +266,16 @@ export class UnitComponent {
 
   // Your existing methods and code
   openModalForSelected() {
+    console.log(this.selectedCategory)
     if (this.selectedCategory) {
-      
       this.unitForm.patchValue({
         name: this.selectedCategory.name,
         localName: this.selectedCategory.localName,
         note: this.selectedCategory.note,
-        UnitCategoryId: this.selectedCategory.UnitCategoryId,
+        UnitCategoryId: this.selectedCategory.unitCategoryId,
         unitCategory: this.selectedCategory.unitCategory,
       });
       this.selectedUnitCategoryName = this.selectedCategory.unitCategory;
-
       this.attachments.clear();
       if (this.selectedCategory.attachments?.length) {
         this.selectedCategory.attachments.forEach((attachment: any) => {
@@ -298,7 +301,10 @@ export class UnitComponent {
   closeModal() {
     this.unitForm.reset();
     this.isModalOpen = false;
+    this.selectedCategory =null;
     this.resetAttachments();
+    this.showDragDrop =true;
+    console.log(this.showDragDrop)
   }
 
   updateCategory() {
@@ -344,6 +350,7 @@ export class UnitComponent {
   }
   resetAttachments(){
     this.attachments.clear();
+    this.showDragDrop = true;
   }
   closeConfirmationModal() {
     this.showConfirmationModal = false;
@@ -591,5 +598,68 @@ export class UnitComponent {
   onSelectChange() {
     const selectedCategory = this.unitCategories.find(category => category.id === this.selectedUnitCategoryId);
     this.selectedUnitCategoryName = selectedCategory ? selectedCategory.name : null;
+  }
+
+// Toggle Drag and Drop
+showDragDrop =true;
+  toggleDragDrop(){
+    this.showDragDrop = !this.showDragDrop;
+  }
+
+  //Audio
+  mediaRecorder: MediaRecorder | null = null;
+  audioChunks: Blob[] = [];
+  isRecording = false;
+  recCount =-1;
+  startRecording() {
+    this.isRecording = true;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.mediaRecorder.start();
+      this.mediaRecorder.ondataavailable = (event) => {
+        this.audioChunks.push(event.data);
+      };
+    }).catch((error) => {
+      console.error("Error accessing microphone:", error);
+    });
+    this.recCount++;
+  }
+  isSaving = false;
+
+  stopRecording() {
+    this.isRecording = false;
+    if (this.mediaRecorder) {
+      this.isSaving = true;
+      this.mediaRecorder.stop();
+      this.mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+        this.audioChunks = [];
+        this.ngZone.run(() => {
+          this.uploadAudio(audioBlob);
+          this.isSaving = false; // Angular will detect this change
+          this.toggleDragDrop();
+        });
+      };
+    }
+  }
+  
+  async uploadAudio(audioBlob: Blob) {
+    const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+    const fileData = {
+      fileTitle: this.recCount > 0 ? `${audioFile.name.slice(0, 9)}(${this.recCount})${audioFile.name.slice(9)}` : audioFile.name,
+      fileType: audioFile.type,
+      fileName: audioFile.name,
+      fileSize: audioFile.size,
+      file: audioFile,
+    };
+  
+    // Create a URL for the audio Blob
+    const audioUrl = URL.createObjectURL(audioBlob);
+  
+    // Update the attachment with audio URL
+    this.attachments.push(this.fb.control({ ...fileData, audioUrl }));
+  
+    // Trigger change detection
+    // this.changeDetectorRef.detectChanges();
   }
 }

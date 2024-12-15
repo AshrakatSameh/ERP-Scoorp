@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -39,16 +39,23 @@ imgApiUrl= environment.imgApiUrl;
   paymentType = PaymentType;  // Access the PaymentType enum
   // Convert enum to an array for dropdown
   paymentTypeList: { key: number; value: string }[] = [];
- 
+  
   collectionForm!: FormGroup;
+  
+  commentForm:FormGroup;
+  comments:any[] =[];
+
+userId:any;
+
 
   constructor(private costCenterService: CostCenterService, private representService:RepresentativeService,
-     private convenantBoxService: ConvenantBoxService, private contractService:ContractService,
-    private paymentService:PaymentMethodService, private clientService:ClientsService,
-  private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
-  private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
-  private contract:ContractService,
-private toast:ToastrService) { 
+      private convenantBoxService: ConvenantBoxService, private contractService:ContractService,
+      private paymentService:PaymentMethodService, private clientService:ClientsService,
+      private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
+      private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
+      private contract:ContractService, private ngZone:NgZone,
+      private toast:ToastrService) { 
+        this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.collectionForm= this.fb.group({
       code: ['', Validators.required || null],
       clientId: ['', Validators.required || null],
@@ -67,6 +74,13 @@ private toast:ToastrService) {
       attachments: this.fb.array([])
     });
 
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
     // this.paymentTypeList = Object.keys(PaymentType)
     // .map((key, index) => ({
     //   key: index,  // Use the index as the numeric key
@@ -273,6 +287,7 @@ getAllProjects() {
   }
    // Method to handle file selection
    onFileSelected(event: Event): void {
+    this.toggleDragDrop();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -295,6 +310,7 @@ getAllProjects() {
    // Method to remove a file from the attachments FormArray
    removeAttachment(index: number): void {
      this.attachmentFiles.removeAt(index);
+     if(this.attachmentFiles.length==0) this.toggleDragDrop();
    }
  
    @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -376,6 +392,7 @@ onCheckboxChange(category: any) {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory)
   if (this.selectedCategory) {
     this.collectionForm.patchValue({
       code: this.selectedCategory.code,
@@ -390,8 +407,8 @@ openModalForSelected() {
       value: this.selectedCategory.value
     });
     this.attachmentFiles.clear();
-      if (this.selectedCategory.attachments?.length) {
-        this.selectedCategory.attachments.forEach((attachment: any) => {
+      if (this.selectedCategory.attachmentFiles?.length) {
+        this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
           this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
           console.log(this.attachmentFiles.controls);
         });
@@ -405,6 +422,7 @@ openModalForSelected() {
 closeModal() {
   this.collectionForm.reset();
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.resetAttachments();
 }
 resetAttachments(){
@@ -633,4 +651,107 @@ toggleColumnVisibility(columnName: string) {
       this.filteredCollections = this.collections;
     }
   }
+
+
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.collectionService.postCollectionsComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.collectionService.getCollectionsComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.collectionService.updateCollectionsComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
+    }
+
+    
+// Toggle Drag and Drop
+showDragDrop =true;
+toggleDragDrop(){
+  this.showDragDrop = !this.showDragDrop;
+}
+
+//Audio
+mediaRecorder: MediaRecorder | null = null;
+audioChunks: Blob[] = [];
+isRecording = false;
+recCount =-1;
+startRecording() {
+  this.isRecording = true;
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    this.mediaRecorder = new MediaRecorder(stream);
+    this.mediaRecorder.start();
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.audioChunks.push(event.data);
+    };
+  }).catch((error) => {
+    console.error("Error accessing microphone:", error);
+  });
+  this.recCount++;
+}
+isSaving = false;
+
+stopRecording() {
+  this.isRecording = false;
+  if (this.mediaRecorder) {
+    this.isSaving = true;
+    this.mediaRecorder.stop();
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.audioChunks = [];
+      this.ngZone.run(() => {
+        this.uploadAudio(audioBlob);
+        this.isSaving = false; // Angular will detect this change
+        this.toggleDragDrop();
+      });
+    };
+  }
+}
+
+async uploadAudio(audioBlob: Blob) {
+  const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+  const fileData = {
+    fileTitle: this.recCount > 0 ? `${audioFile.name.slice(0, 9)}(${this.recCount})${audioFile.name.slice(9)}` : audioFile.name,
+    fileType: audioFile.type,
+    fileName: audioFile.name,
+    fileSize: audioFile.size,
+    file: audioFile,
+  };
+
+  // Create a URL for the audio Blob
+  const audioUrl = URL.createObjectURL(audioBlob);
+
+  // Update the attachment with audio URL
+  this.attachmentFiles.push(this.fb.control({ ...fileData, audioUrl }));
+
+  // Trigger change detection
+  // this.changeDetectorRef.detectChanges();
+}
 }

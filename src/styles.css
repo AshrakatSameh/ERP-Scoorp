@@ -50,17 +50,23 @@ div .dropdown-menu{
 
 /* Drop and Drag File */
 /* Customizing the ngx-file-drop component */
+   .my-button3 ,.closebutton{
+      margin-top:10px !important;
+   }
    .ngx-file-drop__content {
       border: 3px dotted gainsboro;
       background-color: none;
       padding: 20px;
       border-radius: 10px;
-      transition: background-color 0.3s ease-in-out;
+      transition: background-color 0.2s ease-in-out;
       color: black !important;
       position: relative;
       height: 75px !important;
    }
-   
+   .ngx-file-drop__content:hover{
+      background-color: rgba(211, 211, 211, 0.416);
+      cursor: pointer;
+   }
    .ngx-file-drop__drop-zone{
       border: none !important;
       height: 75px !important;
@@ -73,6 +79,16 @@ div .dropdown-menu{
 
    /* Fixed Column and Direction */
    .fixed-right{
-      width: 141px;
+      width: 80px;
       text-align: right;
-   }
+   } 
+
+   /* Recording Style */
+  .mic-icon{
+   color: gray;
+   font-size: 18px;
+ }
+ .stop-icon{
+   color: rgba(101, 0, 0, 0.473);
+   font-size: 18px;
+ }

@@ -36,8 +36,12 @@ export class ProjectsComponent implements OnInit {
   ContractsdropdownSettings: any;
   EquipdropdownSettings: any;
   contactForm:FormGroup;
+  imgApiUrl= environment.imgApiUrl;
+  commentForm:FormGroup;
 
+  comments:any[] =[];
 
+  userId:any;
   constructor(private projectService: ProjactService, private http: HttpClient,
     private fb: FormBuilder, private toast: ToastrService, private locationServ: LocationService,
     private clientService: ClientsService, private userServ: UserService, private renderer: Renderer2,
@@ -46,8 +50,7 @@ export class ProjectsComponent implements OnInit {
     private nationality: NationalityService, private projectTypeService: ProjectTypeService,
     private costCenter: CostCenterService
   ) {
-
-
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
@@ -81,7 +84,23 @@ export class ProjectsComponent implements OnInit {
       supplier: [''],
       description:[''],
       attachments: this.fb.array([]),
+      userIds: this.fb.array([]),
+      startDate: [null],
+      endDate: [null],
+      locations: [],
+      attachmentFiles: this.fb.array([]),
+      // status: [null, Validators.required],
+      priority: [0],
+      size: [0],
     });
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
 
   ngOnInit(): void {
@@ -193,6 +212,74 @@ export class ProjectsComponent implements OnInit {
     this.selectedButton = index;
   }
 
+//Attachments
+get attachments(): FormArray {
+   return this.projectForm.get('attachmentFiles') as FormArray;
+ }
+    // Method to handle files dropped into the ngx-file-drop zone
+    dropped(event: any): void {
+      if (event && event.length) {
+        for (const droppedFile of event) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+    
+          if (fileEntry.isFile) {
+            fileEntry.file((file: File) => {
+              const fileData = {
+                fileTitle: file.name,
+                fileType: file.type,
+                fileSize: file.size,
+                fileUrl: null, // Placeholder for URL after upload
+                file: file,
+              };
+              this.attachments.push(this.fb.control(fileData));
+            });
+          }
+        }
+      } else {
+        console.error('No files detected in the dropped event:', event);
+      }
+    }
+    
+  
+  
+    // Method to handle when a file is over the drop zone
+    fileOver(event: any): void {
+      console.log('File is over the drop zone:', event);
+    }
+  
+    // Method to handle when a file leaves the drop zone
+    fileLeave(event: any): void {
+      console.log('File has left the drop zone:', event);
+    }
+ // Method to handle file selection
+onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+
+    // Add the selected file to the FormArray as a FormControl
+    const fileData = {
+      fileTitle: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+      fileUrl: null, // Placeholder for URL after upload
+      file: file,
+    };
+    this.attachments.push(this.fb.control(fileData));
+    console.log(this.attachments)
+    // Reset the input value to allow selecting the same file again
+    input.value = '';
+  }
+}
+
+ // Method to remove a file from the attachments FormArray
+ removeAttachment(index: number): void {
+   this.attachments.removeAt(index);
+ }
+
+
+
+  // get all
   getAllProjects() {
     this.projectService.getProjacts(this.pageNumber, this.pageSize)
       .subscribe(data => {
@@ -513,6 +600,13 @@ export class ProjectsComponent implements OnInit {
     const headers = new HttpHeaders({
       tenant: localStorage.getItem('tenant') || ''  // Add your tenant value here
     });
+    this.attachments.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+      }
+    });
 
     this.http.post(this.api, formData, { headers })
       .subscribe(response => {
@@ -630,6 +724,21 @@ export class ProjectsComponent implements OnInit {
       this.patchArrayValues('contractIds', this.selectedCategory.contractIds);
       this.patchArrayValues('equipmentIds', this.selectedCategory.equipmentIds);
       this.patchArrayValues('contactIds', this.selectedCategory.contactIds);
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -638,6 +747,9 @@ export class ProjectsComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
+    this.projectForm.reset();
+    this.attachments.reset();
   }
   patchArrayValues(arrayName: string, values: any[]) {
     const formArray = this.projectForm.get(arrayName) as FormArray;
@@ -875,34 +987,34 @@ applySearchFilter() {
   // handle array of attachments
   fileNames: string[] = []; // Array to store file names
 
-  get attachments(): FormArray {
-    return this.contactForm.get('attachments') as FormArray;
-  }
+  // get attachments(): FormArray {
+  //   return this.contactForm.get('attachments') as FormArray;
+  // }
 
-  // Method to handle file selection
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const fileData = {
-        fileTitle: [file.name],
-        fileType: [file.type],
-        fileSize: [file.size],
-        fileUrl: [null],  // URL will be set after uploading
-        file: [file]  
-      };
-      // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
+  // // Method to handle file selection
+  // onFileSelected(event: Event): void {
+  //   const input = event.target as HTMLInputElement;
+  //   if (input.files && input.files.length > 0) {
+  //     const file = input.files[0];
+  //     const fileData = {
+  //       fileTitle: [file.name],
+  //       fileType: [file.type],
+  //       fileSize: [file.size],
+  //       fileUrl: [null],  // URL will be set after uploading
+  //       file: [file]  
+  //     };
+  //     // Add the selected file to the FormArray as a FormControl
+  //     this.attachments.push(this.fb.control(file));
 
-      // Reset the input value to allow selecting the same file again
-      input.value = '';
-    }
-  }
+  //     // Reset the input value to allow selecting the same file again
+  //     input.value = '';
+  //   }
+  // }
 
-  // Method to remove a file from the attachments FormArray
-  removeAttachment(index: number): void {
-    this.attachments.removeAt(index);
-  }
+  // // Method to remove a file from the attachments FormArray
+  // removeAttachment(index: number): void {
+  //   this.attachments.removeAt(index);
+  // }
 onSubmitContact() {
     const formData = new FormData();
     formData.append('name', this.contactForm.get('name')?.value);
@@ -970,6 +1082,41 @@ nationalities:any[]=[];
         // console.log(this.nationalities);
       }, error => {
         console.error('Error fetching nationalities data:', error);
-      });
+      });}
+  // Add Comment Logic
+  addComment(parent:any =''){
+    this.projectService.postProjectComment({
+      Content:this.commentForm.controls['content'].value,
+      EntityId:this.selectedCategory.id,
+      ParentCommentId:parent
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    this.commentForm.reset();
+    if(parent) this.replayId = '';
+  }
+
+  getComments(){
+    this.projectService.getProjectComments(this.selectedCategory.id).subscribe((res)=>{
+      this.comments = res;
+    })
+  }
+  replayId:any;
+  toggleReplay(commentId:any){
+    this.replayId = commentId;
+  }
+
+  editedText:string ='';
+  editId:any;
+  //Edit Comment
+  editComment(commentId:any,content:any){
+    this.projectService.updateProjectComment(commentId,{
+      content:this.editedText,
+    }).subscribe((res)=> console.log(res));
+    this.getComments();
+    if(this.editedText) this.editedText ='';this.editId='';
+  }
+  toggleEdit(commentId:any,text:any){
+    this.editId==commentId? this.editId='': this.editId= commentId;
+    this.editedText = text;
   }
 }

@@ -86,6 +86,9 @@ export class StoresSectionService {
           }
         });
       }
+      else{
+        formData.append('attachmentFiles',new Blob(),'empty');
+      }
       // API call with PUT method using the FormData and headers
       return this.http.put(`${this.apiUrl}StoresSection/unit-category/${id}`, formData, { headers });
     }
