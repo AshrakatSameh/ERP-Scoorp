@@ -17,7 +17,7 @@ export class RepaymentWayComponent implements OnInit {
   paymentForm: FormGroup;
   constructor(private payment: PaymentMethodService, private http: HttpClient, private fb: FormBuilder,
     private toast: ToastrService, private renderer: Renderer2,private ngZone:NgZone
-    private toast: ToastrService, private renderer: Renderer2,     private cdr: ChangeDetectorRef
+  ,private cdr: ChangeDetectorRef
     
   ) {
     this.paymentForm = this.fb.group({
