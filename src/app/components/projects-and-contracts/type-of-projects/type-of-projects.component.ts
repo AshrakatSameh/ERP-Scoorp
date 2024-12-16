@@ -258,6 +258,7 @@ applySearchFilter() {
 
  closeModal() {
    this.isModalOpen = false;
+   this.selectedCategory =null;
    this.projectTypeForm.reset();
  }
 

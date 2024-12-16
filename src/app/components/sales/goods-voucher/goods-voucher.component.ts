@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
 import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
@@ -40,14 +40,20 @@ deliveryStatusList: { key: string, value: string }[] = [];
 
 dropdownSettings = {};
 
+comments:any[] =[];
+imgApiUrl= environment.imgApiUrl;
+commentForm:FormGroup;
+
+userId:any;
 constructor(private salesService:SalesService,private clientService:ClientsService,
     private representServece:RepresentativeService, private fb: FormBuilder, private  http:HttpClient,
     private teamService: TeamsService, private costCenterService:CostCenterService,
     private warehouseService:WarehouseService,private locationService:LocationService,
     private itemService: ItemsService, private renderer: Renderer2,
-    private toast: ToastrService,     private cdr: ChangeDetectorRef
+    private toast: ToastrService,     private cdr: ChangeDetectorRef, private ngZone:NgZone
 
   ){
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.deliveryVoucherForm= this.fb.group({
     clientId: ['', Validators.required],
     representativeId: ['', Validators.required || null],
@@ -59,7 +65,6 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     deliveryNoteItems:this.fb.array([], Validators.required),
     attachmentFiles: this.fb.array([]),
     attachments: this.fb.array([])
-    
     });
 
 
@@ -67,6 +72,14 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
       key: key,
       value: this.deliveryStatus[key as keyof typeof DeliveryStatus]
     }));
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
 
  
@@ -266,7 +279,8 @@ costCenterss:any[]=[]
 getAllCostCenters() {
   this.costCenterService.getAllCostCaners().subscribe(response => {
     this.costCenterss = response.costCenters;
-    //console.log(this.costCenters);
+    console.log(this.costCenterss);
+    console.log(response);
   }, error => {
     console.error('Error fetching  costCenters:', error)
   })
@@ -306,7 +320,7 @@ addLocationId() {
   fileNames: string[] = []; // Array to store file names
 
   get attachments(): FormArray {
-    return this.deliveryVoucherForm.get('attachments') as FormArray;
+    return this.deliveryVoucherForm.get('attachmentFiles') as FormArray;
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
@@ -345,6 +359,7 @@ addLocationId() {
     }
   // Method to handle file selection
   onFileSelected(event: Event): void {
+    this.toggleDragDrop();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -367,6 +382,7 @@ addLocationId() {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    if(this.attachments.length==0) this.toggleDragDrop();
   }
 
   @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -634,6 +650,13 @@ openModalForSelected() {
        });
        this.deliveryNoteItems.push(deliveryNoteItem);
      });
+     this.attachments.clear();
+      if (this.selectedCategory.attachmentFiles?.length) {
+        this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     this.isModalOpen = true;
   } else {
     alert('الرجاء تحديد العنصر');
@@ -664,6 +687,7 @@ onAddItemButtonClick() {
 
 closeModal() {
   this.isModalOpen = false;
+  this.selectedCategory =null;
   this.deliveryVoucherForm.reset();
 }
 
@@ -1079,4 +1103,105 @@ resetUpdatedItems() {
       this.filteredDeliveryNote = this.deliveryVouchers;
     }
   }
+
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.salesService.postDeliveryNotesComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.salesService.getDeliveryNotesComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.salesService.updateDeliveryNotesComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
+    }
+    
+// Toggle Drag and Drop
+showDragDrop =true;
+toggleDragDrop(){
+  this.showDragDrop = !this.showDragDrop;
+}
+
+//Audio
+mediaRecorder: MediaRecorder | null = null;
+audioChunks: Blob[] = [];
+isRecording = false;
+recCount =-1;
+startRecording() {
+  this.isRecording = true;
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    this.mediaRecorder = new MediaRecorder(stream);
+    this.mediaRecorder.start();
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.audioChunks.push(event.data);
+    };
+  }).catch((error) => {
+    console.error("Error accessing microphone:", error);
+  });
+  this.recCount++;
+}
+isSaving = false;
+
+stopRecording() {
+  this.isRecording = false;
+  if (this.mediaRecorder) {
+    this.isSaving = true;
+    this.mediaRecorder.stop();
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.audioChunks = [];
+      this.ngZone.run(() => {
+        this.uploadAudio(audioBlob);
+        this.isSaving = false; // Angular will detect this change
+        this.toggleDragDrop();
+      });
+    };
+  }
+}
+
+async uploadAudio(audioBlob: Blob) {
+  const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+  const fileData = {
+    fileTitle: this.recCount > 0 ? `${audioFile.name.slice(0, 9)}(${this.recCount})${audioFile.name.slice(9)}` : audioFile.name,
+    fileType: audioFile.type,
+    fileName: audioFile.name,
+    fileSize: audioFile.size,
+    file: audioFile,
+  };
+
+  // Create a URL for the audio Blob
+  const audioUrl = URL.createObjectURL(audioBlob);
+
+  // Update the attachment with audio URL
+  this.attachments.push(this.fb.control({ ...fileData, audioUrl }));
+
+  // Trigger change detection
+  // this.changeDetectorRef.detectChanges();
+}
 }

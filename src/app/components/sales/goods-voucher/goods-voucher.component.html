@@ -515,84 +515,9 @@
                             <div *ngIf="selectedButton === 1">
                                 <div class="container comment-section mt-5">
                                     <div class="card p-3">
-                                        <!-- Add Comment Section -->
-                                        <div class="container add-comment-section mt-3">
-                                            <div class="card p-3 d-flex align-items-center">
-                                                <div class="d-flex align-items-center w-100">
-                                                    <!-- User Avatar -->
-                                                    <img src="../../../assets/images/images.jpg"
-                                                        class="rounded-circle border border-primary me-2"
-                                                        alt="User Avatar">
-
-                                                    <!-- Comment Input Section -->
-                                                    <div class="flex-grow-1">
-                                                        <input type="text" class="form-control"
-                                                            placeholder="أضف تعليقاً">
-                                                    </div>
-
-                                                    <!-- Icons and Post Button -->
-                                                    <div class="d-flex align-items-center ms-2">
-                                                        <!-- Voice Icon -->
-                                                        <button class="btn btn-link text-muted p-1"><i
-                                                                class="fa fa-microphone"></i></button>
-
-                                                        <!-- Attachment Icon -->
-                                                        <button class="btn btn-link text-muted p-1"><i
-                                                                class="fa fa-paperclip"></i></button>
-
-                                                        <!-- Post Button -->
-                                                        <button class="btn btn-primary ms-2 px-4">نشر</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Comments List -->
-                                        <div class="comments-list mt-4">
-                                            <div class="comment-item p-3 mb-3">
-                                                <div class="d-flex align-items-start">
-                                                    <img src="../../../assets/images/images2.jpg" class="rounded-circle"
-                                                        alt="User Avatar">
-                                                    <div class="ms-3 w-100">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <h6 class="mb-0">خالد ابراهيم</h6>
-                                                            <span class="text-muted small">Aug 19, 2021</span>
-                                                        </div>
-                                                        <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
-                                                        <div class="comment-actions d-flex">
-                                                            <button class="btn btn-link p-0"><i class="fa fa-heart"></i>
-                                                                5</button>
-                                                            <button class="btn btn-link p-0 ms-3"><i
-                                                                    class="fa fa-comment"></i> 3</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Nested Reply Comment -->
-                                            <div class="comment-item p-3 mb-3 ms-5">
-                                                <div class="d-flex align-items-start">
-                                                    <img src="../../../assets/images/images2.jpg" class="rounded-circle"
-                                                        alt="User Avatar">
-                                                    <div class="ms-3 w-100">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <h6 class="mb-0">خالد ابراهيم</h6>
-                                                            <span class="text-muted small">Aug 19, 2021</span>
-                                                        </div>
-                                                        <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- View More Comments Link -->
-                                        <div class="text-center">
-                                            <a href="#" class="text-primary">باقي التعليقات</a>
-                                        </div>
+                                        لا توجد تعليقات
                                     </div>
-                                </div>
-
+                                    </div>
                             </div>
 
                             <!-- show table button 3 -->
@@ -646,11 +571,57 @@
                                 <div class="container mt-5">
                                     <h5 class="mb-3">المرفقات</h5>
                                     <!-- Drag and Drop Zone -->
+                                    
+                                    <!-- File List -->
+                                    <ul class="list-group mt-3 mb-3">
+                                      <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                          <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                                          <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                                        </div>
+                                        <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                                          <audio controls>
+                                            <source [src]="attachment.value.audioUrl" type="audio/wav">
+                                            Your browser does not support the audio element.
+                                          </audio>
+                                        </div>
+                                        <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                                          <i class="fa fa-trash"></i> حذف
+                                        </button>
+                                      </li>
+                                      
+                                    </ul>
+                                    <!-- Select File Zone -->
+                                    <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                                      <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                                        <i class="fa fa-paperclip"></i> ملف إضافي
+                                      </button>
+                                      <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                                    </div>
+                                    <div class="audio-recorder m-1" *ngIf="showDragDrop">
+                                      <span 
+                                        class="mic-icon"
+                                        *ngIf="!isRecording"
+                                        type="button"
+                                        (click)="startRecording()">
+                                        <i class="fa-solid fa-microphone"></i>
+                                      </span>
+                                      <span
+                                        class="stop-icon"
+                                        *ngIf="isRecording"
+                                        type="button"
+                                        (click)="stopRecording()">
+                                        <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                                        <i class="fa-solid fa-stop m-1"></i>
+                                      </span>
+                                    </div>
                                     <ngx-file-drop
                                       dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
                                       (onFileDrop)="dropped($event)"
                                       (onFileOver)="fileOver($event)"
                                       (onFileLeave)="fileLeave($event)"
+                                      (click)="fileInput.click()"
+                                      *ngIf="showDragDrop"
                                       class="mb-3">
                                       <ng-template ngx-file-drop-content-tmp>
                                         <div class="d-flex justify-content-between align-items-center">
@@ -663,29 +634,10 @@
                                           </div>
                                         </div>
                                       </ng-template>
-                                    </ngx-file-drop>
-                                    <!-- Select File Zone -->
-                                    <div class="mb-3 mt-2">
-                                      <button type="button" class="btn btn-primary" (click)="fileInput.click()">
-                                        <i class="fa fa-paperclip"></i> أضف ملف
-                                      </button>
                                       <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
-                                    </div>
-                                  
-                                    <!-- File List -->
-                                    <ul class="list-group mt-3 mb-3">
-                                      <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
-                                          <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
-                                        </div>
-                                        <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
-                                          <i class="fa fa-trash"></i> حذف
-                                        </button>
-                                      </li>
-                                    </ul>
+                                    </ngx-file-drop>
                                   </div>
-                            </div>
+                                </div>
                         </div>
                         <!-- There was code here -->
 
@@ -1092,76 +1044,129 @@
                                     <!-- Add Comment Section -->
                                     <div class="container add-comment-section mt-3">
                                         <div class="card p-3 d-flex align-items-center">
-                                            <div class="d-flex align-items-center w-100">
-                                                <!-- User Avatar -->
-                                                <img src="../../../assets/images/images.jpg"
-                                                    class="rounded-circle border border-primary me-2" alt="User Avatar">
-
-                                                <!-- Comment Input Section -->
-                                                <div class="flex-grow-1">
-                                                    <input type="text" class="form-control" placeholder="أضف تعليقاً">
-                                                </div>
-
-                                                <!-- Icons and Post Button -->
-                                                <div class="d-flex align-items-center ms-2">
-                                                    <!-- Voice Icon -->
-                                                    <button class="btn btn-link text-muted p-1"><i
-                                                            class="fa fa-microphone"></i></button>
-
-                                                    <!-- Attachment Icon -->
-                                                    <button class="btn btn-link text-muted p-1"><i
-                                                            class="fa fa-paperclip"></i></button>
-
-                                                    <!-- Post Button -->
-                                                    <button class="btn btn-primary ms-2 px-4">نشر</button>
-                                                </div>
+                                            <form class="d-flex align-items-center w-100" [formGroup]="commentForm" (ngSubmit)="addComment()">
+                                            <!-- User Avatar -->
+                                            <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                                            
+                                            <!-- Comment Input Section -->
+                                            <div class="flex-grow-1">
+                                                <input type="text" class="form-control" formControlName="content" placeholder="أضف تعليقاً">
                                             </div>
+                                        
+                                            <!-- Icons and Post Button -->
+                                            <div class="d-flex align-items-center ms-2">
+                                                <!-- Voice Icon -->
+                                                <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+                                        
+                                                <!-- Attachment Icon -->
+                                                <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+                                        
+                                                <!-- Post Button -->
+                                                <button class="btn btn-primary ms-2 px-4" type="submit">نشر</button>
+                                            </div>
+                                            </form>
                                         </div>
-                                    </div>
-
-
-                                    <!-- Comments List -->
-                                    <div class="comments-list mt-4">
+                                        </div>
+                                        
+                                    
+                                        <!-- Comments List -->
+                                        <div class="comments-list mt-4" *ngFor="let comment of comments">
                                         <div class="comment-item p-3 mb-3">
                                             <div class="d-flex align-items-start">
-                                                <img src="../../../assets/images/images2.jpg" class="rounded-circle"
-                                                    alt="User Avatar">
-                                                <div class="ms-3 w-100">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h6 class="mb-0">خالد ابراهيم</h6>
-                                                        <span class="text-muted small">Aug 19, 2021</span>
+                                            <img [src]="comment.userprofileImage || '../../../assets/images/images2.jpg'" class="rounded-circle" alt="User Avatar">
+                                            <div class="ms-3 w-100">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0">{{ comment.userName || 'UnKnown User'}}</h6>
+                                                <span class="text-muted small">{{ comment.createdOn | date}}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <p class="mt-2">
+                                                        {{ comment.content }}
+                                                        <button class="btn btn-link p-0 m-1 w-20" style="font-size: 8px;" *ngIf="userId==comment.userId" (click)="toggleEdit(comment.id,comment.content)">
+                                                          <i class="fa-solid fa-pen"></i>
+                                                        </button>
+                                                      </p>
+                                                      <ul *ngFor="let attachment of comment.attachments" class="list-unstyled list-inline-item m-0 p-0">
+                                                        <li>
+                                                          <a [href]="imgApiUrl+attachment.fileUrl" target="_blank"><img src="../../../../../assets/images/mingcute_pdf-fill.png" style="height: 20px;width: 20px;"></a>
+                                                        </li>
+                                                      </ul>
                                                     </div>
-                                                    <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
                                                     <div class="comment-actions d-flex">
-                                                        <button class="btn btn-link p-0"><i class="fa fa-heart"></i>
-                                                            5</button>
-                                                        <button class="btn btn-link p-0 ms-3"><i
-                                                                class="fa fa-comment"></i> 3</button>
+                                                      <button class="btn btn-link p-0"><i class="fa fa-heart"></i> {{ comment.likesCount }}</button>
+                                                      <button class="btn btn-link p-0 ms-3" (click)="toggleReplay(comment.id)"><i class="fa fa-comment"></i> {{ comment.replies.length }}</button>
                                                     </div>
+                                                  </div>
                                                 </div>
+                                              </div>
+                                              <div class="container add-comment-section mt-3" *ngIf="comment.id == editId">
+                                                <div class="card p-3 d-flex align-items-center">
+                                                  <div class="d-flex align-items-center w-100">
+                                                    <!-- User Avatar -->
+                                                    <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                                                    <!-- Comment Input Section -->
+                                                    <div class="flex-grow-1">
+                                                      <input type="text" class="form-control" [(ngModel)]="editedText" [ngModelOptions]="{standalone:true}">
+                                                    </div>
+                                              
+                                                    <!-- Icons and Post Button -->
+                                                    <div class="d-flex align-items-center ms-2">
+                                                      <!-- Voice Icon -->
+                                                      <!-- <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button> -->
+                                              
+                                                      <!-- Attachment Icon -->
+                                                      <!-- <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button> -->
+                                              
+                                                      <!-- Post Button -->
+                                                      <button class="btn btn-primary ms-2 px-4" type="submit" (click)="editComment(comment.id,editedText)">تعديل</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                        </div>
+                                        <div class="container add-comment-section mt-3" *ngIf="comment.id == replayId">
+                                            <div class="card p-3 d-flex align-items-center">
+                                            <form class="d-flex align-items-center w-100" [formGroup]="commentForm" (ngSubmit)="addComment(replayId)">
+                                                <!-- User Avatar -->
+                                                <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                                                
+                                                <!-- Comment Input Section -->
+                                                <div class="flex-grow-1">
+                                                <input type="text" class="form-control" formControlName="content" placeholder="أضف تعليقاً">
+                                                </div>
+                                        
+                                                <!-- Icons and Post Button -->
+                                                <div class="d-flex align-items-center ms-2">
+                                                <!-- Voice Icon -->
+                                                <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+                                        
+                                                <!-- Attachment Icon -->
+                                                <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+                                        
+                                                <!-- Post Button -->
+                                                <button class="btn btn-primary ms-2 px-4" type="submit">نشر</button>
+                                                </div>
+                                            </form>
                                             </div>
                                         </div>
-
                                         <!-- Nested Reply Comment -->
-                                        <div class="comment-item p-3 mb-3 ms-5">
+                                        <div class="comment-item p-3 mb-3 ms-5" *ngFor="let replay of comment.replies">
                                             <div class="d-flex align-items-start">
-                                                <img src="../../../assets/images/images2.jpg" class="rounded-circle"
-                                                    alt="User Avatar">
-                                                <div class="ms-3 w-100">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h6 class="mb-0">خالد ابراهيم</h6>
-                                                        <span class="text-muted small">Aug 19, 2021</span>
-                                                    </div>
-                                                    <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
+                                            <img [src]="comment.userprofileImage || '../../../assets/images/images2.jpg'"  class="rounded-circle" alt="User Avatar">
+                                            <div class="ms-3 w-100">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0">{{ replay.userName || 'UnKnown User'}}</h6>
+                                                <span class="text-muted small">{{ replay.createdOn | date}}</span>
                                                 </div>
+                                                <p class="mt-2">{{ replay.content }}</p>
+                                            </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <!-- View More Comments Link -->
-                                    <div class="text-center">
+                                        </div>
+                                    
+                                        <!-- View More Comments Link -->
+                                        <div class="text-center">
                                         <a href="#" class="text-primary">باقي التعليقات</a>
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
 
@@ -1218,11 +1223,57 @@
                             <div class="container mt-5">
                                 <h5 class="mb-3">المرفقات</h5>
                                 <!-- Drag and Drop Zone -->
+                                
+                                <!-- File List -->
+                                <ul class="list-group mt-3 mb-3">
+                                  <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                      <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                                      <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                                    </div>
+                                    <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                                      <audio controls>
+                                        <source [src]="attachment.value.audioUrl" type="audio/wav">
+                                        Your browser does not support the audio element.
+                                      </audio>
+                                    </div>
+                                    <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                                      <i class="fa fa-trash"></i> حذف
+                                    </button>
+                                  </li>
+                                  
+                                </ul>
+                                <!-- Select File Zone -->
+                                <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                                  <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                                    <i class="fa fa-paperclip"></i> ملف إضافي
+                                  </button>
+                                  <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                                </div>
+                                <div class="audio-recorder m-1" *ngIf="showDragDrop">
+                                  <span 
+                                    class="mic-icon"
+                                    *ngIf="!isRecording"
+                                    type="button"
+                                    (click)="startRecording()">
+                                    <i class="fa-solid fa-microphone"></i>
+                                  </span>
+                                  <span
+                                    class="stop-icon"
+                                    *ngIf="isRecording"
+                                    type="button"
+                                    (click)="stopRecording()">
+                                    <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                                    <i class="fa-solid fa-stop m-1"></i>
+                                  </span>
+                                </div>
                                 <ngx-file-drop
                                   dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
                                   (onFileDrop)="dropped($event)"
                                   (onFileOver)="fileOver($event)"
                                   (onFileLeave)="fileLeave($event)"
+                                  (click)="fileInput.click()"
+                                  *ngIf="showDragDrop"
                                   class="mb-3">
                                   <ng-template ngx-file-drop-content-tmp>
                                     <div class="d-flex justify-content-between align-items-center">
@@ -1235,28 +1286,9 @@
                                       </div>
                                     </div>
                                   </ng-template>
-                                </ngx-file-drop>
-                                <!-- Select File Zone -->
-                                <div class="mb-3 mt-2">
-                                  <button type="button" class="btn btn-primary" (click)="fileInput.click()">
-                                    <i class="fa fa-paperclip"></i> أضف ملف
-                                  </button>
                                   <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
-                                </div>
-                              
-                                <!-- File List -->
-                                <ul class="list-group mt-3 mb-3">
-                                  <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                      <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
-                                      <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
-                                    </div>
-                                    <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
-                                      <i class="fa fa-trash"></i> حذف
-                                    </button>
-                                  </li>
-                                </ul>
-                              </div>
+                                </ngx-file-drop>
+                              </div>                  
                         </div>
 
                         <!-- There was code here -->

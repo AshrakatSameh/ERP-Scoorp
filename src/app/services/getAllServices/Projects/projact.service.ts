@@ -92,7 +92,23 @@ export class ProjactService {
     formData.append('endDate', updatedCategory.endDate || '');
     formData.append('priority', updatedCategory.priority || '');
     formData.append('size', updatedCategory.size || '');
-   
+    if (updatedCategory.attachments && updatedCategory.attachments.length > 0) {
+      updatedCategory.attachments.forEach((attachment: any) => {
+        if (attachment.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+          console.log('Appending existing file reference:', attachment.fileTitle);
+        }
+        if (attachment.file instanceof File) {
+          // For new files, append the actual file object
+          formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+          console.log('Appending new file:', attachment.fileTitle);
+        }
+      });
+    }
+    else{
+      formData.append('attachmentFiles',new Blob(),'empty');
+    }
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}Project/UpdateProject/${id}`, formData, { headers });
   }
@@ -103,5 +119,92 @@ export class ProjactService {
       // 'Content-Type': 'application/json',
     });
     return this.http.delete<void>(`${this.apiUrl}Project/${id}`,{headers});
+  }
+
+
+    // Project Comments Endpoints
+  // Get the Comments of Sales Invoice
+  getProjectComments(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}Project/GetComments/${modelId}`, { headers });
+  }
+  // Get the activities of Sales Invoice
+  getProjectActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.put(`${this.apiUrl}Project/GetActivities/${modelId}`, { headers });
+  }
+  // Add Comment to Sales Invoice
+  postProjectComment(data: any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    const headers = new HttpHeaders({
+      tenant: tenantId || '', // Set tenantId header if available
+    });
+    console.log(data)
+    const formData = new FormData();
+    formData.append('content', data.Content || '');
+    formData.append('EntityId', data.EntityId || '');
+    formData.append('ParentCommentId', data.ParentCommentId || '');
+    if(data.attachments){
+      data.attachments.forEach((attachment: any) => {
+        formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+        console.log('Appending new file:', attachment.fileTitle);
+      });
+    }
+    console.log(formData.get("content"))
+    return this.http.post(`${this.apiUrl}Project/AddComment`, formData, { headers });
+  }
+  // Edit Comment of Sales Invoice
+  updateProjectComment(commentId: number, payload:any): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('Content', payload.content || '');
+  
+    console.log("Form Service", payload.attachments);
+      payload.attachments.forEach((attachment: any) => {
+        if (attachment.file) {
+          // For new files, append the actual file object
+          if (attachment.file instanceof File) {
+            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            console.log('Appending new file:', attachment.fileTitle);
+          }
+          if (attachment.file.fileUrl) {
+            // For existing files, use a metadata representation (fileUrl or any reference)
+            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            console.log('Appending existing file reference:', attachment.file.fileTitle);
+          }
+        } 
+      });
+    console.log(formData.get("attachmentFiles"))
+  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}Project/UpdateComment/${commentId}`, formData, { headers });
+  }
+  // Like Comment of Sales Invoice
+  likeProjectComment(commentId: number): Observable<any> {
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });  
+    // API call with PUT method using the FormData and headers
+    return this.http.put(`${this.apiUrl}Project/LikeComment/${commentId}`, { headers });
   }
 }

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { data } from 'jquery';
@@ -20,12 +20,17 @@ export class WorkServecesReqsComponent implements OnInit {
 
   apiUrl = environment.apiUrl;
   serviceRequestForm: FormGroup;
+  imgApiUrl= environment.imgApiUrl;
 
+  comments:any[] =[];
+  commentForm:FormGroup;
+  userId:any;
   constructor(private reqService: ServiceRequestService, private servType: ServiceTypesService,
     private type: ServiceTypesService, private dep: ServiceDepartmentService, private cat: ServiceCategoryService,
     private fb: FormBuilder, private employeeServ: EmployeeService, private toast: ToastrService,
-    private http: HttpClient, private cdr: ChangeDetectorRef
+    private http: HttpClient, private cdr: ChangeDetectorRef, private ngZone:NgZone
   ) {
+    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.serviceRequestForm = this.fb.group({
       serviceTypeId: ['', Validators.required],
       requestedEmployeeId: [''],
@@ -39,6 +44,14 @@ export class WorkServecesReqsComponent implements OnInit {
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
     })
+
+        // Initializing Comment Form
+        this.commentForm = this.fb.group({
+          content:['', Validators.required],
+          entityId:['', Validators.required],
+          parentCommentId:[''],
+          attachmentFiles: this.fb.array([])
+        })
   }
   ngOnInit(): void {
     this.getAllServiceRequests();
@@ -201,6 +214,7 @@ export class WorkServecesReqsComponent implements OnInit {
   // Method to remove a file from the attachments FormArray
   removeAttachment(index: number): void {
     this.attachments.removeAt(index);
+    if(this.attachments.length==0) this.toggleDragDrop();
   }
 
   @ViewChild('myModal', { static: false }) modal!: ElementRef;
@@ -352,6 +366,7 @@ export class WorkServecesReqsComponent implements OnInit {
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedCategory =null;
   }
 
   // edit and delete toggle
@@ -501,4 +516,105 @@ export class WorkServecesReqsComponent implements OnInit {
       this.getAllServiceRequests();
     }
   }
+
+
+    // Add Comment Logic
+    addComment(parent:any =''){
+      this.reqService.postServiceRequestsComment({
+        Content:this.commentForm.controls['content'].value,
+        EntityId:this.selectedCategory.id,
+        ParentCommentId:parent
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      this.commentForm.reset();
+      if(parent) this.replayId = '';
+    }
+  
+    getComments(){
+      this.reqService.getServiceRequestsComments(this.selectedCategory.id).subscribe((res)=>{
+        this.comments = res;
+      })
+    }
+    replayId:any;
+    toggleReplay(commentId:any){
+      this.replayId = commentId;
+    }
+    editedText:string ='';
+    editId:any;
+    //Edit Comment
+    editComment(commentId:any,content:any){
+      this.reqService.updateServiceRequestsComment(commentId,{
+        content:this.editedText,
+      }).subscribe((res)=> console.log(res));
+      this.getComments();
+      if(this.editedText) this.editedText ='';this.editId='';
+    }
+    toggleEdit(commentId:any,text:any){
+      this.editId==commentId? this.editId='': this.editId= commentId;
+      this.editedText = text;
+    }
+
+    
+// Toggle Drag and Drop
+showDragDrop =true;
+toggleDragDrop(){
+  this.showDragDrop = !this.showDragDrop;
+}
+
+//Audio
+mediaRecorder: MediaRecorder | null = null;
+audioChunks: Blob[] = [];
+isRecording = false;
+recCount =-1;
+startRecording() {
+  this.isRecording = true;
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    this.mediaRecorder = new MediaRecorder(stream);
+    this.mediaRecorder.start();
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.audioChunks.push(event.data);
+    };
+  }).catch((error) => {
+    console.error("Error accessing microphone:", error);
+  });
+  this.recCount++;
+}
+isSaving = false;
+
+stopRecording() {
+  this.isRecording = false;
+  if (this.mediaRecorder) {
+    this.isSaving = true;
+    this.mediaRecorder.stop();
+    this.mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+      this.audioChunks = [];
+      this.ngZone.run(() => {
+        this.uploadAudio(audioBlob);
+        this.isSaving = false; // Angular will detect this change
+        this.toggleDragDrop();
+      });
+    };
+  }
+}
+
+async uploadAudio(audioBlob: Blob) {
+  const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+  const fileData = {
+    fileTitle: this.recCount > 0 ? `${audioFile.name.slice(0, 9)}(${this.recCount})${audioFile.name.slice(9)}` : audioFile.name,
+    fileType: audioFile.type,
+    fileName: audioFile.name,
+    fileSize: audioFile.size,
+    file: audioFile,
+  };
+
+  // Create a URL for the audio Blob
+  const audioUrl = URL.createObjectURL(audioBlob);
+
+  // Update the attachment with audio URL
+  this.attachments.push(this.fb.control({ ...fileData, audioUrl }));
+
+  // Trigger change detection
+  // this.changeDetectorRef.detectChanges();
+}
 }
