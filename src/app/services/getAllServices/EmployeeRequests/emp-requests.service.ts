@@ -55,6 +55,7 @@ export class EmpRequestsService {
     // Prepare FormData for multipart/form-data request
     const formData = new FormData();
     formData.append('requestTypeId', updatedCategory.requestTypeId || '');
+    formData.append('categoryId', updatedCategory.categoryId || '');
     formData.append('name', updatedCategory.name || '');
     formData.append('description', updatedCategory.description || '');
     formData.append('StartDate', updatedCategory.StartDate || '');

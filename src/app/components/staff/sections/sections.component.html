@@ -160,7 +160,7 @@
                         <td>{{item.name}}</td>
                         <td class="fixed-right">{{ i+1 }}</td>
                         <td class="fixed-right">  <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                          class="large-checkbox mx-4" />
+                          class="large-checkbox mx-1" />
                         </td>
                       </tr>
                     </tbody>
@@ -228,6 +228,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     class="form-control custom-input"
                     placeholder="اسم القسم"
                   />
+                  <div
+                  *ngIf="
+                    depForm.get('name')?.invalid &&
+                    depForm.get('name')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم القسم مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -321,6 +330,15 @@ class="modal" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" styl
                   class="form-control custom-input"
                   placeholder="اسم القسم"
                 />
+                 <div
+                  *ngIf="
+                    depForm.get('name')?.invalid &&
+                    depForm.get('name')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم القسم مطلوب.
+                </div>
               </div>
             </div>
             <div class="col-md-6">

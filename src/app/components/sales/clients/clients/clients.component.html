@@ -38,7 +38,8 @@
                         <div class="card-header d-flex justify-content-between align-items-center flex-row-reverse">
                             <h4 class="card-title text-end">العملاء</h4>
                             <div class="button-group d-flex justify-content-start">
-                                <button type="button" class="btn my-button" data-bs-toggle="modal" data-bs-target="#myModal">
+                                <button type="button" class="btn my-button" data-bs-toggle="modal"
+                                    data-bs-target="#myModal">
                                     اضف عميل
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
@@ -160,8 +161,8 @@
                                             <th *ngIf="isColumnVisible('phone')">رقم الجوال</th>
                                             <th *ngIf="isColumnVisible('localName')">الإسم المحلي</th>
                                             <th>اسم العميل</th>
-                                            <th class="fixed-right">مسلسل</th>
-                                            <th class="firstcolright fixed-right">
+                                            <th class="fixed-right" style="width:100px">مسلسل</th>
+                                            <th class="firstcolright fixed-right" style="width:100px">
                                                 <span *ngIf="true"
                                                     [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
                                                     style="display: inline-block; width: 1.5rem; text-align: center;">
@@ -193,7 +194,7 @@
                                             <td>{{item.name}}</td>
                                             <td class="fixed-right">{{i+1}}</td>
                                             <td class="fixed-right"><input type="checkbox" [(ngModel)]="item.checked"
-                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
+                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-1" />
                                             </td>
 
                                         </tr>
@@ -237,7 +238,8 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal>
+<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog"
+    #myModal>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -255,6 +257,12 @@
                                     <label for="field4 text-end"> اسم العميل</label>
                                     <input #nameInput type="text" id="name" formControlName="name" class="form-control"
                                         placeholder="اسم العميل" />
+                                    <div *ngIf="
+                      clientForm.get('name')?.invalid &&
+                      clientForm.get('name')?.touched
+                    " class="text-danger">
+                                        اسم العميل مطلوب.
+                                    </div>
                                 </div>
 
                             </div>
@@ -270,8 +278,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="field4 text-end"> رقم الجوال</label>
-                                    <input type="text" id="phonr" formControlName="phone" class="form-control"
+                                    <input type="text" id="phone" formControlName="phone" class="form-control"
                                         placeholder="رقم الجوال" />
+                                    <div *ngIf="
+                      clientForm.get('phone')?.invalid &&
+                      clientForm.get('phone')?.touched
+                    " class="text-danger">
+                                        رقم جوال العميل مطلوب.
+                                    </div>
                                 </div>
 
                             </div>
@@ -280,18 +294,24 @@
                                     <label for="field4 text-end"> ايميل العميل</label>
                                     <input type="text" id="email" formControlName="email" class="form-control"
                                         placeholder="ايميل العميل" />
+                                    <div *ngIf="
+                                        clientForm.get('email')?.invalid &&
+                                        clientForm.get('email')?.touched
+                                      " class="text-danger">
+                                        إيميل العميل مطلوب.
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="field4 text-end"> كود العميل</label>
                                     <input type="text" id="code" formControlName="code" class="form-control"
                                         placeholder="كود العميل" />
                                 </div>
 
-                            </div>
+                            </div> -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">الوسم</label>
@@ -331,6 +351,12 @@
 
                                                     </select>
                                                 </div>
+                                                <div *ngIf="
+                                                clientForm.get('priceListId')?.invalid &&
+                                                clientForm.get('priceListId')?.touched
+                                              " class="text-danger">
+                                                    قائمة الأسعار مطلوبة.
+                                                </div>
                                             </div>
 
                                         </div>
@@ -344,6 +370,12 @@
                                                         <option *ngFor="let item of paymentPeriod" [value]="item.id">
                                                             {{item.invoicePaymentPeriodDays}}</option>
                                                     </select>
+                                                </div>
+                                                <div *ngIf="
+                                                clientForm.get('paymentPeriodId')?.invalid &&
+                                                clientForm.get('paymentPeriodId')?.touched
+                                              " class="text-danger">
+                                                    فترة السداد مطلوبة.
                                                 </div>
                                             </div>
                                         </div>
@@ -384,6 +416,12 @@
                                                             {{item.userName}}</option>
 
                                                     </select>
+                                                </div>
+                                                <div *ngIf="
+                                                clientForm.get('representativeId')?.invalid &&
+                                                clientForm.get('representativeId')?.touched
+                                              " class="text-danger">
+                                                    اسم المندوب مطلوب.
                                                 </div>
                                             </div>
                                         </div>
@@ -1240,6 +1278,12 @@
                                     <label for="field4 text-end"> ايميل العميل</label>
                                     <input type="text" id="email" formControlName="email" class="form-control"
                                         placeholder="ايميل العميل" />
+                                    <div *ngIf="
+                                        clientForm.get('email')?.invalid &&
+                                        clientForm.get('email')?.touched
+                                      " class="text-danger">
+                                        إيميل العميل مطلوب.
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1292,6 +1336,12 @@
 
                                                         </select>
                                                     </div>
+                                                    <div *ngIf="
+                                                    clientForm.get('priceListId')?.invalid &&
+                                                    clientForm.get('priceListId')?.touched
+                                                  " class="text-danger">
+                                                        قائمة الأسعار مطلوبة.
+                                                    </div>
                                                 </div>
 
                                             </div>
@@ -1306,6 +1356,12 @@
                                                                 [value]="item.id">{{item.invoicePaymentPeriodDays}}
                                                             </option>
                                                         </select>
+                                                    </div>
+                                                    <div *ngIf="
+                                                clientForm.get('paymentPeriodId')?.invalid &&
+                                                clientForm.get('paymentPeriodId')?.touched
+                                              " class="text-danger">
+                                                        فترة السداد مطلوبة.
                                                     </div>
                                                 </div>
                                             </div>

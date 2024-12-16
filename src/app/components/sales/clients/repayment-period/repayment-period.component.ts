@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { NgZone} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -16,11 +17,12 @@ export class RepaymentPeriodComponent  implements OnInit{
   apiUrl = environment.apiUrl;
   paymentForm:FormGroup;
   constructor(private payment:PaymentPeriodsService, private http:HttpClient, private fb: FormBuilder,
-    private toast:ToastrService, private renderer: Renderer2,private ngZone:NgZone
+    private toast:ToastrService, private renderer: Renderer2,   private cdr: ChangeDetectorRef
+   ,private ngZone:NgZone
   ){
     this.paymentForm = this.fb.group({
       name: ['', Validators.required],
-      invoicePaymentPeriodDays: [0],
+      invoicePaymentPeriodDays: ['', Validators.required],
       description: [''],
       attachments: this.fb.array([]),
 
@@ -126,6 +128,24 @@ get attachments(): FormArray {
     });
   }
   onSubmit() {
+    const nameControl = this.paymentForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.paymentForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const periodControl = this.paymentForm.get('invoicePaymentPeriodDays');
+  
+    if (!periodControl || periodControl.invalid) {
+      console.log('Form is invalid because the invoicePaymentPeriodDays field is invalid.');
+      console.log('invoicePaymentPeriodDays field errors:', periodControl?.errors);
+      this.paymentForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.paymentForm.get('name')?.value);
     formData.append('invoicePaymentPeriodDays', this.paymentForm.get('invoicePaymentPeriodDays')?.value);
@@ -239,9 +259,25 @@ closeModal() {
 }
 
 updateCategory() {
-  if (this.paymentForm.valid) {
     const updatedCategory = { ...this.paymentForm.value, id: this.selectedCategory.id };
-
+    const nameControl = this.paymentForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.paymentForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const periodControl = this.paymentForm.get('invoicePaymentPeriodDays');
+  
+    if (!periodControl || periodControl.invalid) {
+      console.log('Form is invalid because the invoicePaymentPeriodDays field is invalid.');
+      console.log('invoicePaymentPeriodDays field errors:', periodControl?.errors);
+      this.paymentForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     // Call the update service method using the category's id
     this.payment.updatePaymentPeriod(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {
@@ -266,9 +302,7 @@ updateCategory() {
         this.toast.error("حدث خطأ ، تأكد من البيانات و حاول مرة أخرى"); 
             }
     );
-    }else{
-      this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
-    }
+   
   }
 
   showConfirmationModal = false;
@@ -349,9 +383,14 @@ finalizeDeletion(successfulDeletions: number[], failedDeletions: { id: number; e
     this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
     this.getPaymentPeriods();
     this.closeConfirmationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    if (this.periods.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getPaymentPeriods(); 
+    } else {
+      this.getPaymentPeriods();
+    }
   }
 }
  

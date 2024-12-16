@@ -154,7 +154,7 @@
                                             <td class="fixed-right">{{ i+1 }}</td>
                                             <td class="fixed-right">
                                                 <input type="checkbox" [(ngModel)]="item.checked"
-                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
+                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-1" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -213,7 +213,16 @@
                                     <label for=" text-end"> اسم جهه الإتصال</label>
                                     <input type="text" id="name" name="name" formControlName="name"
                                         class="form-control custom-input" placeholder="اسم المنشأ" />
-                                </div>
+                                        <div
+                                        *ngIf="
+                                          contactForm.get('name')?.invalid &&
+                                          contactForm.get('name')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        اسم جهه الإتصال مطلوب.
+                                      </div>
+                                    </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -232,6 +241,15 @@
                                     <input type="text" id="phoneNumber1" name="phoneNumber1"
                                         formControlName="phoneNumber1" class="form-control custom-input"
                                         placeholder="رقم الجوال 1" />
+                                        <div
+                                        *ngIf="
+                                          contactForm.get('phoneNumber1')?.invalid &&
+                                          contactForm.get('phoneNumber1')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        رقم جهه الإتصال مطلوب.
+                                      </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -436,7 +454,16 @@
                                 <div class="form-group">
                                     <label for=" text-end"> اسم جهه الإتصال</label>
                                     <input type="text" id="name" name="name" formControlName="name"
-                                        class="form-control custom-input" placeholder="اسم المنشأ" />
+                                        class="form-control custom-input" placeholder="اسم جهه الإتصال" />
+                                        <div
+                                        *ngIf="
+                                          contactForm.get('name')?.invalid &&
+                                          contactForm.get('name')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        اسم جهه الإتصال مطلوب.
+                                      </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -456,6 +483,15 @@
                                     <input type="text" id="phoneNumber1" name="phoneNumber1"
                                         formControlName="phoneNumber1" class="form-control custom-input"
                                         placeholder="رقم الجوال 1" />
+                                        <div
+                                        *ngIf="
+                                          contactForm.get('phoneNumber1')?.invalid &&
+                                          contactForm.get('phoneNumber1')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        رقم جهه الإتصال مطلوب.
+                                      </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -496,7 +532,7 @@
                             <div class="col-md-9">
                                 <label for="location" class="form-label">موقع جهه التواصل</label>
                                 <div class="input-group">
-                                    <select class="form-select custom-input" formControlName="locationLinks"
+                                    <select class="form-select custom-input" formArrayName="locationLinks"
                                         name="locationLinks">
                                         <option selected disabled>قم بإختيار الموقع</option>
                                         <option *ngFor="let item of location" [value]="item.id">{{item.locationName}}

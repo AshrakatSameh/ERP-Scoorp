@@ -15,6 +15,7 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
 
   EmpReqCategoryForm: FormGroup;
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
   constructor(private empReqService: EmpRequestCategService, private fb: FormBuilder, private http: HttpClient,
     private toast: ToastrService, private renderer: Renderer2, private cdr: ChangeDetectorRef,private ngZone:NgZone
 

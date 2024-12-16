@@ -119,6 +119,8 @@
                     <tr class="firstcol">
                         <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
                         </th>
+                        <th>المرفقات</th>
+
                         <th>وصف فئة الطلب</th>
                       <th>كود فئة الطلب</th>
                       <th>اسم فئة الطلب باللغة المحلية</th>
@@ -143,6 +145,13 @@
                   <tbody>
                     <tr *ngFor="let item of filteredServiceCategory, let i=index">
                         <td> </td>
+                        <td>
+                          <ul *ngFor="let attachment of item.attachments" class="list-unstyled list-inline-item">
+                            <li><a [href]="imgApiUrl+attachment.fileUrl" target="_blank"><img
+                                  src="../../../../../assets/images/mingcute_pdf-fill.png" style="height: 30px;"></a>
+                            </li>
+                          </ul>
+                        </td>
                       <td>{{item.description}}</td>
                       <td>{{item.code}}</td>
                       <td>{{item.localName}}</td>

@@ -38,19 +38,30 @@ export class ClientsService {
 
 
   createClient(clientData: any): Observable<any> {
-    const tenantId = localStorage.getItem('tenant');
+    const formData = new FormData();
+
+    // Append fields to FormData
+    formData.append('Name', clientData.name);
+    formData.append('LocalName', clientData.localName || ''); // Optional field
+    formData.append('Phone', clientData.phone);
+    formData.append('Email', clientData.email);
+    formData.append('Code', clientData.code || ''); 
+    formData.append('tagId', clientData.tagId || '');
+    formData.append('priceListId', clientData.priceListId || '');
+    formData.append('paymentPeriodId', clientData.paymentPeriodId || '');
+    formData.append('paymentMethodId', clientData.paymentMethodId || '');
+    formData.append('deliveryMethod', clientData.deliveryMethod || '');
+    formData.append('representativeId', clientData.representativeId || '');
+    formData.append('teamId', clientData.teamId || '');
+    formData.append('costCenterId', clientData.costCenterId || '');
+    formData.append('creditLimit', clientData.creditLimit || '');
+
+    // Headers: Add 'tenant' from localStorage or any logic
     const headers = new HttpHeaders({
-      tenant: tenantId || '', // Set tenantId header if available
-      'Content-Type': 'application/json',
+      tenant: localStorage.getItem('tenant') || '', // Retrieve tenant value
     });
-    console.log(clientData)
-    // Construct the URL with query parameters from the form data
-    const url = `${this.api}?Name=${encodeURIComponent(clientData.name)}&LocalName=${encodeURIComponent(clientData.localName)}&Phone=${encodeURIComponent(clientData.phone)}&Email=${encodeURIComponent(clientData.email)}&Code=${encodeURIComponent(clientData.code)}&TagId=${encodeURIComponent(clientData.tagId)}`;
 
-    // Make the POST request
-    return this.http.post(url, clientData, {headers});
-    
-
+    return this.http.post<any>(this.api, formData, { headers });
   }
 
   getCliensts(): Observable<any> {

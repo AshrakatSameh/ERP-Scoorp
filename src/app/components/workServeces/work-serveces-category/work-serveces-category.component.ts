@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment.development';
 })
 export class WorkServecesCategoryComponent implements OnInit {
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
   serviceCategoryForm: FormGroup;
 
   constructor(private serCategory: ServiceCategoryService, private fb: FormBuilder, private http: HttpClient,

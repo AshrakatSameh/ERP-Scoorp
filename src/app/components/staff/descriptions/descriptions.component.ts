@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +22,7 @@ export class DescriptionsComponent {
   pageSize: number = 10;
 
   constructor(private jobServices: JobDescriptionsService, private fb: FormBuilder,
-    private toast: ToastrService, private http: HttpClient, private ngZone:NgZone
+    private toast: ToastrService, private http: HttpClient, private ngZone:NgZone, private cdr: ChangeDetectorRef
   ) {
     this.JobForm = this.fb.group({
       name: ['', Validators.required],
@@ -66,14 +67,21 @@ export class DescriptionsComponent {
 
 
   onSubmitAdd(): void {
-
-    if (this.JobForm.valid) {
+    const nameControl = this.JobForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.JobForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
       // Call the service to post the data
       const formData = this.JobForm.value; // Get the form data
       this.jobServices.creategetJobDes(formData).subscribe(
         response => {
           console.log('Job Des  created successfully!', response);
-          this.toast.success('Job description created successfully');
+          this.toast.success('تمت الإضافة بنجاح');
           this.getAllJobDes();
           // Handle success, show notification, etc.
         },
@@ -81,15 +89,11 @@ export class DescriptionsComponent {
           console.error('Error creating Job Des :', error);
           console.log(formData);
           const errorMessage = error.error?.message || 'An unexpected error occurred.';
-          this.toast.error(errorMessage, 'Error');
+          this.toast.error("حدث خطأ ، تأكد من البيانات و حاول مرة أخرى");
           // Handle error, show notification, etc.
         }
       );
-    } else {
-      console.log(this.JobForm);
-      console.log('Form is not valid');
-      // Handle form validation errors
-    }
+   
   }
 
 
@@ -170,6 +174,15 @@ export class DescriptionsComponent {
   }
   apiUrl = environment.apiUrl + 'JobDescriptions';
   onSubmit() {
+    const nameControl = this.JobForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.JobForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.JobForm.get('name')?.value);
     formData.append('localName', this.JobForm.get('localName')?.value);
@@ -265,7 +278,15 @@ export class DescriptionsComponent {
 
   updateCategory() {
       const updatedCategory = { ...this.JobForm.value, id: this.selectedCategory.id };
-
+      const nameControl = this.JobForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.JobForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
       // Call the update service method using the category's id
       this.jobServices.updateJobDes(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {
@@ -351,9 +372,14 @@ export class DescriptionsComponent {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllJobDes();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredDeps.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllJobDes(); 
+      } else {
+        this.getAllJobDes();
+      }
     }
   }
   showConfirmationModal = false;

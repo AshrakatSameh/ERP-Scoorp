@@ -149,7 +149,7 @@
                         <td class="fixed-right">{{i+1}}</td>
                         <td class="firstcolright fixed-right">
                           <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
-                            class="large-checkbox mx-4" />
+                            class="large-checkbox mx-1" />
                         </td>
                       </tr>
 
@@ -211,6 +211,15 @@
                   <label for="field1 text-end"> اسم الموظف</label>
                   <input type="text" id="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم الموظف" />
+                    <div
+                    *ngIf="
+                      employeeForm.get('name')?.invalid &&
+                      employeeForm.get('name')?.touched
+                    "
+                    class="text-danger"
+                  >
+                    اسم الموظف مطلوب.
+                  </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -245,6 +254,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentSupervisorId')?.invalid &&
+                    employeeForm.get('departmentSupervisorId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  المشرف مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -257,6 +275,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentManagerId')?.invalid &&
+                    employeeForm.get('departmentManagerId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  مدير القسم مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -269,6 +296,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentId')?.invalid &&
+                    employeeForm.get('departmentId')?.touched
+                  "
+                  class="text-danger"
+                >
+                   القسم مطلوب.
+                </div>
                 </div>
               </div>
             </div>
@@ -280,6 +316,15 @@
                   <input type="date" id="startDate" formControlName="startDate" class="form-control custom-input"
                     placeholder="قم باختيار التاريخ" />
                 </div>
+                <div
+                *ngIf="
+                  employeeForm.get('startDate')?.invalid &&
+                  employeeForm.get('startDate')?.touched
+                "
+                class="text-danger"
+              >
+                 تاريخ البداية مطلوب.
+              </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
@@ -713,6 +758,15 @@
                   <label for="field1 text-end"> اسم الموظف</label>
                   <input type="text" id="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم الموظف" />
+                    <div
+                    *ngIf="
+                      employeeForm.get('name')?.invalid &&
+                      employeeForm.get('name')?.touched
+                    "
+                    class="text-danger"
+                  >
+                    اسم الموظف مطلوب.
+                  </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -747,6 +801,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentSupervisorId')?.invalid &&
+                    employeeForm.get('departmentSupervisorId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  المشرف مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -759,6 +822,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentManagerId')?.invalid &&
+                    employeeForm.get('departmentManagerId')?.touched
+                  "
+                  class="text-danger"
+                >
+                  مدير القسم مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -771,6 +843,15 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="
+                    employeeForm.get('departmentId')?.invalid &&
+                    employeeForm.get('departmentId')?.touched
+                  "
+                  class="text-danger"
+                >
+                   القسم مطلوب.
+                </div>
                 </div>
               </div>
             </div>
@@ -782,6 +863,15 @@
                   <input type="date" id="startDate" formControlName="startDate" class="form-control custom-input"
                     placeholder="قم باختيار التاريخ" />
                 </div>
+                <div
+                *ngIf="
+                  employeeForm.get('startDate')?.invalid &&
+                  employeeForm.get('startDate')?.touched
+                "
+                class="text-danger"
+              >
+                 تاريخ البداية مطلوب.
+              </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">

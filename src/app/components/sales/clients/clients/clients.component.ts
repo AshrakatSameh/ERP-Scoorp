@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -39,20 +40,20 @@ export class ClientsComponent implements OnInit {
     private supervisorService: SupervisorService, private tagService: TagService, private http: HttpClient,
     private priceList: PriceListService, private payments: PaymentPeriodsService, private repre: RepresentativeService,
     private teamService: TeamsService, private costCenterService: CostCenterService, private toast: ToastrService,
-    private renderer:Renderer2, private ngZone:NgZone
+    private renderer:Renderer2,     private cdr: ChangeDetectorRef
+   , private ngZone:NgZone
   ) {
     this.clientForm = this.fb.group({
       name: ['', Validators.required],
-      localName: ['', Validators.required],
-      phone: [''],
-      email: [''],
-      code: [''],
-      priceListId: [''],
+      localName: [''],
+      phone: ['', Validators.required],
+      email: ['', Validators.required],
+      priceListId: ['', Validators.required],
       tagId: [''],
-      paymentPeriodId: [''],
+      paymentPeriodId: ['', Validators.required],
       paymentMethodId: [''],
       deliveryMethod: [''],
-      representativeId: [''],
+      representativeId: ['', Validators.required],
       teamId: [''],
       costCenterId: [''],
       creditLimit: [''],
@@ -237,96 +238,92 @@ export class ClientsComponent implements OnInit {
       document.body.style.overflow = '';
     });
   }
-  onSubmit() {
-    const formData = new FormData();
-    const name = this.clientForm.get('name')!.value;
-    const localName = this.clientForm.get('localName')!.value;
-    const phone = this.clientForm.get('phone')!.value;
-    const email = this.clientForm.get('email')!.value;
-    const code = this.clientForm.get('code')!.value;
-    const tagId = this.clientForm.get('tagId')!.value;
-    const priceListId = this.clientForm.get('priceListId')!.value;
-    const paymentPeriodId = this.clientForm.get('paymentPeriodId')!.value;
-    const paymentMethodId = this.clientForm.get('paymentMethodId')!.value;
-    const deliveryMethod = this.clientForm.get('deliveryMethod')!.value;
-    const representativeId = this.clientForm.get('representativeId')!.value;
-    const teamId = this.clientForm.get('teamId')!.value;
-    const costCenterId = this.clientForm.get('costCenterId')!.value;
-    const creditLimit = this.clientForm.get('creditLimit')!.value;
-
-    if (name) {
-      formData.append('name', name);
-      formData.append('localName', localName);
-      formData.append('phone', phone);
-      formData.append('email', email);
-      formData.append('code', code);
-      formData.append('tagId', tagId);
-      formData.append('priceListId', priceListId);
-      formData.append('paymentPeriodId', paymentPeriodId);
-      formData.append('paymentMethodId', paymentMethodId);
-      formData.append('deliveryMethod', deliveryMethod);
-      formData.append('representativeId', representativeId);
-      formData.append('teamId', teamId);
-      formData.append('costCenterId', costCenterId);
-      formData.append('creditLimit', creditLimit);
-
-
-
-    } else {
-      console.error('One or more form fields are null');
+  onSubmit(): void {
+    if (this.clientForm.invalid) {
+      console.error('Form is invalid');
       return;
     }
 
-    const attachments = this.clientForm.get('attachments')!.value; // Assuming attachments are stored in the form
-    if (attachments && attachments.length > 0) {
-      this.attachments.controls.forEach((control) => {
-        const fileData = control.value;
-        if (fileData && fileData.file instanceof File) {
-          // Append the actual file object
-          formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
-        }
-      });
-    }
-    const tenantId = localStorage.getItem('tenant');
-    const headers = new HttpHeaders({
-      tenant: tenantId || '', // Set tenantId header if available
-      'Content-Type': 'application/json',
-    });
-    const url = `${this.apiUrl}?Name=${encodeURIComponent(name)}&LocalName=${encodeURIComponent(localName)}&Phone=${encodeURIComponent(phone)}&Email=${encodeURIComponent(email)}&Code=${encodeURIComponent(code)}&TagId=${encodeURIComponent(tagId)}
-&PriceListId=${encodeURIComponent(priceListId)}&PaymentPeriodId=${encodeURIComponent(paymentPeriodId)}&PaymentMethodId=${encodeURIComponent(paymentMethodId)}&DeliveryMethod=${encodeURIComponent(deliveryMethod)}
-&RepresentativeId=${encodeURIComponent(representativeId)}&TeamId=${encodeURIComponent(teamId)}&CostCenterId=${encodeURIComponent(costCenterId)}&CreditLimit=${encodeURIComponent(creditLimit)}`;
-// &DeliveryMethod=${encodeURIComponent(deliveryMethod)}
-// &RepresentativeId=${encodeURIComponent(representativeId)}&TeamId=${encodeURIComponent(teamId)}&CostCenterId=${encodeURIComponent(costCenterId)}&CreditLimit=${encodeURIComponent(creditLimit)}
-    this.http.post<any>(url, formData, { headers }).subscribe(
-      (response) => {
-        // alert('Done');
+    const formValues = this.clientForm.value;
+    this.clientService.createClient(formValues).subscribe({
+      next: (response) => {
         console.log('Client created successfully:', response);
-        this.toast.success('تمت الإضافة بنجاح');
-        // Reset form after successful submission
-        const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
-        if (modalInstance) {
-          modalInstance.hide();
-        }
-        // Ensure proper cleanup after modal closure
-        setTimeout(() => {
-          document.body.classList.remove('modal-open');
-          
-          document.body.style.overflow = '';
-        }, 300);
-        this.getAllClients();
-        this.attachments.clear();
-        this.clientForm.reset();
       },
-      (error) => {
-        console.error('Error creating Client:', error.error);
-        const errorMessage = error.error?.message || 'An unexpected error occurred.';
-        this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
-        console.log('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى')
-        // Handle error
-      }
-    );
+      error: (error) => {
+        console.error('Error creating client:', error);
+      },
+    });
   }
 
+  // onSubmit() {
+  //   // const nameControl = this.clientForm.get('name');
+  
+  //   // if (!nameControl || nameControl.invalid) {
+  //   //   console.log('Form is invalid because the name field is invalid.');
+  //   //   console.log('Name field errors:', nameControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+  //   // const phoneControl = this.clientForm.get('phone');
+  
+  //   // if (!phoneControl || phoneControl.invalid) {
+  //   //   console.log('Form is invalid because the phone field is invalid.');
+  //   //   console.log('phone field errors:', phoneControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+  //   // const emailControl = this.clientForm.get('email');
+  
+  //   // if (!emailControl || emailControl.invalid) {
+  //   //   console.log('Form is invalid because the email field is invalid.');
+  //   //   console.log('email field errors:', emailControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+  //   // const priceListControl = this.clientForm.get('priceListId');
+  
+  //   // if (!priceListControl || priceListControl.invalid) {
+  //   //   console.log('Form is invalid because the priceListId field is invalid.');
+  //   //   console.log('priceListId field errors:', priceListControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+  //   // const paymentControl = this.clientForm.get('paymentPeriodId');
+  
+  //   // if (!paymentControl || paymentControl.invalid) {
+  //   //   console.log('Form is invalid because the paymentPeriodId field is invalid.');
+  //   //   console.log('paymentPeriodId field errors:', paymentControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+  //   // const representControl = this.clientForm.get('representativeId');
+  
+  //   // if (!representControl || representControl.invalid) {
+  //   //   console.log('Form is invalid because the representativeId field is invalid.');
+  //   //   console.log('representativeId field errors:', representControl?.errors);
+  //   //   this.clientForm.markAllAsTouched();
+  //   //   this.cdr.detectChanges();
+  //   //   return; // Stop submission if the name field is invalid
+  //   // }
+    
+  //   const formValues = this.clientForm.value;
+  //   this.clientService.createClient(formValues).subscribe({
+  //     next: (response) => {
+  //       console.log('Client created successfully:', response);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error creating client:', error);
+  //     },
+  //   });
+  
+  // }
+
+  
   // ازرار الاجراءات
   isDropdownOpen: boolean = false;
   private documentClickListener: any; // Listener reference for cleanup

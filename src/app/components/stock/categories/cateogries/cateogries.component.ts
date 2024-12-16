@@ -117,10 +117,7 @@ export class CateogriesComponent {
       key: key,
       value: this.itemClassification[key as keyof typeof ItemClassification]
     }));
-    // this.itemClassificationList = Object.keys(ItemClassification).map(key => ({
-    //   key: key,
-    //   value: ItemClassification[key as keyof typeof ItemClassification]
-    // }));
+   
   }
 
   ngOnInit(): void {

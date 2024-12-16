@@ -422,3 +422,7 @@ input.form-control {
   color: gray;
   font-size: 12px;
 }
+
+select{
+  background-position: left;
+}

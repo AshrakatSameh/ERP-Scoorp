@@ -39,7 +39,7 @@
                             <h4 class="card-title text-end">ادارة المناديب</h4>
                             <div class="button-group d-flex justify-content-start">
                                 <button type="button" class="btn my-button" data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdrop">
+                                    data-bs-target="#myModal">
                                     اضف مندوب
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
@@ -71,18 +71,19 @@
                             <div class="d-flex align-items-center flex-row-reverse">
                                 <!-- Button with icon -->
                                 <button class="btn my-custom-icone me-2">
-                                  <span class="btn-label">
-                                    <i class="fa-solid fa-sliders"></i>
-                                  </span>
+                                    <span class="btn-label">
+                                        <i class="fa-solid fa-sliders"></i>
+                                    </span>
                                 </button>
-                
+
                                 <!-- Search form -->
                                 <div class="d-flex position-relative">
-                                    <input class="form-control text-end search-input" type="search" placeholder="بحث في الكل"
-                                    aria-label="Search" [(ngModel)]="searchQuery" (input)="onSearchInputChange($event)" />
-                                  <i class="fs-4 bi-search position-absolute search-icon"></i>
+                                    <input class="form-control text-end search-input" type="search"
+                                        placeholder="بحث في الكل" aria-label="Search" [(ngModel)]="searchQuery"
+                                        (input)="onSearchInputChange($event)" />
+                                    <i class="fs-4 bi-search position-absolute search-icon"></i>
                                 </div>
-                              </div>
+                            </div>
                             <div class="icon-group d-flex align-items-center">
 
                                 <button class="btn  my-custom-icone">
@@ -125,19 +126,14 @@
                                             <th>اسم المندوب</th>
                                             <th class="fixed-right">المسلسل</th>
                                             <th class="firstcolright fixed-right">
-                                                <span 
-                                                  *ngIf="true" 
-                                                  [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
-                                                  style="display: inline-block; width: 1.5rem; text-align: center;"
-                                                >
-                                                  {{ selectedCount }}
+                                                <span *ngIf="true"
+                                                    [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                                                    style="display: inline-block; width: 1.5rem; text-align: center;">
+                                                    {{ selectedCount }}
                                                 </span>
-                                                <input 
-                                                  type="checkbox" 
-                                                  [(ngModel)]="selectAll" 
-                                                  (change)="toggleAllCheckboxes()" 
-                                                  class="large-checkbox mx-1" 
-                                                />                      </th>
+                                                <input type="checkbox" [(ngModel)]="selectAll"
+                                                    (change)="toggleAllCheckboxes()" class="large-checkbox mx-1" />
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -150,7 +146,8 @@
                                             <td>{{item.userName}}</td>
                                             <td class="fixed-right">{{ i+1 }}</td>
                                             <td class="fixed-right">
-                                                <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
+                                                <input type="checkbox" [(ngModel)]="item.checked"
+                                                    (change)="onCheckboxChange(item)" class="large-checkbox mx-1" />
 
                                             </td>
 
@@ -170,8 +167,8 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog"
+    #myModal>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -190,6 +187,12 @@
                                     <label for="field4 text-end">اسم المندوب</label>
                                     <input type="text" id="userName" formControlName="username" name="userName"
                                         class="form-control" placeholder="اسم المندوب" />
+                                    <div *ngIf="
+                                          representativeForm.get('username')?.invalid &&
+                                          representativeForm.get('username')?.touched
+                                        " class="text-danger">
+                                        اسم المندوب مطلوب.
+                                    </div>
                                 </div>
                             </div>
 
@@ -200,6 +203,12 @@
                                     <label for=" text-end">البريد الإلكتروني</label>
                                     <input type="email" id="email" formControlName="email" name="email"
                                         class="form-control" placeholder="البريد الإلكتروني" />
+                                    <div *ngIf="
+                                          representativeForm.get('email')?.invalid &&
+                                          representativeForm.get('email')?.touched
+                                        " class="text-danger">
+                                        ايميل المندوب مطلوب.
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -207,6 +216,18 @@
                                     <label for="password text-end">كلمة المرور</label>
                                     <input type="password" id="password" formControlName="password" name="password"
                                         class="form-control" placeholder="كلمة المرور" />
+                                    <div *ngIf="
+                                          representativeForm.get('password')?.invalid &&
+                                          representativeForm.get('password')?.touched
+                                        " class="text-danger">
+                                        الباسورد مطلوب.
+                                    </div>
+                                    <div *ngIf="
+                                          representativeForm.get('password')?.invalid &&
+                                          representativeForm.get('password')?.touched
+                                        " class="text-danger">
+                                        الباسورد 6 حروف على الأقل، يجب أن يحتوي على حروف كبيرة و صغيرة و أرقام و رمز على الأقل
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -222,6 +243,12 @@
                                             </option>
 
                                         </select>
+                                    </div>
+                                    <div *ngIf="
+                                      representativeForm.get('employeeId')?.invalid &&
+                                      representativeForm.get('employeeId')?.touched
+                                    " class="text-danger">
+                                        الموظف مطلوب.
                                     </div>
                                 </div>
                             </div>
@@ -239,6 +266,12 @@
 
                                         </select>
                                     </div>
+                                    <div *ngIf="
+                                      representativeForm.get('jobType')?.invalid &&
+                                      representativeForm.get('jobType')?.touched
+                                    " class="text-danger">
+                                        الرجاء تحديد نوع العمل.
+                                    </div>
                                 </div>
 
                             </div>
@@ -251,6 +284,12 @@
                                             (onDeSelect)="onItemDeselect($event)" (onSelectAll)="onSelectAll($event)"
                                             (onDeSelectAll)="onDeselectAll()">
                                         </ng-multiselect-dropdown>
+                                    </div>
+                                    <div *ngIf="
+                                          representativeForm.get('accessTypes')?.hasError('minSelected') &&
+                                        representativeForm.get('accessTypes')?.touched
+                                            " class="text-danger">
+                                        الرجاء تحديد نوع وصول واحد على الأقل.
                                     </div>
                                 </div>
 

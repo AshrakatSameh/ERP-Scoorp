@@ -125,8 +125,8 @@
                                     <thead>
                                         <tr class="firstcol">
 
-                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                                            </th>
+                                            <!-- <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th> -->
                                             <th>الوصف</th>
                                             <th>الإسم المحلي</th>
                                             <th>الإسم</th>
@@ -143,7 +143,7 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let item of filteredLists, let i = index">
-                                            <td> </td>
+                                            <!-- <td> </td> -->
 
                                             <td>{{item.description}}</td>
                                             <td>{{item.localName}}</td>
@@ -151,7 +151,7 @@
                                             <td>{{item.name}}</td>
                                             <td class="fixed-right">{{ i+1 }}</td>
                                             <td class="fixed-right">  <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
-                                                class="large-checkbox mx-4" />
+                                                class="large-checkbox mx-1" />
                                             </td>
                                         </tr>
 
@@ -210,7 +210,16 @@
                                     <label for="field4 text-end"> اسم القائمة</label>
                                     <input type="text" id="name" formControlName="name"
                                         class="form-control custom-input" placeholder="اسم القائمة" />
-                                </div>
+                                        <div
+                                        *ngIf="
+                                          priceListForm.get('name')?.invalid &&
+                                          priceListForm.get('name')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        اسم القائمة مطلوب.
+                                      </div>
+                                    </div>
                             </div>
 
                         </div>
@@ -224,23 +233,12 @@
                             </div>
 
                         </div>
-                        <!-- <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for=" text-end"> الكود</label>
-                                    <input type="text" id="code" formControlName="code"
-                                        class="form-control custom-input" placeholder="الكود" />
-                                </div>
-                            </div>
-
-                        </div> -->
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for=" text-end"> الوصف</label>
                                     <textarea id="description" formControlName="description"
                                         class="form-control custom-input" placeholder="الوصف"></textarea>
-                                    <!-- <input type="text" id="description" formControlName="description" class="form-control" placeholder="الوصف" /> -->
                                 </div>
                             </div>
 
@@ -253,6 +251,11 @@
                                 class="scroll-button" type="button" (click)="showContent(i)">
                                 {{ btn }}
                             </button>
+                        </div>
+                        <div *ngIf="priceListForm.get('priceListItems')?.invalid &&
+                             priceListForm.get('priceListItems')?.touched
+                             " class="text-danger">
+                            الأصناف مطلوبة.
                         </div>
                         <!-- show table button 1 -->
                         <div *ngIf="selectedButton !== null">

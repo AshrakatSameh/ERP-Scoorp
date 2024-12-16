@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
@@ -31,16 +31,17 @@ export class ContactsComponent implements OnInit {
   constructor(private contactService:ContactsService, private locationService:LocationService,
     private clientService:ClientsService, private fb:FormBuilder, private http:HttpClient,
     private toast: ToastrService, private nationality: NationalityService,private renderer : Renderer2
+  ,    private cdr: ChangeDetectorRef
   ){
     
     this.contactForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
-      phoneNumber1: [''],
+      phoneNumber1: ['', Validators.required],
       phoneNumber2: [''],
       jobTitle: [''],
       email: [''],
-      locationLinks: [''],
+      locationLinks: this.fb.array([]), // Initialize FormArray
       nationality: [''],
       clientId: [''],
       supplier: [''],
@@ -55,7 +56,21 @@ export class ContactsComponent implements OnInit {
     this.getClients();
     this.getNationalities()
   }
+  // Getter for the FormArray
+  get locationLinks(): FormArray {
+    return this.contactForm.get('locationLinks') as FormArray;
+  }
 
+  // Add a new location link field
+  addLocationLink(link: string) {
+    const locationLinks = this.contactForm.get('locationLinks') as FormArray;
+    locationLinks.push(new FormControl(link));
+  }
+
+  // Remove a location link field
+  removeLocationLink(index: number): void {
+    this.locationLinks.removeAt(index);
+  }
   isDropdownOpen: boolean = false;
   private documentClickListener: any; // Listener reference for cleanup
   
@@ -168,7 +183,40 @@ nationalities:any[]=[];
       document.body.style.overflow = '';
     });
   }
+  initializeContactForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      phoneNumber1: ['', Validators.required],
+      phoneNumber2: [''],
+      jobTitle: [''],
+      email: [''],
+      locationLinks: this.fb.array([]),
+      nationality: [''],
+      clientId: [''],
+      supplier: [''],
+      description:[''],
+    });
+  }
   onSubmit() {
+    const nameControl = this.contactForm.get('name');
+
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.contactForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const phoneControl = this.contactForm.get('phoneNumber1');
+
+    if (!phoneControl || phoneControl.invalid) {
+      console.log('Form is invalid because the phoneNumber1 field is invalid.');
+      console.log('phoneNumber1 field errors:', phoneControl?.errors);
+      this.contactForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.contactForm.get('name')?.value);
     formData.append('localName', this.contactForm.get('localName')?.value);
@@ -176,11 +224,20 @@ nationalities:any[]=[];
     formData.append('phoneNumber2', this.contactForm.get('phoneNumber2')?.value);
     formData.append('jobTitle', this.contactForm.get('jobTitle')?.value);
     formData.append('email', this.contactForm.get('email')?.value);
-    formData.append('locationLinks', this.contactForm.get('locationLinks')?.value);
+    // formData.append('locationLinks', this.contactForm.get('locationLinks')?.value || null);
     formData.append('nationality', this.contactForm.get('nationality')?.value);
     formData.append('clientId', this.contactForm.get('clientId')?.value);
     formData.append('supplier', this.contactForm.get('supplier')?.value);
     formData.append('description', this.contactForm.get('description')?.value);
+    const locationLinks = this.contactForm.get('locationLinks') as FormArray;
+    if (locationLinks && locationLinks.length > 0) {
+      locationLinks.controls.forEach((control, index) => {
+        const linkValue = control.value;
+        if (linkValue) {
+          formData.append(`locationLinks[${index}]`, linkValue);
+        }
+      });
+    }
     this.attachments.controls.forEach((control) => {
       const file = control.value;
       if (file) {
@@ -188,7 +245,7 @@ nationalities:any[]=[];
       }
     });
 
-  
+ 
     const headers = new HttpHeaders({
       'tenant': localStorage.getItem('tenant')||''  // Add your tenant value here
     });
@@ -209,7 +266,7 @@ nationalities:any[]=[];
           document.body.style.overflow = '';
         }, 300);
         this.getAllContacts();
-        this.contactForm.reset();
+        this.contactForm= this.initializeContactForm();
         this.attachments.clear();
       }, error => {
         console.error('Error:', error);
@@ -254,9 +311,25 @@ closeModal() {
 storesSec:any[] =[];
 
 updateCategory() {
-  if (this.contactForm.valid) {
     const updatedCategory = { ...this.contactForm.value, id: this.selectedCategory.id };
+    const nameControl = this.contactForm.get('name');
 
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.contactForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const phoneControl = this.contactForm.get('phoneNumber1');
+
+    if (!phoneControl || phoneControl.invalid) {
+      console.log('Form is invalid because the phoneNumber1 field is invalid.');
+      console.log('phoneNumber1 field errors:', phoneControl?.errors);
+      this.contactForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     // Call the update service method using the category's id
     this.contactService.updateItem(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {
@@ -278,10 +351,7 @@ updateCategory() {
         this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
       }
     );
-    }
-    else{
-      this.toast.warning('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
-    }
+  
   }
 
   showConfirmationModal = false;
@@ -358,9 +428,14 @@ finalizeDeletion(successfulDeletions: number[], failedDeletions: { id: number; e
     this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
     this.getAllContacts();
     this.closeConfirmationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    if (this.filteredContacts.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getAllContacts(); 
+    } else {
+      this.getAllContacts();
+    }
   }
 }
 totalCount: number = 0; // Total count of items from the API

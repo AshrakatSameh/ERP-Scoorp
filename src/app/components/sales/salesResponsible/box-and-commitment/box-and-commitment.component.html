@@ -125,8 +125,8 @@
                                     <thead>
                                         <tr class="firstcol">
 
-                                            <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                                            </th>
+                                            <!-- <th> <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </th> -->
                                             <th>كود العهده</th>
                                             <th>وصف العهده</th>
                                             <th>اسم العهده</th>
@@ -144,13 +144,13 @@
                                     <tbody>
                                         <tr *ngFor="let item of filteredConvenentBoxes, let i =index">
 
-                                            <td> </td>
+                                            <!-- <td> </td> -->
                                             <td>{{item.code}}</td>
                                             <td>{{item.description}}</td>
                                             <td>{{item.covenantBoxName}}</td>
                                             <td class="fixed-right">{{ i+1 }} </td>
                                             <td class="fixed-right"> <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                                                class="large-checkbox mx-4" />
+                                                class="large-checkbox mx-1" />
                                             </td>
 
                                         </tr>
@@ -211,7 +211,16 @@
                                     <label for="field4 text-end"> اسم العهده</label>
                                     <input type="text" id="covenantBoxName" formControlName="covenantBoxName"
                                         name="covenantBoxName" class="form-control" placeholder="اسم العهده" />
-                                </div>
+                                        <div
+                                        *ngIf="
+                                          convBoxForm.get('covenantBoxName')?.invalid &&
+                                          convBoxForm.get('covenantBoxName')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        اسم العهده مطلوب.
+                                      </div>
+                                    </div>
                             </div>
 
                         </div>
@@ -339,21 +348,22 @@
                                     <label for="field4 text-end"> اسم العهده</label>
                                     <input type="text" id="covenantBoxName" formControlName="covenantBoxName"
                                         name="covenantBoxName" class="form-control" placeholder="اسم العهده" />
-                                </div>
+                                        <div
+                                        *ngIf="
+                                          convBoxForm.get('covenantBoxName')?.invalid &&
+                                          convBoxForm.get('covenantBoxName')?.touched
+                                        "
+                                        class="text-danger"
+                                      >
+                                        اسم العهده مطلوب.
+                                      </div>
+                                    </div>
                             </div>
 
                         </div>
 
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="field4 text-end">كود العهده</label>
-                                    <input type="text" id="code" formControlName="code" name="code" class="form-control"
-                                        placeholder="كود العهده" />
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div class="row mb-3">
                             <div class="col-md-12 ">
                                 <label for="Textarea1">وصف العهده</label>

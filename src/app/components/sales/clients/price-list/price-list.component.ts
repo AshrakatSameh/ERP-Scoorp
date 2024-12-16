@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {  NgZone} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -23,14 +24,16 @@ export class PriceListComponent implements OnInit {
   imgApiUrl=environment.imgApiUrl;
   constructor(private fb:FormBuilder, private priceService:PriceListService, private http:HttpClient,
     private toast: ToastrService, private itemService:ItemsService, private renderer:Renderer2,
+        private cdr: ChangeDetectorRef,
+     
     private ngZone:NgZone
   ){
     this.priceListForm = this.fb.group({
       name:['', Validators.required],
-      localName:['', Validators.required],
-      description:['', Validators.required],
-      code:['', Validators.required],
-      priceListItems:this.fb.array([]),
+      localName:[''],
+      description:[''],
+      code:[''],
+      priceListItems:this.fb.array([], Validators.required),
       attachments: this.fb.array([])
       
     })
@@ -167,74 +170,35 @@ export class PriceListComponent implements OnInit {
        document.body.style.overflow = '';
      });
    }
-  // onSubmitAdd(){
-
-  //   const formData = new FormData();
-  //   const name = this.priceListForm.get('name')!.value;
-  //   const localName = this.priceListForm.get('localName')!.value;
-  //   const code = this.priceListForm.get('code')!.value;
-  //   const description = this.priceListForm.get('description')!.value;
-
-   
-  //     formData.append('name', name);
-  //     formData.append('localName', localName);
-  //     formData.append('code', code);
-  //     formData.append('description', description);
-  //     this.attachments.controls.forEach((control) => {
-  //       const file = control.value;
-  //       if (file) {
-  //         formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
-  //       }
-  //     });
-  
-      
-  
-  //    // Append PriceListItems array
-  // const priceListItems = this.priceListForm.get('priceListItems') as FormArray;
-  // priceListItems.controls.forEach((item, index) => {
-  //   formData.append(`PriceListItems[${index}].itemId`, item.get('itemId')?.value);
-  //   formData.append(`PriceListItems[${index}].description`, item.get('description')?.value);
-  //   formData.append(`PriceListItems[${index}].unitPrice`, item.get('unitPrice')?.value);
-  //   formData.append(`PriceListItems[${index}].unit`, item.get('unit')?.value);
-  //   formData.append(`PriceListItems[${index}].tax`, item.get('tax')?.value);
-  //   formData.append(`PriceListItems[${index}].discount`, item.get('discount')?.value);
-  // });
-
-  //   const tenantId = localStorage.getItem('tenant');
-  //   const headers = new HttpHeaders({
-  //     tenant: tenantId || '', // Set tenantId header if available
-  //     'Content-Type': 'application/json',
-  //   });
-  //   const url = `${this.apiUrl}?Name=${encodeURIComponent(name)}&LocalName=${encodeURIComponent(localName)}&Code=${encodeURIComponent(code)}&Description=${encodeURIComponent(description)}`;
-  //   this.http.post<any>(url, formData,{headers}).subscribe(
-  //     (response) => {
-  //       console.log('Price list created successfully:', response);
-  //       // Reset form after successful submission
-  //       this.priceListForm.reset();
-  //       this.getAllPriceLists();
-  //       this.toast.success('تمت الإضافة بنجاح');
-         
-  //         // Close the modal programmatically
-  //         const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
-  //         if (modalInstance) {
-  //           modalInstance.hide();
-  //         }
-  //         // Ensure proper cleanup after modal closure
-  //         setTimeout(() => {
-  //           document.body.classList.remove('modal-open');
-            
-  //           document.body.style.overflow = '';
-  //         }, 300);
-  //         this.attachments.clear();
-  //     },
-  //     (error: HttpErrorResponse) => {
-  //       console.error('Error creating Client:', error.error);
-  //       this.toast.error(error.error)
-  //       // Handle error
-  //     }
-  //   );
-  // }
+   initializePriceListForm(): FormGroup {
+    return this.fb.group({
+      name:['', Validators.required],
+      localName:[''],
+      description:[''],
+      code:[''],
+      priceListItems:this.fb.array([], Validators.required),
+      attachments: this.fb.array([])
+    });
+  }
   onSubmit() { 
+    const nameControl = this.priceListForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.priceListForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
+      const itemsControl = this.priceListForm.get('priceListItems');
+  
+      if (!itemsControl || itemsControl.invalid) {
+        console.log('Form is invalid because the priceListItems field is invalid.');
+        console.log('priceListItems field errors:', itemsControl?.errors);
+        this.priceListForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
     const formData = new FormData();
   
     // Basic fields
@@ -293,7 +257,7 @@ export class PriceListComponent implements OnInit {
             
             document.body.style.overflow = '';
           }, 300);
-          this.priceListForm.reset();
+          this.priceListForm = this.initializePriceListForm();
           this.attachments.clear();
       },
       (error: HttpErrorResponse) => {
@@ -473,9 +437,14 @@ deleteItemType(){
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllPriceLists();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredLists.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllPriceLists(); 
+      } else {
+        this.getAllPriceLists();
+      }
     }
   }
  // select checkbox

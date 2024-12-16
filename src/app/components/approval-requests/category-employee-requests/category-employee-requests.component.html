@@ -139,7 +139,7 @@
                   >
                     <thead>
                       <tr class="firstcol">
-                      
+                      <th>المرفقات</th>
                         <th>وصف فئه الطلب</th>
                         <th>اسم فئه طلب الموظف</th>
                         <th class="fixed-right">المسلسل</th>
@@ -155,7 +155,13 @@
                     </thead>
                     <tbody>
                       <tr *ngFor="let item of filteredEmpRequestCategory ,let i= index">
-                     
+                        <td>
+                          <ul *ngFor="let attachment of item.attachments" class="list-unstyled list-inline-item">
+                            <li><a [href]="imgApiUrl+attachment.fileUrl" target="_blank"><img
+                                  src="../../../../../assets/images/mingcute_pdf-fill.png" style="height: 30px;"></a>
+                            </li>
+                          </ul>
+                        </td>
                         <td>{{item.description}}</td>
                         <td>{{item.name}}</td>
                         <td class="fixed-right">{{ i+1 }}</td>

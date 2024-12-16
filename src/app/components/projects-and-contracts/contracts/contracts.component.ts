@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
 import { ContractService } from 'src/app/services/getAllServices/Contracts/contract.service';
 import { LocationService } from 'src/app/services/getAllServices/Location/location.service';
@@ -10,6 +10,8 @@ import { environment } from 'src/environments/environment.development';
 import * as L from 'leaflet';
 import { ToastrService } from 'ngx-toastr';
 import * as bootstrap from 'bootstrap';
+import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
+import { ContactsService } from 'src/app/services/getAllServices/Contacts/contacts.service';
 
 
 @Component({
@@ -18,6 +20,7 @@ import * as bootstrap from 'bootstrap';
   styleUrls: ['./contracts.component.css']
 })
 export class ContractsComponent implements OnInit {
+  dropdownSettings = {};
 
   isFirstButtonClicked = false;
   isSecondButtonClicked = false;
@@ -47,6 +50,8 @@ export class ContractsComponent implements OnInit {
   storesSec:any[] =[];
   isModalOpen = false;
   selectedCategory: any = null;
+  ContactdropdownSettings: any;
+
 
   comments:any[] =[];
   imgApiUrl= environment.imgApiUrl;
@@ -59,6 +64,7 @@ export class ContractsComponent implements OnInit {
   constructor(private cnotractService: ContractService, private fb: FormBuilder, private http: HttpClient,
     private clientService: ClientsService, private userService: UserService, private teamService: TeamsService
     , private locarionService: LocationService, private toast:ToastrService, private renderer:Renderer2,
+     private cdr: ChangeDetectorRef, private costCenter: CostCenterService, private contactS: ContactsService ,
   ) {
 
      // Initialize the form with default values and validation
@@ -73,14 +79,19 @@ export class ContractsComponent implements OnInit {
 
     this.contractForm = this.fb.group({
       name: ['', Validators.required],
-      localName: ['', Validators.required],
-      clientId: ['', Validators.required],
-      assignedToId: ['', Validators.required],
-      teamId: ['', Validators.required],
-      userIds: ['', Validators.required],
+      localName: [''],
+      clientId: [''],
+      assignedToId: [''],
+      teamId: [''],
+      userIds:  fb.array([]),
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      code: ['', Validators.required],
+      endDate: [''],
+      description:[''],
+      autoRenewal:[''],
+      contractTypeId:[''],
+      costCenterId:[''],
+      contactIds: fb.array([]),
+    
       locationLinks: fb.array([]),
     });
 
@@ -101,9 +112,69 @@ export class ContractsComponent implements OnInit {
     this.getAllUsers();
     this.getAllTeams();
     this.getLocations();
-
+    this.getAllCostCenters();
+   this.initializeContactDropdownSettings();
     // this.initializeMap();
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Replace 'id' with the key from your user object
+      textField: 'userName', // Replace 'name' with the key for user name
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true, // Enable search
+    };
+  }
+  contacts: any[] = [];
+  getAllContacts() {
+    this.contactS.getAllContactsWithoutPaging().subscribe(
+      (response) => {
+        this.contacts = response.contacts; // Assign the fetched Warehouses
+        // console.log('contacts :', this.locations);
+      },
+      (error) => {
+        console.error('Error fetching contacts:', error); // Handle errors
+      }
+    );
+  }
+  initializeContactDropdownSettings() {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id', // Adjust according to your API response field
+      textField: 'name', // Adjust according to your API response field
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
+      itemsShowLimit: 5,
+      allowSearchFilter: true,
+    };
+  }
+  onContactSelect(item: any) {
+    const contactIds = this.contractForm.get('contactIds') as FormArray;
+    contactIds.push(this.fb.control(item.id));
+  }
 
+  // Remove deselected contact from the form array
+  onContactDeselect(item: any) {
+    const contactIds = this.contractForm.get('contactIds') as FormArray;
+    const index = contactIds.controls.findIndex((control) => control.value === item.id);
+    if (index >= 0) {
+      contactIds.removeAt(index);
+    }
+  }
+
+  // Select all contacts
+  onContactSelectAll(items: any[]) {
+    const contactIds = this.contractForm.get('contactIds') as FormArray;
+    contactIds.clear(); // Clear previous selections
+    items.forEach((item) => {
+      contactIds.push(this.fb.control(item.id));
+    });
+  }
+
+  // Deselect all contacts
+  onContactDeselectAll() {
+    const contactIds = this.contractForm.get('contactIds') as FormArray;
+    contactIds.clear();
   }
 
   isCodeVisible = false;
@@ -111,6 +182,50 @@ export class ContractsComponent implements OnInit {
     this.isCodeVisible = !this.isCodeVisible;  // Toggle the visibility
   }
 
+
+   onItemSelect(item: any) {
+      const userIds = this.contractForm.get('userIds') as FormArray;
+      userIds.push(this.fb.control(item.id)); // Push selected ID into FormArray
+    }
+  
+    // Handle item deselection
+    onItemDeselect(item: any) {
+      const userIds = this.contractForm.get('userIds') as FormArray;
+      const index = userIds.controls.findIndex((control) => control.value === item.id);
+      if (index !== -1) {
+        userIds.removeAt(index); // Remove deselected ID from FormArray
+      }
+    }
+  
+    // Handle "Select All"
+    onSelectAll(items: any[]) {
+      const userIds = this.contractForm.get('userIds') as FormArray;
+      items.forEach((item) => {
+        if (!userIds.controls.some((control) => control.value === item.id)) {
+          userIds.push(this.fb.control(item.id)); // Add all IDs to FormArray
+        }
+      });
+    }
+  
+    // Handle "Deselect All"
+    onDeselectAll() {
+      const userIds = this.contractForm.get('userIds') as FormArray;
+      while (userIds.length) {
+        userIds.removeAt(0); // Clear all IDs from FormArray
+      }
+    }
+    costCenters: any[] = [];
+    getAllCostCenters() {
+      this.costCenter.getAllCostCaners().subscribe(
+        (response) => {
+          this.costCenters = response.costCenters;
+          
+        },
+        (error) => {
+          console.error('Error fetching users section:', error); // Handle errors
+        }
+      )
+    }
   getcontracts() {
     this.cnotractService.getPagingContracts(this.pageNumber, this.pageSize)
       .subscribe(data => {
@@ -169,6 +284,24 @@ export class ContractsComponent implements OnInit {
   }
   
   onSubmit() {
+    const nameControl = this.contractForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.contractForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const dateControl = this.contractForm.get('startDate');
+  
+    if (!dateControl || dateControl.invalid) {
+      console.log('Form is invalid because the startDate field is invalid.');
+      console.log('startDate field errors:', dateControl?.errors);
+      this.contractForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.contractForm.get('name')?.value);
     formData.append('localName', this.contractForm.get('localName')?.value);
@@ -439,9 +572,14 @@ finalizeDeletion(successfulDeletions: number[], failedDeletions: { id: number; e
     this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
     this.getcontracts();
     this.closeConfirmationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    if (this.filteredContract.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getAllContacts(); 
+    } else {
+      this.getAllContacts();
+    }
   }
 }
 

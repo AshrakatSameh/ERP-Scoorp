@@ -160,12 +160,6 @@
                       
                         </th>
 
-                        <!-- <th>الفرق</th>
-                        <th>موكل الي</th>
-                        <th>العميل</th>
-                        <th>موقع العقد</th>
-                        <th>اسم العقد باللغه المحليه</th>
-                        <th>اسم العقد</th> -->
                         <th *ngIf="isColumnVisible('teamName')">الفريق</th>
                         <th *ngIf="isColumnVisible('assignedToName')">موقع العقد</th>
                         <th *ngIf="isColumnVisible('endDate')">تاريخ الإنتهاء</th>
@@ -335,6 +329,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     placeholder="اسم العقد"
                     name="name"
                   />
+                  <div
+                  *ngIf="
+                    contractForm.get('name')?.invalid &&
+                    contractForm.get('name')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم العقد مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -391,10 +394,10 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="userIds">المستخدمين </label>
-                  <select id="userIds" name="userIds" formControlName="userIds" class="form-select form-control">
-                    <option  value=""  disabled selected>قم باختيار المستخدمين </option>
-                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
-                  </select>
+                  <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
+                  formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
+                  (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
+                </ng-multiselect-dropdown>
                 </div>
               </div>
             </div>
@@ -409,6 +412,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     class="form-control custom-input"
                     placeholder="قم باختيار التاريخ"
                   />
+                  <div
+                  *ngIf="
+                    contractForm.get('startDate')?.invalid &&
+                    contractForm.get('startDate')?.touched
+                  "
+                  class="text-danger"
+                >
+                  تاريخ البدء مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -425,7 +437,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <!-- <div class="col-md-6">
                 <div class="form-group">
                   <label for="code text-end">رقم العقد</label>
                   <input
@@ -435,7 +447,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     placeholder="قم باختبار رقم العقد"
                   />
                 </div>
-              </div>
+              </div> -->
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="field2 text-end">حاله العقد </label>
@@ -488,14 +500,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
 
                 <div class="row align-items-center">
                   <div class="col-md-9">
-                    <!-- <label for="location" class="form-label">الموقع</label>
-                    <div class="input-group">
-                        <select class="form-select" id="location"  name="code" ngModel required>
-                            <option selected>قم بإختيار الموقع</option>
-                            <option *ngFor="let item of locations" [value]="item.id">{{item.locationName}},{{item.locationAddress}},{{item.latitude}},{{item.longitude}}</option>
-                           
-                        </select>
-                    </div> -->
+                
                     <label for="locationLinks" class="form-label">Location Links:</label>
                     <div *ngFor="let location of locationLinks; let i = index" class="input-group mb-2">
                       <select 
@@ -644,8 +649,8 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                       <label for="field1 text-end">نوع العقد</label>
                       <input
                         type="text"
-                        id="field1"
-                       
+                        id="contractTypeId"
+                        formControlName="contractTypeId"
                         class="form-control custom-input"
                         placeholder="قم باختبار النوع"
                       />
@@ -654,13 +659,11 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">مركز التكلفه </label>
-                      <input
-                        type="text"
-                        id="field2"
-                       
-                        class="form-control custom-input"
-                        placeholder="قم باختيار التكلفه"
-                      />
+                      <select class="form-select form-control custom-input" formControlName="costCenterId">
+                        <option disabled selected>قم باختيار مركز التكلفة</option>
+                        <option *ngFor="let item of costCenters" [value]="item.id">{{ item.name }}</option>
+  
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -671,7 +674,8 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                       <label for="field1 text-end">وصف العقد</label>
                       <textarea
                         class="form-control custom-input"
-                        id="Textarea1"
+                        id="description"
+                        formControlName="description"
                         rows="3"
                       ></textarea>
                     </div>
@@ -679,16 +683,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                 </div>
 
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end"> التجديد التلقائي</label>
-                      <input
-                        type="text"
-                        id="field1"
-                       
-                        class="form-control custom-input"
-                        placeholder="نعم ام لا "
-                      />
+                    
+                      <select  class="form-control form-select custom-input" id="autoRenewal"
+                      formControlName="autoRenewal">
+                        <option [value]="0">نعم</option>
+                        <option [value]="1">لا</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -724,13 +727,10 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <div class="col-md-9">
                     <label for="location" class="form-label">جهه الاتصال</label>
                     <div class="input-group">
-                      <input
-                        type="text"
-                        id="field3"
-                        
-                        class="form-control custom-input"
-                        placeholder="قم باختيار جهه الاتصال"
-                      />
+                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContactdropdownSettings" [data]="contacts"
+                        (onSelect)="onContactSelect($event)" (onDeSelect)="onContactDeselect($event)"
+                        (onSelectAll)="onContactSelectAll($event)" (onDeSelectAll)="onContactDeselectAll()">
+                      </ng-multiselect-dropdown>
                     </div>
                   </div>
                   <div
@@ -1422,6 +1422,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     placeholder="اسم العقد"
                     name="name"
                   />
+                  <div
+                  *ngIf="
+                    contractForm.get('name')?.invalid &&
+                    contractForm.get('name')?.touched
+                  "
+                  class="text-danger"
+                >
+                  اسم العقد مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -1478,10 +1487,10 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="userIds">المستخدمين </label>
-                  <select id="userIds" name="userIds" formControlName="userIds" class="form-select form-control">
-                    <option  value=""  disabled selected>قم باختيار المستخدمين </option>
-                    <option *ngFor="let item of users" [value]="item.id">{{item.userName}}</option>
-                  </select>
+                  <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
+                  formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
+                  (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
+                </ng-multiselect-dropdown>
                 </div>
               </div>
             </div>
@@ -1496,6 +1505,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     class="form-control custom-input"
                     placeholder="قم باختيار التاريخ"
                   />
+                  <div
+                  *ngIf="
+                    contractForm.get('startDate')?.invalid &&
+                    contractForm.get('startDate')?.touched
+                  "
+                  class="text-danger"
+                >
+                  تاريخ البدء مطلوب.
+                </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -1512,7 +1530,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <!-- <div class="col-md-6">
                 <div class="form-group">
                   <label for="code text-end">رقم العقد</label>
                   <input
@@ -1522,7 +1540,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     placeholder="قم باختبار رقم العقد"
                   />
                 </div>
-              </div>
+              </div> -->
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="field2 text-end">حاله العقد </label>
@@ -1731,8 +1749,8 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                       <label for="field1 text-end">نوع العقد</label>
                       <input
                         type="text"
-                        id="field1"
-                       
+                        id="contractTypeId"
+                        formControlName="contractTypeId"
                         class="form-control custom-input"
                         placeholder="قم باختبار النوع"
                       />
@@ -1741,13 +1759,11 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">مركز التكلفه </label>
-                      <input
-                        type="text"
-                        id="field2"
-                       
-                        class="form-control custom-input"
-                        placeholder="قم باختيار التكلفه"
-                      />
+                      <select class="form-select form-control custom-input" formControlName="costCenterId">
+                        <option disabled selected>قم باختيار مركز التكلفة</option>
+                        <option *ngFor="let item of costCenters" [value]="item.id">{{ item.name }}</option>
+  
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -1758,7 +1774,8 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                       <label for="field1 text-end">وصف العقد</label>
                       <textarea
                         class="form-control custom-input"
-                        id="Textarea1"
+                        id="description"
+                        formControlName="description"
                         rows="3"
                       ></textarea>
                     </div>
@@ -1766,16 +1783,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                 </div>
 
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end"> التجديد التلقائي</label>
-                      <input
-                        type="text"
-                        id="field1"
-                       
-                        class="form-control custom-input"
-                        placeholder="نعم ام لا "
-                      />
+                    
+                      <select  class="form-control form-select custom-input" id="autoRenewal"
+                      formControlName="autoRenewal">
+                        <option [value]="0">نعم</option>
+                        <option [value]="1">لا</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -1811,13 +1827,10 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   <div class="col-md-9">
                     <label for="location" class="form-label">جهه الاتصال</label>
                     <div class="input-group">
-                      <input
-                        type="text"
-                        id="field3"
-                        
-                        class="form-control custom-input"
-                        placeholder="قم باختيار جهه الاتصال"
-                      />
+                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContactdropdownSettings" [data]="contacts"
+                        (onSelect)="onContactSelect($event)" (onDeSelect)="onContactDeselect($event)"
+                        (onSelectAll)="onContactSelectAll($event)" (onDeSelectAll)="onContactDeselectAll()">
+                      </ng-multiselect-dropdown>
                     </div>
                   </div>
                   <div

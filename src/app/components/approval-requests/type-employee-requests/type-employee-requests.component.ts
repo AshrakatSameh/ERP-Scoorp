@@ -19,6 +19,7 @@ export class TypeEmployeeRequestsComponent implements OnInit {
   dropdownSettingsList: any[] = [];
 
   apiUrl = environment.apiUrl;
+  imgApiUrl= environment.imgApiUrl;
 
   constructor(private fb: FormBuilder, private empType: EmpRequestTypeService, private userServ: UserService,
     private catService: EmpRequestCategService, private http: HttpClient, private toast: ToastrService,

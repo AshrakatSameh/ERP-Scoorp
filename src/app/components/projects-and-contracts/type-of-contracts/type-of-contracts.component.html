@@ -137,14 +137,13 @@
                     >
                       <thead>
                         <tr class="firstcol">
-                          <th class="firstcolleft position-relative">
+                          <!-- <th class="firstcolleft position-relative">
                             <i
                               class="fa-solid fa-right-left"
                               (click)="openDropdown()"
                               style="cursor: pointer"
                             ></i>
   
-                            <!-- Custom Dropdown -->
                             <ul
                               class="dropdown-menu"
                               [ngClass]="{ show: isDropdownOpen }"
@@ -182,7 +181,7 @@
                               </a>
                             </li>
                             </ul>
-                          </th>
+                          </th> -->
                          
                           <th>وصف</th>
                           <th> لون النوع</th>
@@ -202,7 +201,7 @@
                       </thead>
                       <tbody>
                         <tr *ngFor="let item of filteredTypeContracts, let i= index ">
-                          <td></td>
+                         
   
                           <td>{{item.description}}</td>
                           <td>{{item.colorId}}</td>
@@ -210,9 +209,9 @@
                           <td>{{item.localName}}</td>
                           <td>{{item.name}}</td>
                           <td class="fixed-right">{{ i+1}}</td>
-                          <td class="firstcolright fixed-right">
+                          <td class=" fixed-right">
                             <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item, $event)"
-                            class="large-checkbox mx-4" />                          </td>
+                            class="large-checkbox mx-1" />                          </td>
                         </tr>
                         
                       </tbody>
@@ -345,6 +344,15 @@
                           placeholder="اسم نوع العقد باللغه المحليه"
                         />
                       </div>
+                      <div
+                      *ngIf="
+                        contractTypeForm.get('name')?.invalid &&
+                        contractTypeForm.get('name')?.touched
+                      "
+                      class="text-danger"
+                    >
+                      اسم نوع العقد مطلوب.
+                    </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
@@ -444,6 +452,15 @@
                           class="form-control custom-input"
                           placeholder="اسم نوع العقد باللغه المحليه"
                         />
+                        <div
+                        *ngIf="
+                          contractTypeForm.get('name')?.invalid &&
+                          contractTypeForm.get('name')?.touched
+                        "
+                        class="text-danger"
+                      >
+                        اسم نوع العقد مطلوب.
+                      </div>
                       </div>
                     </div>
                     <div class="col-md-6">

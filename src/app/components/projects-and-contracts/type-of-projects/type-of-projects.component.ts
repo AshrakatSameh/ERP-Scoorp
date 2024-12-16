@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -59,6 +59,7 @@ export class TypeOfProjectsComponent {
   projectTypeForm:FormGroup;
 
   constructor(private projestService: ProjectTypeService,private fb:FormBuilder, private toast: ToastrService, private renderer: Renderer2,
+    private cdr: ChangeDetectorRef
 
   ){
     this.projectTypeForm= this.fb.group({
@@ -94,6 +95,15 @@ ngAfterViewInit(): void {
 }
 onSubmitAdd(): void {
    
+  const nameControl = this.projectTypeForm.get('name');
+  
+  if (!nameControl || nameControl.invalid) {
+    console.log('Form is invalid because the name field is invalid.');
+    console.log('Name field errors:', nameControl?.errors);
+    this.projectTypeForm.markAllAsTouched();
+    this.cdr.detectChanges();
+    return; // Stop submission if the name field is invalid
+  }
     // Call the service to post the data
     const formData = this.projectTypeForm.value; // Get the form data
     this.projestService.createProjectType(formData).subscribe(
@@ -254,7 +264,15 @@ applySearchFilter() {
 
  updateCategory() {
      const updatedCategory = { ...this.projectTypeForm.value, id: this.selectedCategory.id };
-
+  const nameControl = this.projectTypeForm.get('name');
+  
+      if (!nameControl || nameControl.invalid) {
+        console.log('Form is invalid because the name field is invalid.');
+        console.log('Name field errors:', nameControl?.errors);
+        this.projectTypeForm.markAllAsTouched();
+        this.cdr.detectChanges();
+        return; // Stop submission if the name field is invalid
+      }
      // Call the update service method using the category's id
      this.projestService.updateProjectType(this.selectedCategory.id, updatedCategory).subscribe(
        (response) => {
@@ -351,9 +369,14 @@ applySearchFilter() {
      this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
      this.getAllProjectTypes();
      this.closeConfirmationModal();
-     setTimeout(() => {
-       window.location.reload();
-     }, 1000);
+     if (this.filteredTypeProjects.length === 0 && this.pageNumber > 1) {
+      // Move to the previous page if the current page is empty
+      this.pageNumber -= 1;  // Adjust the page number to the previous one
+      this.changePage(this.pageNumber)
+      this.getAllProjectTypes(); 
+    } else {
+      this.getAllProjectTypes();
+    }
    }
  }
 
