@@ -319,6 +319,7 @@ export class UnitCategoryComponent implements OnDestroy {
     this.selectedCategory =null;
     this.unitCatForm.reset();
     this.resetAttachments();
+    this.toggleDragDrop();
   }
   resetAttachments(){
     this.attachments.clear();

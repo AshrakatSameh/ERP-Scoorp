@@ -303,8 +303,7 @@ export class UnitComponent {
     this.isModalOpen = false;
     this.selectedCategory =null;
     this.resetAttachments();
-    this.showDragDrop =true;
-    console.log(this.showDragDrop)
+    this.toggleDragDrop();
   }
 
   updateCategory() {
