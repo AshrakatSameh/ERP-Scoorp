@@ -56,7 +56,7 @@ export class ClientsComponent implements OnInit {
       representativeId: ['', Validators.required],
       teamId: [''],
       costCenterId: [''],
-      creditLimit: [''],
+      creditLimit: ['', Validators.required],
       attachments: this.fb.array([]) // Array to hold attachments
     })
   }
@@ -238,92 +238,65 @@ export class ClientsComponent implements OnInit {
       document.body.style.overflow = '';
     });
   }
+  initializeForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      phone: ['', Validators.required],
+      email: ['', Validators.required],
+      priceListId: ['', Validators.required],
+      tagId: [''],
+      paymentPeriodId: ['', Validators.required],
+      paymentMethodId: [''],
+      deliveryMethod: [''],
+      representativeId: ['', Validators.required],
+      teamId: [''],
+      costCenterId: [''],
+      creditLimit: ['', Validators.required],
+      attachments: this.fb.array([])
+    });
+  }
   onSubmit(): void {
-    if (this.clientForm.invalid) {
-      console.error('Form is invalid');
-      return;
+    const nameControl = this.clientForm.get('name');
+
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.clientForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
     }
 
+    console.log(this.clientForm.value)
     const formValues = this.clientForm.value;
     this.clientService.createClient(formValues).subscribe({
       next: (response) => {
-        console.log('Client created successfully:', response);
+        // console.log('Client created successfully:', response);
+        this.toast.success('تمت الإضافة بنجاح');
+        this.getAllClients();
+        this.clientForm = this.initializeForm();
+        this.attachments.clear(); 
+          const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+                if (modalInstance) {
+                  modalInstance.hide();
+                }
+                // Ensure proper cleanup after modal closure
+                setTimeout(() => {
+                  document.body.classList.remove('modal-open');
+                  
+                  document.body.style.overflow = '';
+                }, 300);
+
       },
       error: (error) => {
         console.error('Error creating client:', error);
+        this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
+
       },
     });
   }
 
-  // onSubmit() {
-  //   // const nameControl = this.clientForm.get('name');
-  
-  //   // if (!nameControl || nameControl.invalid) {
-  //   //   console.log('Form is invalid because the name field is invalid.');
-  //   //   console.log('Name field errors:', nameControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-  //   // const phoneControl = this.clientForm.get('phone');
-  
-  //   // if (!phoneControl || phoneControl.invalid) {
-  //   //   console.log('Form is invalid because the phone field is invalid.');
-  //   //   console.log('phone field errors:', phoneControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-  //   // const emailControl = this.clientForm.get('email');
-  
-  //   // if (!emailControl || emailControl.invalid) {
-  //   //   console.log('Form is invalid because the email field is invalid.');
-  //   //   console.log('email field errors:', emailControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-  //   // const priceListControl = this.clientForm.get('priceListId');
-  
-  //   // if (!priceListControl || priceListControl.invalid) {
-  //   //   console.log('Form is invalid because the priceListId field is invalid.');
-  //   //   console.log('priceListId field errors:', priceListControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-  //   // const paymentControl = this.clientForm.get('paymentPeriodId');
-  
-  //   // if (!paymentControl || paymentControl.invalid) {
-  //   //   console.log('Form is invalid because the paymentPeriodId field is invalid.');
-  //   //   console.log('paymentPeriodId field errors:', paymentControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-  //   // const representControl = this.clientForm.get('representativeId');
-  
-  //   // if (!representControl || representControl.invalid) {
-  //   //   console.log('Form is invalid because the representativeId field is invalid.');
-  //   //   console.log('representativeId field errors:', representControl?.errors);
-  //   //   this.clientForm.markAllAsTouched();
-  //   //   this.cdr.detectChanges();
-  //   //   return; // Stop submission if the name field is invalid
-  //   // }
-    
-  //   const formValues = this.clientForm.value;
-  //   this.clientService.createClient(formValues).subscribe({
-  //     next: (response) => {
-  //       console.log('Client created successfully:', response);
-  //     },
-  //     error: (error) => {
-  //       console.error('Error creating client:', error);
-  //     },
-  //   });
-  
-  // }
-
-  
+ 
   // ازرار الاجراءات
   isDropdownOpen: boolean = false;
   private documentClickListener: any; // Listener reference for cleanup
@@ -507,9 +480,14 @@ export class ClientsComponent implements OnInit {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllClients();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredClients.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllClients(); 
+      } else {
+        this.getAllClients();
+      }
     }
   }
 

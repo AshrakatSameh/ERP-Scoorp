@@ -55,7 +55,7 @@ userId:any;
       private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
       private contract:ContractService, private ngZone:NgZone,
       private toast:ToastrService) { 
-        this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+        // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.collectionForm= this.fb.group({
       code: ['', Validators.required || null],
       clientId: ['', Validators.required || null],

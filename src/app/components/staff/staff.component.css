@@ -328,3 +328,12 @@ tr, th, tr, select {
   color: rgba(101, 0, 0, 0.473);
   font-size: 18px;
 }
+.overlay {
+  position: fixed; /* Positioning and size */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(78, 78, 78, 0.5); /* color */
+  display: none; /* making it hidden by default */
+}

@@ -30,7 +30,7 @@ userId: any;
    , private cdr: ChangeDetectorRef,
     private empCategory: EmpRequestCategService
   ) {
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.employeeRequestForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],

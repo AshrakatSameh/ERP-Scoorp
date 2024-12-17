@@ -57,7 +57,7 @@ export class SalesInvoicesComponent implements OnInit {
     private cdr: ChangeDetectorRef,private ngZone:NgZone
 
   ) {
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
 
     this.salesForm = this.fb.group({
       clientId:  ['', Validators.required],

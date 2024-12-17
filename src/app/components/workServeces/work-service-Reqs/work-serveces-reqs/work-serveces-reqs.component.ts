@@ -30,7 +30,7 @@ export class WorkServecesReqsComponent implements OnInit {
     private fb: FormBuilder, private employeeServ: EmployeeService, private toast: ToastrService,
     private http: HttpClient, private cdr: ChangeDetectorRef, private ngZone:NgZone
   ) {
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    //this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.serviceRequestForm = this.fb.group({
       serviceTypeId: ['', Validators.required],
       requestedEmployeeId: [''],
@@ -71,12 +71,7 @@ export class WorkServecesReqsComponent implements OnInit {
 
   requests: any[] = [];
   getAllServiceRequests() {
-  //   this.servType.getServiceTypes().subscribe((res)=>{
-  //     this.requests= res.serviceRequests
-  //   }(error)=>{
-  //     console.log(error)
-  //   }
-  // )
+
     this.reqService.getServiceRequestsPaging(this.pageNumber,this.pageSize).subscribe(
       (response) => {
         this.requests = response.serviceRequests; // Assign the fetched Warehouses
@@ -97,7 +92,7 @@ export class WorkServecesReqsComponent implements OnInit {
     this.dep.getServiceDepartment().subscribe(
       (response) => {
         this.deps = response.categories; // Assign the fetched Warehouses
-        // console.log('deps :', this.deps);
+        console.log('deps :', this.deps);
         // this.applySearchFilter();
       },
       (error) => {

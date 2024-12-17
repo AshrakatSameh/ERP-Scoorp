@@ -23,7 +23,7 @@ export class ServiceDepartmentService {
     });
 
     // Send the GET request with headers
-    return this.http.get(`${this.apiUrl}WorkServiceDepartment/GetAllCategories`, { headers});
+    return this.http.get(`${this.apiUrl}WorkServiceDepartment/GetAllDepartments`, { headers});
     
   }
   getServiceDepartmentPaging(pageNumber:number, pageSize: number): Observable<any> {
