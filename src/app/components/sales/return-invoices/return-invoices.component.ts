@@ -47,7 +47,7 @@ imgApiUrl= environment.imgApiUrl;
     private http: HttpClient, private toast: ToastrService, private fb: FormBuilder,
     private payPeriodService: PaymentPeriodsService, private itemService: ItemsService,private ngZone:NgZone
   ) {
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.invoiceFrom = this.fb.group({
       returnInvoiceNumber: [''],
       clientId:  ['', Validators.required || null],

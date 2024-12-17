@@ -80,10 +80,10 @@ export class ContractsComponent implements OnInit {
     this.contractForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
-      clientId: [''],
+      clientId: ['', Validators.required],
       assignedToId: [''],
       teamId: [''],
-      userIds:  fb.array([]),
+      userIds:  fb.array([], Validators.required),
       startDate: ['', Validators.required],
       endDate: [''],
       description:[''],
@@ -103,7 +103,7 @@ export class ContractsComponent implements OnInit {
       attachmentFiles: this.fb.array([])
     })
 
-    this.userId = JSON.parse(localStorage.getItem('userData')!).user_id;
+    // this.userId = JSON.parse(localStorage.getItem('userData')!).user_id;
   }
 
   ngOnInit(): void {
@@ -283,12 +283,49 @@ export class ContractsComponent implements OnInit {
     });
   }
   
+  initializeForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      localName: [''],
+      clientId: ['', Validators.required],
+      assignedToId: [''],
+      teamId: [''],
+      userIds:  this.fb.array([], Validators.required),
+      startDate: ['', Validators.required],
+      endDate: [''],
+      description:[''],
+      autoRenewal:[''],
+      contractTypeId:[''],
+      costCenterId:[''],
+      contactIds: this.fb.array([]),
+    
+      locationLinks: this.fb.array([]),
+    });
+  }
   onSubmit() {
     const nameControl = this.contractForm.get('name');
   
     if (!nameControl || nameControl.invalid) {
       console.log('Form is invalid because the name field is invalid.');
       console.log('Name field errors:', nameControl?.errors);
+      this.contractForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const userControl = this.contractForm.get('userIds');
+  
+    if (!userControl || userControl.invalid) {
+      console.log('Form is invalid because the userIds field is invalid.');
+      console.log('userIds field errors:', userControl?.errors);
+      this.contractForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
+    const ClientControl = this.contractForm.get('clientId');
+  
+    if (!ClientControl || ClientControl.invalid) {
+      console.log('Form is invalid because the clientId field is invalid.');
+      console.log('clientId field errors:', ClientControl?.errors);
       this.contractForm.markAllAsTouched();
       this.cdr.detectChanges();
       return; // Stop submission if the name field is invalid
@@ -323,17 +360,17 @@ export class ContractsComponent implements OnInit {
         // alert('submit successfully');
         this.toast.success('تم الإضافة بنجاح');
         this.getcontracts();
-        this.contractForm.reset();
-        const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
-        if (modalInstance) {
-          modalInstance.hide();
-        }
-        // Ensure proper cleanup after modal closure
-        setTimeout(() => {
-          document.body.classList.remove('modal-open');
+        this.contractForm = this. initializeForm();
+        // const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+        // if (modalInstance) {
+        //   modalInstance.hide();
+        // }
+        // // Ensure proper cleanup after modal closure
+        // setTimeout(() => {
+        //   document.body.classList.remove('modal-open');
           
-          document.body.style.overflow = '';
-        }, 300);
+        //   document.body.style.overflow = '';
+        // }, 300);
         this.closeModal();
       }, error => {
         console.error('Error:', error);

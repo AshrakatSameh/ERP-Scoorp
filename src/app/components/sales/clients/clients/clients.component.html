@@ -459,6 +459,12 @@
                                                 <input formControlName="creditLimit" type="number" id="field3"
                                                     class="form-control" placeholder="قم بكتابة الحد الأدنى" />
                                             </div>
+                                            <div *ngIf="
+                                            clientForm.get('creditLimit')?.invalid &&
+                                            clientForm.get('creditLimit')?.touched
+                                          " class="text-danger">
+                                                الحد الأدنى مطلوب
+                                            </div>
                                         </div>
 
                                     </div>

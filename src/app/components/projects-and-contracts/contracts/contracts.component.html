@@ -366,6 +366,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                     <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
                   </select> -->
                 </div>
+                <div
+                *ngIf="
+                  contractForm.get('clientId')?.invalid &&
+                  contractForm.get('clientId')?.touched
+                "
+                class="text-danger"
+              >
+                اسم العميل مطلوب.
+              </div>
               </div>
             </div>
 
@@ -399,6 +408,15 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
                 </ng-multiselect-dropdown>
                 </div>
+                <div
+                *ngIf="
+                  contractForm.get('userIds')?.invalid &&
+                  contractForm.get('userIds')?.touched
+                "
+                class="text-danger"
+              >
+                اسم المستخدم مطلوب.
+              </div>
               </div>
             </div>
 

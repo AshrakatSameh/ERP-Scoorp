@@ -22,13 +22,14 @@ export class UnitComponent {
 
   constructor(private unitService: UnitService, private fb: FormBuilder, private toast: ToastrService,
     private unitCat: StoresSectionService, private http: HttpClient, private renderer: Renderer2,
-    private ngZone:NgZone
+    private ngZone:NgZone, private cdr: ChangeDetectorRef
+    
   ) {
     this.unitForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
       note: [''],
-      UnitCategoryId: [''],
+      UnitCategoryId: ['', Validators.required],
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([]),
       unitCategory: ['']
@@ -160,7 +161,15 @@ export class UnitComponent {
     });
   }
   onSubmitAdd(): void {
-
+    const nameControl = this.unitForm.get('name');
+  
+    if (!nameControl || nameControl.invalid) {
+      console.log('Form is invalid because the name field is invalid.');
+      console.log('Name field errors:', nameControl?.errors);
+      this.unitForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission if the name field is invalid
+    }
     const formData = new FormData();
     formData.append('name', this.unitForm.get('name')?.value);
     formData.append('localName', this.unitForm.get('localName')?.value);

@@ -53,7 +53,7 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     private toast: ToastrService,     private cdr: ChangeDetectorRef, private ngZone:NgZone
 
   ){
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
     this.deliveryVoucherForm= this.fb.group({
     clientId: ['', Validators.required],
     representativeId: ['', Validators.required || null],

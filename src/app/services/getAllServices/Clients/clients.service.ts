@@ -61,6 +61,7 @@ export class ClientsService {
       tenant: localStorage.getItem('tenant') || '', // Retrieve tenant value
     });
 
+    
     return this.http.post<any>(this.api, formData, { headers });
   }
 
@@ -72,7 +73,7 @@ export class ClientsService {
     });
 
     // Send the GET request with headers
-    return this.http.get(`${this.apiUrl}Clients/GetAllClients`, { headers });
+    return this.http.get(`https://platformproject-001-site1.anytempurl.com/api/Clients/CreateClient`, { headers });
 
   }
 
@@ -91,7 +92,8 @@ export class ClientsService {
     
     // Create headers with tenant info
     const headers = new HttpHeaders({
-      tenant: tenantId || ''  // Set tenantId header if available
+      'Content-Type': 'multipart/form-data',
+      'tenant': tenantId || ''  // Set tenantId header if available
     });
     const formData = new FormData();
     formData.append('name', updatedCategory.name || '');
