@@ -141,7 +141,7 @@ export class ProjactService {
     const headers = new HttpHeaders({
       tenant: tenantId || '' // Set tenantId header if available
     });
-    return this.http.put(`${this.apiUrl}Project/GetActivities/${modelId}`, { headers });
+    return this.http.get(`${this.apiUrl}Project/GetActivities/${modelId}`, { headers });
   }
   // Add Comment to Sales Invoice
   postProjectComment(data: any): Observable<any> {

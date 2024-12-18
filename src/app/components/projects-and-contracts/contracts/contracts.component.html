@@ -499,21 +499,72 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
               <div *ngIf="selectedButton === 0">
                 <div class="container mt-5">
                   <h5 class="mb-3">المرفقات</h5>
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-microphone"></i>
-                  </button>
-
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-paperclip"></i>
-                  </button>
-
-                  <div class="custom-file-upload">
-                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
-                    <small class="text-muted"
-                      >JPG, PNG or PDF; file size no more than 10MB</small
-                    >
+                  <!-- Drag and Drop Zone -->
+                  
+                  <!-- File List -->
+                  <ul class="list-group mt-3 mb-3">
+                    <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                        <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                      </div>
+                      <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                        <audio controls>
+                          <source [src]="attachment.value.audioUrl" type="audio/wav">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                        <i class="fa fa-trash"></i> حذف
+                      </button>
+                    </li>
+                    
+                  </ul>
+                  <!-- Select File Zone -->
+                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                    <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                      <i class="fa fa-paperclip"></i> ملف إضافي
+                    </button>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                   </div>
+                  <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+                    <span 
+                      class="mic-icon"
+                      *ngIf="!isRecording"
+                      type="button"
+                      (click)="startRecording()">
+                      <i class="fa-solid fa-microphone"></i>
+                    </span>
+                    <span
+                      class="stop-icon"
+                      *ngIf="isRecording"
+                      type="button"
+                      (click)="stopRecording()">
+                      <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                      <i class="fa-solid fa-stop m-1"></i>
+                    </span>
+                  </div>
+                  <ngx-file-drop
+                    dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                    (onFileDrop)="dropped($event)"
+                    (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)"
+                    (click)="fileInput.click()"
+                    *ngIf="showDragDrop || attachments.length==0"
+                    class="mb-3">
+                    <ng-template ngx-file-drop-content-tmp>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="upload-text">
+                          <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                          <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                        </div>
+                        <div class="icon">
+                          <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                  </ngx-file-drop>
                 </div>
 
                 <div class="row align-items-center">
@@ -765,43 +816,25 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
 
                 <h5>اظهار الانشطه</h5>
                 <div class="row">
-                    <div class="col-md-6">
-                  <div class="container mt-4">
-                    <div class="card chat-card">
+                    <div class="col-md-12">
+                  <div class="container mt-4" *ngIf="this.selectedCategory != null">
+                    <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                    <div class="card chat-card" *ngFor="let activity of activities">
                       <div class="card-body p-3">
-                        <div class="d-flex align-items-center">
-                          <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                          <span class="chat-time"> 01 Oct 2024</span>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                          <span class="chat-time"> {{ activity.timestamp | date}}</span>
                         </div>
                         <p class="chat-message mt-2">
-                          I'm good, thanks for asking! What about you?
+                          {{ activity.details }}
                         </p>
                       </div>
                     </div>
-                    
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-  
                   </div>
-                    
-                    
                 </div>
-                  
-                  
-
+              </div>
               </div>
             </div>
-
             <!-- Show assignments  -->
 
             <div *ngIf="selectedButton !== null">
@@ -1144,7 +1177,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                 اضافه
                 <i class="fa-solid fa-plus"></i>
               </button>
-              <button type="button" class="btn closebutton " data-bs-dismiss="modal">
+              <button type="button" class="btn closebutton " data-bs-dismiss="modal" (click)="closeModal()">
                 الغاء
               </button></div>
           </div>
@@ -1310,21 +1343,72 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
 
           <div class="container mt-5">
             <h5 class="mb-3">المرفقات</h5>
-            <button class="btn btn-link text-muted p-1">
-              <i class="fa fa-microphone"></i>
-            </button>
-
-            <button class="btn btn-link text-muted p-1">
-              <i class="fa fa-paperclip"></i>
-            </button>
-
-            <div class="custom-file-upload">
-              <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-              <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
-              <small class="text-muted"
-                >JPG, PNG or PDF; file size no more than 10MB</small
-              >
+            <!-- Drag and Drop Zone -->
+            
+            <!-- File List -->
+            <ul class="list-group mt-3 mb-3">
+              <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                  <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                </div>
+                <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                  <audio controls>
+                    <source [src]="attachment.value.audioUrl" type="audio/wav">
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+                <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                  <i class="fa fa-trash"></i> حذف
+                </button>
+              </li>
+              
+            </ul>
+            <!-- Select File Zone -->
+            <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+              <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                <i class="fa fa-paperclip"></i> ملف إضافي
+              </button>
+              <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
             </div>
+            <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+              <span 
+                class="mic-icon"
+                *ngIf="!isRecording"
+                type="button"
+                (click)="startRecording()">
+                <i class="fa-solid fa-microphone"></i>
+              </span>
+              <span
+                class="stop-icon"
+                *ngIf="isRecording"
+                type="button"
+                (click)="stopRecording()">
+                <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                <i class="fa-solid fa-stop m-1"></i>
+              </span>
+            </div>
+            <ngx-file-drop
+              dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+              (onFileDrop)="dropped($event)"
+              (onFileOver)="fileOver($event)"
+              (onFileLeave)="fileLeave($event)"
+              (click)="fileInput.click()"
+              *ngIf="showDragDrop || attachments.length==0"
+              class="mb-3">
+              <ng-template ngx-file-drop-content-tmp>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="upload-text">
+                    <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                    <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                  </div>
+                </div>
+              </ng-template>
+              <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+            </ngx-file-drop>
           </div>
 
              
@@ -1341,6 +1425,7 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
             type="button"
             class="btn closebutton"
             data-bs-dismiss="modal"
+            (click)="closeModal()"
           >
             الغاء
           </button> 
@@ -1592,21 +1677,72 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
               <div *ngIf="selectedButton === 0">
                 <div class="container mt-5">
                   <h5 class="mb-3">المرفقات</h5>
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-microphone"></i>
-                  </button>
-
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-paperclip"></i>
-                  </button>
-
-                  <div class="custom-file-upload">
-                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
-                    <small class="text-muted"
-                      >JPG, PNG or PDF; file size no more than 10MB</small
-                    >
+                  <!-- Drag and Drop Zone -->
+                  
+                  <!-- File List -->
+                  <ul class="list-group mt-3 mb-3">
+                    <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                        <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                      </div>
+                      <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                        <audio controls>
+                          <source [src]="attachment.value.audioUrl" type="audio/wav">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                        <i class="fa fa-trash"></i> حذف
+                      </button>
+                    </li>
+                    
+                  </ul>
+                  <!-- Select File Zone -->
+                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                    <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                      <i class="fa fa-paperclip"></i> ملف إضافي
+                    </button>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                   </div>
+                  <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+                    <span 
+                      class="mic-icon"
+                      *ngIf="!isRecording"
+                      type="button"
+                      (click)="startRecording()">
+                      <i class="fa-solid fa-microphone"></i>
+                    </span>
+                    <span
+                      class="stop-icon"
+                      *ngIf="isRecording"
+                      type="button"
+                      (click)="stopRecording()">
+                      <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                      <i class="fa-solid fa-stop m-1"></i>
+                    </span>
+                  </div>
+                  <ngx-file-drop
+                    dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                    (onFileDrop)="dropped($event)"
+                    (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)"
+                    (click)="fileInput.click()"
+                    *ngIf="showDragDrop || attachments.length==0"
+                    class="mb-3">
+                    <ng-template ngx-file-drop-content-tmp>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="upload-text">
+                          <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                          <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                        </div>
+                        <div class="icon">
+                          <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                  </ngx-file-drop>
                 </div>
 
                 <div class="row align-items-center">
@@ -1863,44 +1999,26 @@ class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabe
                   </div>
                 </div>
 
-                <h5>اظهار الانشطه</h5>
                 <div class="row">
-                    <div class="col-md-6">
-                  <div class="container mt-4">
-                    <div class="card chat-card">
-                      <div class="card-body p-3">
-                        <div class="d-flex align-items-center">
-                          <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                          <span class="chat-time"> 01 Oct 2024</span>
-                        </div>
-                        <p class="chat-message mt-2">
-                          I'm good, thanks for asking! What about you?
-                        </p>
+                  <div class="col-md-12">
+                <div class="container mt-4">
+                  <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                  <div class="card chat-card" *ngFor="let activity of activities">
+                    <div class="card-body p-3">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                        <span class="chat-time"> {{ activity.timestamp | date}}</span>
                       </div>
+                      <p class="chat-message mt-2">
+                        {{ activity.details }}
+                      </p>
                     </div>
-                    
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-  
                   </div>
-                    
-                    
                 </div>
-                  
-                  
-
               </div>
             </div>
+          </div>
+        </div>
 
             <!-- Show assignments  -->
 

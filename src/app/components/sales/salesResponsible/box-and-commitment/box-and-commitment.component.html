@@ -241,12 +241,12 @@
               
               <!-- File List -->
               <ul class="list-group mt-3 mb-3">
-                <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
                     <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                     <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
                   </div>
-                  <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                  <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
                     <audio controls>
                       <source [src]="attachment.value.audioUrl" type="audio/wav">
                       Your browser does not support the audio element.
@@ -265,7 +265,7 @@
                 </button>
                 <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
               </div>
-              <div class="audio-recorder m-1" *ngIf="showDragDrop">
+              <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
                 <span 
                   class="mic-icon"
                   *ngIf="!isRecording"
@@ -288,7 +288,7 @@
                 (onFileOver)="fileOver($event)"
                 (onFileLeave)="fileLeave($event)"
                 (click)="fileInput.click()"
-                *ngIf="showDragDrop"
+                *ngIf="showDragDrop || attachments.length==0"
                 class="mb-3">
                 <ng-template ngx-file-drop-content-tmp>
                   <div class="d-flex justify-content-between align-items-center">
@@ -379,12 +379,12 @@
               
               <!-- File List -->
               <ul class="list-group mt-3 mb-3">
-                <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
                     <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                     <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
                   </div>
-                  <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                  <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
                     <audio controls>
                       <source [src]="attachment.value.audioUrl" type="audio/wav">
                       Your browser does not support the audio element.
@@ -403,7 +403,7 @@
                 </button>
                 <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
               </div>
-              <div class="audio-recorder m-1" *ngIf="showDragDrop">
+              <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
                 <span 
                   class="mic-icon"
                   *ngIf="!isRecording"
@@ -426,7 +426,7 @@
                 (onFileOver)="fileOver($event)"
                 (onFileLeave)="fileLeave($event)"
                 (click)="fileInput.click()"
-                *ngIf="showDragDrop"
+                *ngIf="showDragDrop || attachments.length==0"
                 class="mb-3">
                 <ng-template ngx-file-drop-content-tmp>
                   <div class="d-flex justify-content-between align-items-center">

@@ -925,4 +925,12 @@ async uploadAudio(audioBlob: Blob) {
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
 }
+
+activities: any[] = [];
+getActivities(){
+  // this.salesService.getSaleOfferActivities(this.selectedCategory.id).subscribe((res)=>{
+  //   this.activities = res;
+  //   console.log(res)
+  // })
+}
 }

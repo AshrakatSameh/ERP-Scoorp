@@ -151,4 +151,14 @@ getCostCenterById(costCenterId: string): Observable<any> {
 getBrandById(brandId: string): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}StoresSection/brands/${brandId}`);
 }
+
+getItemsActivities(modelId:number): Observable<any>{
+  const tenantId = localStorage.getItem('tenant');
+  
+  // Create headers with tenant info
+  const headers = new HttpHeaders({
+    tenant: tenantId || '' // Set tenantId header if available
+  });
+  return this.http.get(`${this.apiUrl}Items/GetActivities/${modelId}`, { headers });
+}
 }

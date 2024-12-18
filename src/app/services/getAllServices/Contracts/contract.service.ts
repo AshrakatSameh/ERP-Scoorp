@@ -133,7 +133,7 @@ export class ContractService {
     const headers = new HttpHeaders({
       tenant: tenantId || '' // Set tenantId header if available
     });
-    return this.http.put(`${this.apiUrl}Contract/GetActivities/${modelId}`, { headers });
+    return this.http.get(`${this.apiUrl}Contract/GetActivities/${modelId}`, { headers });
   }
   // Add Comment to Sales Invoice
   postContractComment(data: any): Observable<any> {

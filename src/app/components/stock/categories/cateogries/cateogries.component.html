@@ -658,12 +658,12 @@ class="modal fade overlay" id="myModal"
           
           <!-- File List -->
           <ul class="list-group mt-3 mb-3">
-            <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+            <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
                 <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                 <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
               </div>
-              <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+              <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
                 <audio controls>
                   <source [src]="attachment.value.audioUrl" type="audio/wav">
                   Your browser does not support the audio element.
@@ -682,7 +682,7 @@ class="modal fade overlay" id="myModal"
             </button>
             <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
           </div>
-          <div class="audio-recorder m-1" *ngIf="showDragDrop">
+          <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
             <span 
               class="mic-icon"
               *ngIf="!isRecording"
@@ -705,7 +705,7 @@ class="modal fade overlay" id="myModal"
             (onFileOver)="fileOver($event)"
             (onFileLeave)="fileLeave($event)"
             (click)="fileInput.click()"
-            *ngIf="showDragDrop"
+            *ngIf="showDragDrop || attachments.length==0"
             class="mb-3">
             <ng-template ngx-file-drop-content-tmp>
               <div class="d-flex justify-content-between align-items-center">
@@ -1062,8 +1062,27 @@ class="modal fade overlay" id="myModal"
 
             <div *ngIf="selectedButton !== null">
                 <div *ngIf="selectedButton === 6">
-                  
-                </div>
+                  <h5>اظهار الانشطه</h5>
+                  لا توجد انشطه
+                <div class="row">
+                    <!-- <div class="col-md-6">
+                  <div class="container mt-4" *ngIf="this.selectedCategory != null">
+                    <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                    <div class="card chat-card" *ngFor="let activity of activities">
+                      <div class="card-body p-3">
+                        <div class="d-flex align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                          <span class="chat-time"> {{ activity.timestamp }}</span>
+                        </div>
+                        <p class="chat-message mt-2">
+                          {{ activity.details }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+            </div>
             </div>
 
 
@@ -1687,12 +1706,12 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                 
                 <!-- File List -->
                 <ul class="list-group mt-3 mb-3">
-                  <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                  <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                       <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                       <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
                     </div>
-                    <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                    <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
                       <audio controls>
                         <source [src]="attachment.value.audioUrl" type="audio/wav">
                         Your browser does not support the audio element.
@@ -1711,7 +1730,7 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                   </button>
                   <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                 </div>
-                <div class="audio-recorder m-1" *ngIf="showDragDrop">
+                <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
                   <span 
                     class="mic-icon"
                     *ngIf="!isRecording"
@@ -1734,7 +1753,7 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                   (onFileOver)="fileOver($event)"
                   (onFileLeave)="fileLeave($event)"
                   (click)="fileInput.click()"
-                  *ngIf="showDragDrop"
+                  *ngIf="showDragDrop || attachments.length==0"
                   class="mb-3">
                   <ng-template ngx-file-drop-content-tmp>
                     <div class="d-flex justify-content-between align-items-center">
@@ -2090,8 +2109,26 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
 
             <div *ngIf="selectedButton !== null">
                 <div *ngIf="selectedButton === 6">
-                  
+                  <h5>اظهار الانشطه</h5>
+                <div class="row">
+                    <div class="col-md-12">
+                  <div class="container mt-4" *ngIf="this.selectedCategory != null">
+                    <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                    <div class="card chat-card" *ngFor="let activity of activities">
+                      <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                          <span class="chat-time"> {{ activity.timestamp | date}}</span>
+                        </div>
+                        <p class="chat-message mt-2">
+                          {{ activity.details }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+              </div>
             </div>
 
             <div  *ngIf="selectedButton !== null" >
