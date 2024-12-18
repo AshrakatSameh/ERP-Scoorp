@@ -73,7 +73,7 @@ export class ClientsService {
     });
 
     // Send the GET request with headers
-    return this.http.get(`https://platformproject-001-site1.anytempurl.com/api/Clients/CreateClient`, { headers });
+    return this.http.get(`${this.apiUrl}Clients/GetAllClients`, { headers });
 
   }
 
