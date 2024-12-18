@@ -351,23 +351,30 @@ export class TypeEmployeeRequestsComponent implements OnInit {
         formData.append(`approvalLevels[${levelIndex}].userIds`, user.id); // Match the key `userIds` used in Postman
       });
     });
-       // Append each attachment file
-      this.attachments.controls.forEach((control) => {
-        const fileData = control.value;
-        if (fileData && fileData.file instanceof File) {
-          // Append the actual file object
-          formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
-        }
-      });
+    //    // Append each attachment file
+    //   this.attachments.controls.forEach((control) => {
+    //     const fileData = control.value;
+    //     if (fileData && fileData.file instanceof File) {
+    //       // Append the actual file object
+    //       formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+    //     }
+    //   });
   
-    // Append attachment files
-    this.attachments.controls.forEach((control) => {
-      const file = control.value;
-      if (file) {
-        formData.append('attachmentFiles', file);
-      }
-    });
-  
+    // // Append attachment files
+    // this.attachments.controls.forEach((control) => {
+    //   const file = control.value;
+    //   if (file) {
+    //     formData.append('attachmentFiles', file);
+    //   }
+    // });
+  // Append each attachment file
+this.attachments.controls.forEach((control, index) => {
+  const file = control.value;
+  if (file) {
+    console.log(`Appending attachment ${index}:`, file.name);
+    formData.append(`AttachmentFiles`, file, file.name); // Key: 'AttachmentFiles'
+  }
+});
   
   
     // Set headers with tenant information
