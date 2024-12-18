@@ -354,78 +354,71 @@
             <div class="container mt-5">
               <h5 class="mb-3">المرفقات</h5>
               <!-- Drag and Drop Zone -->
+              
+              <!-- File List -->
+              <ul class="list-group mt-3 mb-3">
+                <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                    <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                  </div>
+                  <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                    <audio controls>
+                      <source [src]="attachment.value.audioUrl" type="audio/wav">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                  <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                    <i class="fa fa-trash"></i> حذف
+                  </button>
+                </li>
+                
+              </ul>
+              <!-- Select File Zone -->
+              <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                  <i class="fa fa-paperclip"></i> ملف إضافي
+                </button>
+                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+              </div>
+              <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+                <span 
+                  class="mic-icon"
+                  *ngIf="!isRecording"
+                  type="button"
+                  (click)="startRecording()">
+                  <i class="fa-solid fa-microphone"></i>
+                </span>
+                <span
+                  class="stop-icon"
+                  *ngIf="isRecording"
+                  type="button"
+                  (click)="stopRecording()">
+                  <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                  <i class="fa-solid fa-stop m-1"></i>
+                </span>
+              </div>
               <ngx-file-drop
                 dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
                 (onFileDrop)="dropped($event)"
                 (onFileOver)="fileOver($event)"
                 (onFileLeave)="fileLeave($event)"
-                class="mb-3"
-              >
+                (click)="fileInput.click()"
+                *ngIf="showDragDrop || attachments.length==0"
+                class="mb-3">
                 <ng-template ngx-file-drop-content-tmp>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
+                  <div class="d-flex justify-content-between align-items-center">
                     <div class="upload-text">
-                      <p class="upload-title">
-                        حدد ملفاً أو قم بالسحب والإسقاط هنا
-                      </p>
-                      <p class="upload-subtitle">
-                        JPG, PNG أو PDF، حجم الملف لا يزيد عن 10MB
-                      </p>
+                      <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                      <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
                     </div>
                     <div class="icon">
-                      <i
-                        class="fa-solid fa-cloud-arrow-up cloud-custom"
-                      ></i>
+                      <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
                     </div>
                   </div>
                 </ng-template>
+                <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
               </ngx-file-drop>
-              <!-- Select File Zone -->
-              <div class="mb-3 mt-2">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  (click)="fileInput.click()"
-                >
-                  <i class="fa fa-paperclip"></i> أضف ملف
-                </button>
-                <input
-                  type="file"
-                  #fileInput
-                  class="d-none"
-                  (change)="onFileSelected($event)"
-                />
-              </div>
-
-              <!-- File List -->
-              <ul
-                class="list-group mt-3 mb-3"
-              >
-                <li
-                  *ngFor="
-                    let attachment of attachments.controls;
-                    let i = index
-                  "
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <div class="d-flex align-items-center">
-                    <img
-                      src="../../../../../assets/images/mingcute_pdf-fill.png"
-                      style="width: 35px"
-                    />
-                    <span>
-                      {{ attachment.value?.fileTitle || 'Unnamed File' }}
-                    </span>
-                  </div>
-                  <button
-                    (click)="removeAttachment(i)"
-                    class="btn btn-link text-danger"
-                  >
-                    <i class="fa fa-trash"></i> حذف
-                  </button>
-                </li>
-              </ul>
             </div>
 
             <!-- Submission Buttons -->
@@ -557,12 +550,12 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
               
               <!-- File List -->
               <ul class="list-group mt-3 mb-3">
-                <li *ngFor="let attachment of attachments.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
                     <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
                     <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
                   </div>
-                  <div *ngIf="attachment.value.fileType === 'audio/wav'" class="audio-player">
+                  <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
                     <audio controls>
                       <source [src]="attachment.value.audioUrl" type="audio/wav">
                       Your browser does not support the audio element.
@@ -581,7 +574,7 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                 </button>
                 <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
               </div>
-              <div class="audio-recorder m-1" *ngIf="showDragDrop">
+              <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
                 <span 
                   class="mic-icon"
                   *ngIf="!isRecording"
@@ -604,7 +597,7 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
                 (onFileOver)="fileOver($event)"
                 (onFileLeave)="fileLeave($event)"
                 (click)="fileInput.click()"
-                *ngIf="showDragDrop"
+                *ngIf="showDragDrop || attachments.length==0"
                 class="mb-3">
                 <ng-template ngx-file-drop-content-tmp>
                   <div class="d-flex justify-content-between align-items-center">

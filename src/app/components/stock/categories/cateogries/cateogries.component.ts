@@ -529,6 +529,7 @@ export class CateogriesComponent {
           console.log(this.attachments.controls);
         });
       }
+      this.getActivities();
       // Populate ItemWarehouses array
       this.selectedCategory.itemWarehouses.forEach((warehouse: any) => {
         const warehouseGroup = this.fb.group({
@@ -889,5 +890,13 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+
+activities: any[] = [];
+getActivities(){
+  this.itemServices.getItemsActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

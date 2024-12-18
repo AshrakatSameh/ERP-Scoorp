@@ -101,7 +101,7 @@ imgApiUrl= environment.imgApiUrl;
     this.getAllItems();
   }
   // buttons=['الأصناف','الملاحظات','المهام' ,'مرفقات']
-  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات']
+  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات', 'الانشطه']
 
   selectedButton: number | null = null; // To track which button is clicked
 
@@ -952,5 +952,13 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+
+activities: any[] = [];
+getActivities(){
+  this.salesService.getReturnInvoiceActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

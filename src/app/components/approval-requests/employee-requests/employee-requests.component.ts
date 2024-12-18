@@ -329,8 +329,7 @@ userId: any;
     this.employeeRequestForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
-    this.attachments.reset();
-  }
+    this.attachments.clear();  }
 
   isDropdownOpen: boolean = false;
   private documentClickListener: any; // Listener reference for cleanup

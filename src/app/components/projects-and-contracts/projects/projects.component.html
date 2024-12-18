@@ -56,7 +56,7 @@
                     <button type="button" class="btn ms-3 my-button2" (click)="toggleDropdown2()">
                       <i class="fa-solid fa-gear"></i> الاجراءات
                     </button>
-
+                  
                     <div class="dropdown-menu" *ngIf="isDropdownOpen2" style="cursor:default;">
                       <a class="dropdown-item" (click)="openModalForSelected()">تعديل</a>
                       <a class="dropdown-item" (click)="openConfirmationModal()">حذف</a>
@@ -89,7 +89,7 @@
                     <input class="form-control text-end search-input" type="search" placeholder="بحث في الكل"
                       aria-label="Search" [(ngModel)]="searchQuery" (input)="onSearchInputChange($event)" />
                     <i class="fs-4 bi-search position-absolute search-icon"></i>
-                  </div>
+                      </div>
                 </div>
 
                 <div class="icon-group d-flex align-items-center">
@@ -115,26 +115,26 @@
                     <thead>
                       <tr class="firstcol">
                         <th class="firstcolleft position-relative">
-
-                          <div>
-                            <!-- Icon to trigger dropdown -->
-                            <i class="fa-solid fa-right-left" style="cursor: pointer" (click)="toggleDropdown()"></i>
-
-                            <!-- Dropdown menu for selecting columns -->
-                            <ul *ngIf="showDropdown" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
+                         
+                            <div >
+                              <!-- Icon to trigger dropdown -->
+                              <i class="fa-solid fa-right-left" style="cursor: pointer" (click)="toggleDropdown()"></i>
+                            
+                              <!-- Dropdown menu for selecting columns -->
+                              <ul *ngIf="showDropdown" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
                               border-radius: 15px;">
-                              <li *ngFor="let column of columns">
-                                <a class="dropdown-item">
-                                  <div class="d-flex justify-content-end align-items-center">
-                                    {{ column.displayName }}
-                                    <input class="mx-2" type="checkbox" [(ngModel)]="column.visible" />
-                                  </div>
-
-                                </a>
-
-                              </li>
-                            </ul>
-                          </div>
+                                <li *ngFor="let column of columns">
+                                  <a class="dropdown-item">
+                                    <div class="d-flex justify-content-end align-items-center">
+                                      {{ column.displayName }}
+                                      <input class="mx-2" type="checkbox" [(ngModel)]="column.visible" />
+                                    </div>
+                                 
+                                  </a>
+                                 
+                                </li>
+                              </ul>
+                            </div>
 
 
                         </th>
@@ -152,20 +152,26 @@
                         <th>اسم القسم</th> -->
                         <th class="fixed-right">المسلسل</th>
                         <th class="firstcolright fixed-right">
-                          <span *ngIf="true" [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
-                            style="display: inline-block; width: 1.5rem; text-align: center;">
+                          <span 
+                            *ngIf="true" 
+                            [style.visibility]="selectedCount > 0 ? 'visible' : 'hidden'"
+                            style="display: inline-block; width: 1.5rem; text-align: center;"
+                          >
                             {{ selectedCount }}
                           </span>
-                          <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleAllCheckboxes()"
-                            class="large-checkbox mx-1" />
-                        </th>
+                          <input 
+                            type="checkbox" 
+                            [(ngModel)]="selectAll" 
+                            (change)="toggleAllCheckboxes()" 
+                            class="large-checkbox mx-1" 
+                          />                      </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr *ngFor="let item of filteredProjects, let i = index">
                         <td> </td>
                         <td> </td>
-
+                       
                         <td *ngIf="isColumnVisible('endDate')">{{ item.endDate |date: 'dd/MM/yy' }}</td>
                         <td *ngIf="isColumnVisible('startDate')">{{ item.startDate | date: 'dd/MM/yy' }}</td>
                         <td *ngIf="isColumnVisible('clientName')">{{ item.clientName }}</td>
@@ -177,9 +183,8 @@
                         <td>{{item.localName}}</td>
                         <td>{{item.name}}</td> -->
                         <td class="fixed-right">{{ i+1 }}</td>
-                        <td class=" fixed-right">
-                          <input type="checkbox" [(ngModel)]="item.checked" (change)="onCheckboxChange(item)"
-                            class="large-checkbox mx-1" />
+                        <td class="firstcolright fixed-right">
+                          <input type="checkbox" [(ngModel)]="item.checked"  (change)="onCheckboxChange(item)" class="large-checkbox mx-4" />
                         </td>
 
                       </tr>
@@ -187,28 +192,28 @@
                   </table>
 
                   <!-- paging -->
-                  <nav *ngIf="!searchQuery" aria-label="Page navigation">
-                    <ul class="pagination justify-content-end">
-                      <!-- Previous Button -->
-                      <li class="page-item" [class.disabled]="pageNumber === 1">
-                        <a class="page-link" (click)="changePage(pageNumber - 1)" tabindex="-1"
-                          [attr.aria-disabled]="pageNumber === 1 ? true : null">&laquo;</a>
+                <nav *ngIf="!searchQuery"  aria-label="Page navigation">
+                  <ul class="pagination justify-content-end">
+                    <!-- Previous Button -->
+                    <li class="page-item" [class.disabled]="pageNumber === 1">
+                      <a class="page-link"  (click)="changePage(pageNumber - 1)" tabindex="-1"
+                        [attr.aria-disabled]="pageNumber === 1 ? true : null">&laquo;</a>
+                    </li>
+                
+                    <!-- Dynamically Render Page Numbers -->
+                    <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+                      <li class="page-item" [class.active]="pageNumber === (i + 1)">
+                        <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
                       </li>
-
-                      <!-- Dynamically Render Page Numbers -->
-                      <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
-                        <li class="page-item" [class.active]="pageNumber === (i + 1)">
-                          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
-                        </li>
-                      </ng-container>
-
-                      <!-- Next Button -->
-                      <li class="page-item" [class.disabled]="pageNumber === totalPages">
-                        <a class="page-link" (click)="changePage(pageNumber + 1)"
-                          [attr.aria-disabled]="pageNumber === totalPages ? true : null">&raquo;</a>
-                      </li>
-                    </ul>
-                  </nav>
+                    </ng-container>
+                
+                    <!-- Next Button -->
+                    <li class="page-item" [class.disabled]="pageNumber === totalPages">
+                      <a class="page-link"  (click)="changePage(pageNumber + 1)" 
+                        [attr.aria-disabled]="pageNumber === totalPages ? true : null">&raquo;</a>
+                    </li>
+                  </ul>
+                </nav>
                 </div>
               </div>
 
@@ -282,8 +287,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog"
-  #myModal>
+<div class="modal fade overlay" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" role="dialog" #myModal>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -301,9 +305,6 @@
                   <label for="field1 text-end"> اسم المشروع</label>
                   <input type="text" id="name" name="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم المشروع" />
-                  <div *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched" class="text-danger">
-                    اسم المشروع مطلوب.
-                  </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -333,17 +334,13 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for=" text-end">موكل إلي</label>
+                  <label for="field1 text-end">موكل إلي</label>
                   <div class="input-group">
                     <select class="form-select form-control custom-input" formControlName="assignedToId">
                       <option value="" disabled selected>قم باختيار المستخدم</option>
                       <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
 
                     </select>
-                  </div>
-                  <div *ngIf="projectForm.get('assignedToId')?.invalid && projectForm.get('assignedToId')?.touched"
-                    class="text-danger">
-                    اسم الموكل اليه مطلوب.
                   </div>
                 </div>
               </div>
@@ -401,6 +398,33 @@
               </div>
             </div>
 
+            <!-- <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field1 text-end">حاله المشروع</label>
+                  <input
+                    type="text"
+                    id="field1"
+                   disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار حاله المشروع"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">تطور المشروع </label>
+                  <input
+                    type="text"
+                    id="field2"
+                    disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار تطور المشروع"
+                  />
+                </div>
+              </div>
+            </div> -->
+
             <div class="scroll-buttons-container">
               <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i" class="scroll-button"
                 type="button" (click)="showContent(i)">
@@ -414,34 +438,72 @@
               <div *ngIf="selectedButton === 0">
                 <div class="container mt-5">
                   <h5 class="mb-3">المرفقات</h5>
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-microphone"></i>
-                  </button>
-
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-paperclip"></i>
-                  </button>
-
-                  <div class="custom-file-upload">
-                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
-                    <small class="text-muted">JPG, PNG or PDF; file size no more than 10MB</small>
-                  </div>
-                </div>
-
-                <div class="row align-items-center">
-                  <div class="col-md-9">
-                    <label for="location" class="form-label">الموقع</label>
-                    <div class="input-group">
-                      <input type="text" id="field3" class="form-control custom-input"
-                        placeholder="قم باختيار الموقع" />
-                    </div>
-                  </div>
-                  <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
-                    <button class="btn btn-primary locationButton" type="button" (click)="toggleMap()">
-                      <i class="fas fa-map-marker-alt"></i> أضف موقع
+                  <!-- Drag and Drop Zone -->
+                  
+                  <!-- File List -->
+                  <ul class="list-group mt-3 mb-3">
+                    <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                        <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                      </div>
+                      <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                        <audio controls>
+                          <source [src]="attachment.value.audioUrl" type="audio/wav">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                        <i class="fa fa-trash"></i> حذف
+                      </button>
+                    </li>
+                    
+                  </ul>
+                  <!-- Select File Zone -->
+                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                    <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                      <i class="fa fa-paperclip"></i> ملف إضافي
                     </button>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                   </div>
+                  <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+                    <span 
+                      class="mic-icon"
+                      *ngIf="!isRecording"
+                      type="button"
+                      (click)="startRecording()">
+                      <i class="fa-solid fa-microphone"></i>
+                    </span>
+                    <span
+                      class="stop-icon"
+                      *ngIf="isRecording"
+                      type="button"
+                      (click)="stopRecording()">
+                      <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                      <i class="fa-solid fa-stop m-1"></i>
+                    </span>
+                  </div>
+                  <ngx-file-drop
+                    dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                    (onFileDrop)="dropped($event)"
+                    (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)"
+                    (click)="fileInput.click()"
+                    *ngIf="showDragDrop || attachments.length==0"
+                    class="mb-3">
+                    <ng-template ngx-file-drop-content-tmp>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="upload-text">
+                          <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                          <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                        </div>
+                        <div class="icon">
+                          <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                  </ngx-file-drop>
                 </div>
 
                 <!-- Map Viewing -->
@@ -502,23 +564,14 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end">نوع المشروع</label>
-                      <!-- <input type="text" id="projectTypeId" formControlName="projectTypeId"
-                        class="form-control custom-input" placeholder="قم باختبار النوع" /> -->
-                        <select class="form-select form-control custom-input" formControlName="projectTypeId">
-                          <option disabled selected>قم باختيار نوع المشروع</option>
-                          <option *ngFor="let item of projectTypes" [value]="item.id">{{ item.name }}</option>
-    
-                        </select>
+                      <input type="text" id="field1" class="form-control custom-input" placeholder="قم باختبار النوع" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">مركز التكلفه </label>
-                      <select class="form-select form-control custom-input" formControlName="costCenterId">
-                        <option disabled selected>قم باختيار مركز التكلفة</option>
-                        <option *ngFor="let item of costCenters" [value]="item.id">{{ item.name }}</option>
-  
-                      </select>
+                      <input type="text" id="field2" class="form-control custom-input"
+                        placeholder="قم باختيار التكلفه" />
                     </div>
                   </div>
                 </div>
@@ -545,8 +598,7 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="field1 text-end">وصف المشروع</label>
-                      <textarea class="form-control custom-input" formControlName="description" id="description"
-                        rows="3"></textarea>
+                      <textarea class="form-control custom-input" id="Textarea1" rows="3"></textarea>
                     </div>
                   </div>
                 </div>
@@ -557,21 +609,15 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end">العقود</label>
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContractsdropdownSettings"
-                        [data]="contracts" (onSelect)="onContractSelect($event)"
-                        (onDeSelect)="onContractDeselect($event)" (onSelectAll)="onContractSelectAll($event)"
-                        (onDeSelectAll)="onContractDeselectAll()">
-                      </ng-multiselect-dropdown>
-
+                      <input type="text" id="field1" class="form-control custom-input"
+                        placeholder="قم باختبار العقود" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">المعدات </label>
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="EquipdropdownSettings" [data]="equips"
-                        (onSelect)="onEquipmentSelect($event)" (onDeSelect)="onEquipmentDeselect($event)"
-                        (onSelectAll)="onEquipmentSelectAll($event)" (onDeSelectAll)="onEquipmentDeselectAll()">
-                      </ng-multiselect-dropdown>
+                      <input type="text" id="field2" class="form-control custom-input"
+                        placeholder="قم باختيارالمعدات" />
                     </div>
                   </div>
                 </div>
@@ -580,10 +626,8 @@
                   <div class="col-md-9">
                     <label for="location" class="form-label">جهه الاتصال</label>
                     <div class="input-group">
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContactdropdownSettings" [data]="contacts"
-                        (onSelect)="onContactSelect($event)" (onDeSelect)="onContactDeselect($event)"
-                        (onSelectAll)="onContactSelectAll($event)" (onDeSelectAll)="onContactDeselectAll()">
-                      </ng-multiselect-dropdown>
+                      <input type="text" id="field3" class="form-control custom-input"
+                        placeholder="قم باختيار جهه الاتصال" />
                     </div>
                   </div>
                   <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
@@ -596,39 +640,23 @@
 
                 <h5>اظهار الانشطه</h5>
                 <div class="row">
-                  <div class="col-md-6">
-                    <div class="container mt-4">
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
+                    <div class="col-md-12">
+                      <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                  <div class="container mt-4" *ngIf="this.selectedCategory != null">
+                    <div class="card chat-card" *ngFor="let activity of activities">
+                      <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                          <span class="chat-time"> {{ activity.timestamp | date}}</span>
                         </div>
-                      </div>
-
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
-                        </div>
+                        <p class="chat-message mt-2">
+                          {{ activity.details }}
+                        </p>
                       </div>
                     </div>
-
                   </div>
-
-
                 </div>
-
-
+              </div>
               </div>
             </div>
 
@@ -688,76 +716,10 @@
               <div *ngIf="selectedButton === 3">
                 <div class="container comment-section mt-5">
                   <div class="card p-3">
-                    <!-- Add Comment Section -->
-                    <div class="container add-comment-section mt-3">
-                      <div class="card p-3 d-flex align-items-center">
-                        <div class="d-flex align-items-center w-100">
-                          <!-- User Avatar -->
-                          <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2"
-                            alt="User Avatar">
-
-                          <!-- Comment Input Section -->
-                          <div class="flex-grow-1">
-                            <input type="text" class="form-control" placeholder="أضف تعليقاً">
-                          </div>
-
-                          <!-- Icons and Post Button -->
-                          <div class="d-flex align-items-center ms-2">
-                            <!-- Voice Icon -->
-                            <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
-
-                            <!-- Attachment Icon -->
-                            <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
-
-                            <!-- Post Button -->
-                            <button class="btn btn-primary ms-2 px-4">نشر</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-                    <!-- Comments List -->
-                    <div class="comments-list mt-4">
-                      <div class="comment-item p-3 mb-3">
-                        <div class="d-flex align-items-start">
-                          <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
-                          <div class="ms-3 w-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="mb-0">خالد ابراهيم</h6>
-                              <span class="text-muted small">Aug 19, 2021</span>
-                            </div>
-                            <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
-                            <div class="comment-actions d-flex">
-                              <button class="btn btn-link p-0"><i class="fa fa-heart"></i> 5</button>
-                              <button class="btn btn-link p-0 ms-3"><i class="fa fa-comment"></i> 3</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Nested Reply Comment -->
-                      <div class="comment-item p-3 mb-3 ms-5">
-                        <div class="d-flex align-items-start">
-                          <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
-                          <div class="ms-3 w-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="mb-0">خالد ابراهيم</h6>
-                              <span class="text-muted small">Aug 19, 2021</span>
-                            </div>
-                            <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- View More Comments Link -->
-                    <div class="text-center">
-                      <a href="#" class="text-primary">باقي التعليقات</a>
-                    </div>
+                    لا توجد تعليقات
                   </div>
                 </div>
-              </div>
+            </div>
             </div>
 
             <!-- show Surveys -->
@@ -1001,208 +963,156 @@
         <h5 class="modal-title" id="AddmessionLabel">اضافه جهه اتصال</h5>
       </div>
       <div class="modal-body">
-        <form [formGroup]="contactForm" (ngSubmit)="onSubmitContact()">
-            <div class="container">
-                <!-- Row with two fields -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=" text-end"> اسم جهه الإتصال</label>
-                            <input type="text" id="name" name="name" formControlName="name"
-                                class="form-control custom-input" placeholder="اسم المنشأ" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=" text-end">اسم جهه الإتصال باللغة المحلية
-                            </label>
-                            <input type="text" id="localName" name="localName" formControlName="localName"
-                                class="form-control custom-input" placeholder="contact Name  " />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="field4 text-end">رقم جوال 1 لجهه الإتصال</label>
-                            <input type="text" id="phoneNumber1" name="phoneNumber1"
-                                formControlName="phoneNumber1" class="form-control custom-input"
-                                placeholder="رقم الجوال 1" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=" text-end">رقم الجوال 2 لجهه الإتصال
-                            </label>
-                            <input type="text" id="phoneNumber2" name="phoneNumber2"
-                                formControlName="phoneNumber2" class="form-control custom-input"
-                                placeholder="رقم الجوال 2" />
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=" text-end"> وظيفة جهه التواصل</label>
-                            <input type="text" id="jobTitle" name="jobTitle" formControlName="jobTitle"
-                                class="form-control custom-input" placeholder="وظيفة جهه التواصل" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for=" text-end">ايميل جهه التواصل
-                            </label>
-                            <input type="text" id="email" name="email" ngModel formControlName="email"
-                                class="form-control custom-input" placeholder="ايميل جهه التواصل" />
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <!--  -->
-                <!-- Location Section -->
-                <div class="row align-items-center">
-                    <div class="col-md-9">
-                        <label for="location" class="form-label">موقع جهه التواصل</label>
-                        <div class="input-group">
-                            <select class="form-select custom-input" formControlName="locationLinks"
-                                name="locationLinks">
-                                <option selected disabled>قم بإختيار الموقع</option>
-                                <option *ngFor="let item of location" [value]="item.id">{{item.locationName}}
-                                </option>
-
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
-                        <button class="btn btn-primary locationButton" type="button">
-                            <i class="fas fa-map-marker-alt"></i> أضف موقع
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="nationality">جنسية جهه التواصل</label>
-                            <select id="nationality" name="nationality" formControlName="nationality"
-                                class="form-control custom-input">
-                                <option value="" disabled selected>قم باختيار جنسية جهه التواصل</option>
-                                <option *ngFor="let item of nationalities, index as i " [value]="i">{{item}}
-                                </option>
-
-
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="taskField3">العميل</label>
-                            <select id="taskField" name="clientId" formControlName="clientId"
-                                class="form-control custom-input">
-                                <option value="" disabled selected>قم باختيار العميل</option>
-                                <option *ngFor="let item of clients" [value]="item.id">{{item.name}}</option>
-
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="taskField4">المورد</label>
-                            <select id="taskField4" name="supplier" formControlName="supplier"
-                                class="form-select form-control custom-input">
-                                <option value="" disabled selected>قم باختيار المورد</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-    
-
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <label for="Textarea1">وصف جهه الإتصال</label>
-                        <textarea class="form-control" name="description" formControlName="description"
-                            id="Textarea1" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <!-- Buttons for actions -->
-                <div class="row mb-4">
-                    <div class="col-md-12 text-start">
-                        <button class="btn btn-outline-primary me-3">الغاء</button>
-                        <button type="submit" class="btn btn-primary m-2">حفظ</button>
-                    </div>
-                </div>
-
-
-                <div class="container mt-3 mb-3">
-                    <div class="row">
-                        <div class="col-12 d-flex justify-content-between align-items-center flex-row-reverse">
-                            <div class="container mt-5">
-                                <div class="mb-3 text-center">
-                                  <button type="button" class="btn btn-primary" (click)="fileInput.click()">
-                                    <i class="fa fa-paperclip"></i> أضف صورة
-                                  </button>
-                                  <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
-                                </div>
-                                <ul class="list-group mt-3 mb-3">
-                                  <li *ngFor="let attachment of attachments.controls; let i = index"
-                                    class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                      <img src="../../../../../assets/images/mingcute_pdf-fill.png"
-                                        style="width: 35px;" />
-                                      <span>{{ attachment.value?.name || 'Unnamed File' }}</span>
-                                    </div>
-                                    <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
-                                      <i class="fa fa-trash"></i> حذف
-                                    </button>
-                                  </li>
-                                </ul>
-                              </div>
-                            <div class="profile-picture ml-3">
-                                <img src="../../../../../assets/images/images.jpg" alt="صوره شخصيه"
-                                    class="rounded-circle" />
-                                <p class="text-center mt-2">صوره شخصيه</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- There was code here -->
-
-                <div class="col-md-6 mx-auto ">
-                    <button type="submit" class="btn my-button3">
-                        اضافه
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn closebutton " data-bs-dismiss="modal">
-                        الغاء
-                    </button>
-
-                </div>
-
-
+        <!-- Form or content for the second modal -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField"> اسم جهه الاتصال</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="اسم جهه الاتصال">
             </div>
-        </form>
-    </div>
-      <!-- <div class="modal-footer">
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">اسم جهه الاتصال باللغه المحليه </label>
+              <input type="text" id="taskField" class="form-control custom-input"
+                placeholder="اسم جهه الاتصال باللغه المحليه">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">رقم جوال 1 لجهه الاتصال</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="رقم جوال 1 لجهه الاتصال">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">رقم جوال 2 لجهه الاتصال</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="رقم جوال 2 لجهه الاتصال">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">وظيفه جهه التواصل</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="وظيفه جهه التوصل">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">ايميل جهه التواصل</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="ايميل جهه التواصل">
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="row align-items-center">
+          <div class="col-md-9">
+            <label for="location" class="form-label">الموقع</label>
+            <div class="input-group">
+              <input type="text" id="field3" class="form-control custom-input" placeholder="قم باختيار الموقع" />
+            </div>
+          </div>
+          <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
+            <button class="btn btn-primary locationButton" type="button">
+              <i class="fas fa-map-marker-alt"></i> أضف موقع
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="taskField">جنسيه جهه التواصل</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="جنسيه جهه التوصل">
+            </div>
+          </div>
+
+
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">العميل</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder=" العميل ">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="taskField">المورد</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder=" المورد ">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="taskField">المستخدم</label>
+              <input type="text" id="taskField" class="form-control custom-input" placeholder="المستخدم">
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="field1 text-end">وصف جهه الاتصال</label>
+              <textarea class="form-control custom-input" id="Textarea1" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="container mt-3 mb-3">
+          <div class="row">
+            <div class="col-12 d-flex justify-content-between align-items-center flex-row-reverse">
+              <div class="file-upload-area d-flex flex-grow-1">
+                <label for="file-upload" class="custom-file-upload w-100">
+                  <input type="file" id="file-upload" />
+                  <div class="upload-placeholder">
+                    <i class="fa fa-cloud-upload-alt"></i>
+                    <span>حدد ملفًا أو قم بالسحب والإسقاط هنا</span>
+                    <p>JPG, PNG or, file size no more than 10MB</p>
+                  </div>
+                </label>
+              </div>
+              <div class="profile-picture ml-3">
+                <img src="../../../../../assets/images/images.jpg" alt="صوره شخصيه" class="rounded-circle" />
+                <p class="text-center mt-2">صوره شخصيه</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+      </div>
+      <div class="modal-footer">
         <button type="button my-button3" class="btn my-button3">
           <i class="fa-solid fa-plus"></i>اضافه
         </button>
         <button type="button" class="btn closebutton" data-bs-dismiss="modal">
           الغاء
         </button>
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
@@ -1312,13 +1222,13 @@
 </div>
 
 <!-- update -->
-<div class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;"
-  *ngIf="isModalOpen">
+<div   class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;" *ngIf="isModalOpen"
+>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-end flex-row-reverse" id="staticBackdropLabel">
-          تعديل مشروع
+          تعديل مشروع 
         </h5>
       </div>
       <div class="modal-body">
@@ -1331,9 +1241,6 @@
                   <label for="field1 text-end"> اسم المشروع</label>
                   <input type="text" id="name" name="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم المشروع" />
-                  <div *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched" class="text-danger">
-                    اسم المشروع مطلوب.
-                  </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -1371,10 +1278,6 @@
 
                     </select>
                   </div>
-                  <div *ngIf="projectForm.get('assignedToId')?.invalid && projectForm.get('assignedToId')?.touched"
-                    class="text-danger">
-                    اسم الموكل اليه مطلوب.
-                  </div>
                 </div>
               </div>
               <div class="col-md-6">
@@ -1396,14 +1299,11 @@
                 <div class="form-group">
                   <label for="field1 text-end">المستخدمين</label>
                   <div class="input-group">
-                    <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
-                      formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
-                      (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
-                    </ng-multiselect-dropdown>
-                  </div>
-                  <div *ngIf="projectForm.get('userIds')?.invalid && projectForm.get('userIds')?.touched"
-                    class="text-danger">
-                    المستخدم مطلوب.
+                    <select class="form-select form-control custom-input" formControlName="clientId">
+                      <option value="" disabled selected>قم باختيار المستخدم</option>
+                      <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
+
+                    </select>
                   </div>
                 </div>
               </div>
@@ -1426,7 +1326,32 @@
               </div>
             </div>
 
-      
+            <!-- <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field1 text-end">حاله المشروع</label>
+                  <input
+                    type="text"
+                    id="field1"
+                   disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار حاله المشروع"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="field2 text-end">تطور المشروع </label>
+                  <input
+                    type="text"
+                    id="field2"
+                    disabled
+                    class="form-control custom-input"
+                    placeholder="قم باختيار تطور المشروع"
+                  />
+                </div>
+              </div>
+            </div> -->
 
             <div class="scroll-buttons-container">
               <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i" class="scroll-button"
@@ -1441,19 +1366,72 @@
               <div *ngIf="selectedButton === 0">
                 <div class="container mt-5">
                   <h5 class="mb-3">المرفقات</h5>
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-microphone"></i>
-                  </button>
-
-                  <button class="btn btn-link text-muted p-1">
-                    <i class="fa fa-paperclip"></i>
-                  </button>
-
-                  <div class="custom-file-upload">
-                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                    <p>حدد ملفًا أو قم بالسحب والإسقاط هنا</p>
-                    <small class="text-muted">JPG, PNG or PDF; file size no more than 10MB</small>
+                  <!-- Drag and Drop Zone -->
+                  
+                  <!-- File List -->
+                  <ul class="list-group mt-3 mb-3">
+                    <li *ngFor="let attachment of attachments?.controls; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <img src="../../../../../assets/images/mingcute_pdf-fill.png" style="width: 35px;" />
+                        <span>{{ attachment.value?.fileTitle || attachment.value?.file.fileTitle || 'Unnamed File' }}</span>
+                      </div>
+                      <div *ngIf="attachment.value?.fileType === 'audio/wav'" class="audio-player">
+                        <audio controls>
+                          <source [src]="attachment.value.audioUrl" type="audio/wav">
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <button (click)="removeAttachment(i)" class="btn btn-link text-danger">
+                        <i class="fa fa-trash"></i> حذف
+                      </button>
+                    </li>
+                    
+                  </ul>
+                  <!-- Select File Zone -->
+                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                    <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
+                      <i class="fa fa-paperclip"></i> ملف إضافي
+                    </button>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
                   </div>
+                  <div class="audio-recorder m-1" *ngIf="showDragDrop || attachments.length==0">
+                    <span 
+                      class="mic-icon"
+                      *ngIf="!isRecording"
+                      type="button"
+                      (click)="startRecording()">
+                      <i class="fa-solid fa-microphone"></i>
+                    </span>
+                    <span
+                      class="stop-icon"
+                      *ngIf="isRecording"
+                      type="button"
+                      (click)="stopRecording()">
+                      <i class="fa-solid fa-microphone-lines fa-fade m-1" style="color: #ff0000;"></i>
+                      <i class="fa-solid fa-stop m-1"></i>
+                    </span>
+                  </div>
+                  <ngx-file-drop
+                    dropZoneLabel="حدد ملفا أو قم بالسحب والإسقاط هنا"
+                    (onFileDrop)="dropped($event)"
+                    (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)"
+                    (click)="fileInput.click()"
+                    *ngIf="showDragDrop || attachments.length==0"
+                    class="mb-3">
+                    <ng-template ngx-file-drop-content-tmp>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="upload-text">
+                          <p class="upload-title">حدد ملفاً أو قم بالسحب والإسقاط هنا</p>
+                          <p class="upload-subtitle">JPG, PNG or PDF, file size no more than 10MB</p>
+                        </div>
+                        <div class="icon">
+                          <i class="fa-solid fa-cloud-arrow-up cloud-custom"></i>
+                        </div>
+                      </div>
+                    </ng-template>
+                    <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" />
+                  </ngx-file-drop>
                 </div>
 
                 <div class="row align-items-center">
@@ -1529,15 +1507,14 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end">نوع المشروع</label>
-                      <input type="text" id="projectTypeId" formControlName="projectTypeId"
-                        class="form-control custom-input" placeholder="قم باختبار النوع" />
+                      <input type="text" id="field1" class="form-control custom-input" placeholder="قم باختبار النوع" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">مركز التكلفه </label>
-                      <input type="text" id="costCenterId" formControlName="costCenterId"
-                        class="form-control custom-input" placeholder="قم باختيار التكلفه" />
+                      <input type="text" id="field2" class="form-control custom-input"
+                        placeholder="قم باختيار التكلفه" />
                     </div>
                   </div>
                 </div>
@@ -1564,8 +1541,7 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="field1 text-end">وصف المشروع</label>
-                      <textarea class="form-control custom-input" formControlName="description" id="description"
-                        rows="3"></textarea>
+                      <textarea class="form-control custom-input" id="Textarea1" rows="3"></textarea>
                     </div>
                   </div>
                 </div>
@@ -1576,21 +1552,15 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field1 text-end">العقود</label>
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContractsdropdownSettings"
-                        [data]="contracts" (onSelect)="onContractSelect($event)"
-                        (onDeSelect)="onContractDeselect($event)" (onSelectAll)="onContractSelectAll($event)"
-                        (onDeSelectAll)="onContractDeselectAll()">
-                      </ng-multiselect-dropdown>
-
+                      <input type="text" id="field1" class="form-control custom-input"
+                        placeholder="قم باختبار العقود" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="field2 text-end">المعدات </label>
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="EquipdropdownSettings" [data]="equips"
-                        (onSelect)="onEquipmentSelect($event)" (onDeSelect)="onEquipmentDeselect($event)"
-                        (onSelectAll)="onEquipmentSelectAll($event)" (onDeSelectAll)="onEquipmentDeselectAll()">
-                      </ng-multiselect-dropdown>
+                      <input type="text" id="field2" class="form-control custom-input"
+                        placeholder="قم باختيارالمعدات" />
                     </div>
                   </div>
                 </div>
@@ -1599,10 +1569,8 @@
                   <div class="col-md-9">
                     <label for="location" class="form-label">جهه الاتصال</label>
                     <div class="input-group">
-                      <ng-multiselect-dropdown style="width: 100%;" [settings]="ContactdropdownSettings" [data]="contacts"
-                        (onSelect)="onContactSelect($event)" (onDeSelect)="onContactDeselect($event)"
-                        (onSelectAll)="onContactSelectAll($event)" (onDeSelectAll)="onContactDeselectAll()">
-                      </ng-multiselect-dropdown>
+                      <input type="text" id="field3" class="form-control custom-input"
+                        placeholder="قم باختيار جهه الاتصال" />
                     </div>
                   </div>
                   <div class="col-md-3 d-flex justify-content-start mt-3 mt-md-0">
@@ -1615,39 +1583,23 @@
 
                 <h5>اظهار الانشطه</h5>
                 <div class="row">
-                  <div class="col-md-6">
-                    <div class="container mt-4">
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
+                    <div class="col-md-12">
+                  <div class="container mt-4" *ngIf="this.selectedCategory != null">
+                    <div *ngIf="activities.length===0">لا توجد انشطة</div>
+                    <div class="card chat-card" *ngFor="let activity of activities">
+                      <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h6 class="chat-name mb-0" style="padding-left:120px;">{{ activity.username || 'Unknown User' }}</h6>
+                          <span class="chat-time"> {{ activity.timestamp | date}}</span>
                         </div>
-                      </div>
-
-                      <div class="card chat-card">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center">
-                            <h6 class="chat-name mb-0" style="padding-left:120px;">Alice Smith</h6>
-                            <span class="chat-time"> 01 Oct 2024</span>
-                          </div>
-                          <p class="chat-message mt-2">
-                            I'm good, thanks for asking! What about you?
-                          </p>
-                        </div>
+                        <p class="chat-message mt-2">
+                          {{ activity.details }}
+                        </p>
                       </div>
                     </div>
-
                   </div>
-
-
                 </div>
-
-
+              </div>
               </div>
             </div>
 
@@ -1707,69 +1659,126 @@
               <div *ngIf="selectedButton === 3">
                 <div class="container comment-section mt-5">
                   <div class="card p-3">
-                    <!-- Add Comment Section -->
                     <div class="container add-comment-section mt-3">
                       <div class="card p-3 d-flex align-items-center">
-                        <div class="d-flex align-items-center w-100">
+                        <form class="d-flex align-items-center w-100" [formGroup]="commentForm" (ngSubmit)="addComment()">
                           <!-- User Avatar -->
-                          <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2"
-                            alt="User Avatar">
-
+                          <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                          
                           <!-- Comment Input Section -->
                           <div class="flex-grow-1">
-                            <input type="text" class="form-control" placeholder="أضف تعليقاً">
+                            <input type="text" class="form-control" formControlName="content" placeholder="أضف تعليقاً">
                           </div>
-
+                    
                           <!-- Icons and Post Button -->
                           <div class="d-flex align-items-center ms-2">
                             <!-- Voice Icon -->
                             <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
-
+                    
                             <!-- Attachment Icon -->
                             <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
-
+                    
                             <!-- Post Button -->
-                            <button class="btn btn-primary ms-2 px-4">نشر</button>
+                            <button class="btn btn-primary ms-2 px-4" type="submit">نشر</button>
                           </div>
-                        </div>
+                        </form>
                       </div>
                     </div>
-
-
+                    
                     <!-- Comments List -->
-                    <div class="comments-list mt-4">
+                    <div class="comments-list mt-4" *ngFor="let comment of comments">
                       <div class="comment-item p-3 mb-3">
                         <div class="d-flex align-items-start">
-                          <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                          <img [src]="comment.userprofileImage || '../../../assets/images/images2.jpg'" class="rounded-circle" alt="User Avatar">
                           <div class="ms-3 w-100">
                             <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="mb-0">خالد ابراهيم</h6>
-                              <span class="text-muted small">Aug 19, 2021</span>
+                              <h6 class="mb-0">{{ comment.userName || 'UnKnown User'}}</h6>
+                              <span class="text-muted small">{{ comment.createdOn | date}}</span>
                             </div>
-                            <p class="mt-2">المندوبين عندكم ممتازين جداً...</p>
+                            <div class="d-flex align-items-center justify-content-between">
+                              <p class="mt-2">
+                                {{ comment.content }}
+                                <button class="btn btn-link p-0 m-1 w-20" style="font-size: 8px;" *ngIf="userId==comment.userId" (click)="toggleEdit(comment.id,comment.content)">
+                                  <i class="fa-solid fa-pen"></i>
+                                </button>
+                              </p>
+                              <ul *ngFor="let attachment of comment.attachments" class="list-unstyled list-inline-item m-0 p-0">
+                                <li>
+                                  <a [href]="imgApiUrl+attachment.fileUrl" target="_blank"><img src="../../../../../assets/images/mingcute_pdf-fill.png" style="height: 20px;width: 20px;"></a>
+                                </li>
+                              </ul>
+                            </div>
                             <div class="comment-actions d-flex">
-                              <button class="btn btn-link p-0"><i class="fa fa-heart"></i> 5</button>
-                              <button class="btn btn-link p-0 ms-3"><i class="fa fa-comment"></i> 3</button>
+                              <button class="btn btn-link p-0"><i class="fa fa-heart"></i> {{ comment.likesCount }}</button>
+                              <button class="btn btn-link p-0 ms-3" (click)="toggleReplay(comment.id)"><i class="fa fa-comment"></i> {{ comment.replies.length }}</button>
                             </div>
                           </div>
                         </div>
                       </div>
-
+                      <div class="container add-comment-section mt-3" *ngIf="comment.id == editId">
+                        <div class="card p-3 d-flex align-items-center">
+                          <div class="d-flex align-items-center w-100">
+                            <!-- User Avatar -->
+                            <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                            <!-- Comment Input Section -->
+                            <div class="flex-grow-1">
+                              <input type="text" class="form-control" [(ngModel)]="editedText" [ngModelOptions]="{standalone:true}">
+                            </div>
+                      
+                            <!-- Icons and Post Button -->
+                            <div class="d-flex align-items-center ms-2">
+                              <!-- Voice Icon -->
+                              <!-- <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button> -->
+                      
+                              <!-- Attachment Icon -->
+                              <!-- <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button> -->
+                      
+                              <!-- Post Button -->
+                              <button class="btn btn-primary ms-2 px-4" type="submit" (click)="editComment(comment.id,editedText)">تعديل</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="container add-comment-section mt-3" *ngIf="comment.id == replayId">
+                        <div class="card p-3 d-flex align-items-center">
+                          <form class="d-flex align-items-center w-100" [formGroup]="commentForm" (ngSubmit)="addComment(replayId)">
+                            <!-- User Avatar -->
+                            <img src="../../../assets/images/images.jpg" class="rounded-circle border border-primary me-2" alt="User Avatar">
+                            
+                            <!-- Comment Input Section -->
+                            <div class="flex-grow-1">
+                              <input type="text" class="form-control" formControlName="content" placeholder="أضف تعليقاً">
+                            </div>
+                      
+                            <!-- Icons and Post Button -->
+                            <div class="d-flex align-items-center ms-2">
+                              <!-- Voice Icon -->
+                              <button class="btn btn-link text-muted p-1"><i class="fa fa-microphone"></i></button>
+                      
+                              <!-- Attachment Icon -->
+                              <button class="btn btn-link text-muted p-1"><i class="fa fa-paperclip"></i></button>
+                      
+                              <!-- Post Button -->
+                              <button class="btn btn-primary ms-2 px-4" type="submit">نشر</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                       <!-- Nested Reply Comment -->
-                      <div class="comment-item p-3 mb-3 ms-5">
+                      <div class="comment-item p-3 mb-3 ms-5" *ngFor="let replay of comment.replies">
                         <div class="d-flex align-items-start">
-                          <img src="../../../assets/images/images2.jpg" class="rounded-circle" alt="User Avatar">
+                          <img [src]="comment.userprofileImage || '../../../assets/images/images2.jpg'"  class="rounded-circle" alt="User Avatar">
                           <div class="ms-3 w-100">
                             <div class="d-flex justify-content-between align-items-center">
-                              <h6 class="mb-0">خالد ابراهيم</h6>
-                              <span class="text-muted small">Aug 19, 2021</span>
+                              <h6 class="mb-0">{{ replay.userName || 'UnKnown User'}}</h6>
+                              <span class="text-muted small">{{ replay.createdOn | date}}</span>
                             </div>
-                            <p class="mt-2">شكراً لك على رأيك الإيجابي...</p>
+                            <p class="mt-2">{{ replay.content }}</p>
                           </div>
                         </div>
                       </div>
                     </div>
-
+                
                     <!-- View More Comments Link -->
                     <div class="text-center">
                       <a href="#" class="text-primary">باقي التعليقات</a>
@@ -1998,8 +2007,7 @@
                 اضافه
                 <i class="fa-solid fa-plus"></i>
               </button>
-              <button type="button" (click)="closeModal()" class="btn closebutton " (click)="projectForm.reset()"
-                data-bs-dismiss="modal">
+              <button type="button" (click)="closeModal()" class="btn closebutton " (click)="projectForm.reset()" data-bs-dismiss="modal">
                 الغاء
               </button>
             </div>
@@ -2014,11 +2022,11 @@
 <div *ngIf="showConfirmationModal" class="confirmation-modal">
   <div class="modal-content">
     <p>هل أنت متأكد؟</p>
-    <div class="col-md-12 mx-auto">
-      <button (click)="deleteItemType()" class="btn btn-danger">نعم</button>
+   <div class="col-md-12 mx-auto">
+    <button (click)="deleteItemType()" class="btn btn-danger">نعم</button>
 
-      <button (click)="closeConfirmationModal()" class="btn btn-secondary">إلغاء</button>
+    <button (click)="closeConfirmationModal()" class="btn btn-secondary">إلغاء</button>
 
-    </div>
+   </div>
   </div>
 </div>

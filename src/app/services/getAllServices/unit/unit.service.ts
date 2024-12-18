@@ -7,9 +7,9 @@ import { environment } from 'src/environments/environment.development';
   providedIn: 'root'
 })
 export class UnitService {
-
+  
   private apiUrl = environment.apiUrl;
-
+  
 
   constructor(private http: HttpClient) { }
 
@@ -50,7 +50,7 @@ export class UnitService {
   getAllUnitsWithPaging(pageNumber:number, pageSize: number): Observable<any> {
     // Get tenantId from localStorage
     const tenantId = localStorage.getItem('tenant');
-
+    
     // Set the custom header with the tenantId
     const headers = new HttpHeaders({
       tenant: tenantId || '', // Set tenantId header if available
@@ -62,10 +62,10 @@ export class UnitService {
     .set('pageSize', pageSize.toString());
     // Send the GET request with headers
     return this.http.get(`${this.apiUrl}StoresSection/units`, { headers , params});
-
+    
   }
-
-
+  
+  
   createUnits(unit: any): Observable<any> {
     const tenantId = localStorage.getItem('tenant');
     const headers = new HttpHeaders({
@@ -136,4 +136,5 @@ export class UnitService {
     return this.http.delete<any>(`${this.apiUrl}StoresSection/unit/${id}`, { headers });
   }
   
+
 }
