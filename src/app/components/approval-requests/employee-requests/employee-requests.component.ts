@@ -7,6 +7,7 @@ import { EmpRequestCategService } from 'src/app/services/getAllServices/Employee
 import { EmpRequestsService } from 'src/app/services/getAllServices/EmployeeRequests/emp-requests.service';
 import { EmpRequestTypeService } from 'src/app/services/getAllServices/EmployeeRequestType/emp-request-type.service';
 import { environment } from 'src/environments/environment.development';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-employee-requests',
@@ -28,9 +29,10 @@ userId: any;
   constructor(private empService: EmpRequestsService, private fb: FormBuilder, private empType: EmpRequestTypeService,
     private http: HttpClient, private toast: ToastrService, private ngZone: NgZone, private renderer: Renderer2
    , private cdr: ChangeDetectorRef,
-    private empCategory: EmpRequestCategService
+    private empCategory: EmpRequestCategService,private jwtHelper:JwtHelperService
   ) {
-    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
     this.employeeRequestForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],

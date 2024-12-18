@@ -10,6 +10,7 @@ import { ServiceDepartmentService } from 'src/app/services/getAllServices/Servic
 import { ServiceRequestService } from 'src/app/services/getAllServices/ServiceRequests/service-request.service';
 import { ServiceTypesService } from 'src/app/services/getAllServices/ServiceTypes/service-types.service';
 import { environment } from 'src/environments/environment.development';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-work-serveces-reqs',
@@ -28,9 +29,10 @@ export class WorkServecesReqsComponent implements OnInit {
   constructor(private reqService: ServiceRequestService, private servType: ServiceTypesService,
     private type: ServiceTypesService, private dep: ServiceDepartmentService, private cat: ServiceCategoryService,
     private fb: FormBuilder, private employeeServ: EmployeeService, private toast: ToastrService,
-    private http: HttpClient, private cdr: ChangeDetectorRef, private ngZone:NgZone
+    private http: HttpClient, private cdr: ChangeDetectorRef, private ngZone:NgZone, private jwtHelper: JwtHelperService
   ) {
-    //this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
     this.serviceRequestForm = this.fb.group({
       serviceTypeId: ['', Validators.required],
       requestedEmployeeId: [''],

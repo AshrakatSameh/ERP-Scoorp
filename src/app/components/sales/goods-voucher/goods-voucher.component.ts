@@ -14,6 +14,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { ToastrService } from 'ngx-toastr';
 import { ItemsService } from 'src/app/services/getAllServices/Items/items.service';
 import { DeliveryStatus } from 'src/app/enums/DeliveryStatus ';
+import { JwtHelperService } from '@auth0/angular-jwt';
+
 import { error } from 'jquery';
 import { popup } from 'leaflet';
 import * as bootstrap from 'bootstrap';
@@ -49,11 +51,12 @@ constructor(private salesService:SalesService,private clientService:ClientsServi
     private representServece:RepresentativeService, private fb: FormBuilder, private  http:HttpClient,
     private teamService: TeamsService, private costCenterService:CostCenterService,
     private warehouseService:WarehouseService,private locationService:LocationService,
-    private itemService: ItemsService, private renderer: Renderer2,
+    private itemService: ItemsService, private renderer: Renderer2, private jwtHelper:JwtHelperService,
     private toast: ToastrService,     private cdr: ChangeDetectorRef, private ngZone:NgZone
 
   ){
-    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
     this.deliveryVoucherForm= this.fb.group({
     clientId: ['', Validators.required],
     representativeId: ['', Validators.required || null],

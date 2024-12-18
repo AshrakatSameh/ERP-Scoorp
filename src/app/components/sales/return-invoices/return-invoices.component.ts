@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { InvoiceStatus } from 'src/app/enums/InvoiceStatus';
@@ -45,9 +46,9 @@ imgApiUrl= environment.imgApiUrl;
     private priceServ: PriceListService, private costService: CostCenterService,
     private projectServ: ProjactService, private salesService: SalesService,private renderer: Renderer2,
     private http: HttpClient, private toast: ToastrService, private fb: FormBuilder,
-    private payPeriodService: PaymentPeriodsService, private itemService: ItemsService,private ngZone:NgZone
-  ) {
-    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    private payPeriodService: PaymentPeriodsService, private itemService: ItemsService,private ngZone:NgZone,
+    private jwtHelper: JwtHelperService) {
+    this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
     this.invoiceFrom = this.fb.group({
       returnInvoiceNumber: [''],
       clientId:  ['', Validators.required || null],
