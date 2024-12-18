@@ -73,7 +73,25 @@ export class JobDescriptionsService {
     formData.append('name', updatedJobDes.name || '');
     formData.append('localName', updatedJobDes.localName || '');
     formData.append('description', updatedJobDes.description || '');
-  
+    console.log('Full attachments:', updatedJobDes.attachments);
+
+    if(updatedJobDes.attachments){
+      updatedJobDes.attachments.forEach((attachment: any) => {
+        if (attachment.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+          console.log('Appending existing file reference:', attachment.fileTitle);
+        }
+        if (attachment.file instanceof File) {
+          // For new files, append the actual file object
+          formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+          console.log('Appending new file:', attachment.fileTitle);
+        }
+      });
+    }
+    else{
+      formData.append('attachmentFiles',updatedJobDes.attachments);
+    }
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}JobDescriptions/${id}`, formData, { headers });
   }

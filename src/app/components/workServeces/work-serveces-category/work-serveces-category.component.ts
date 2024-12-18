@@ -249,6 +249,7 @@ onFileSelected(event: Event): void {
           console.log(this.attachments.controls);
         });
       }
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('Please select a type to update.');
@@ -521,5 +522,12 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+activities: any[] = [];
+getActivities(){
+  this.serCategory.getWorkServiceCategoryActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

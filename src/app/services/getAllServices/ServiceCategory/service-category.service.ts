@@ -88,4 +88,13 @@ export class ServiceCategoryService {
     });
     return this.http.delete<void>(`${this.apiUrl}WorkServiceCategory/${id}`,{headers});
   }
+  getWorkServiceCategoryActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}WorkServiceCategory/GetActivities/${modelId}`, { headers });
+  }
 }

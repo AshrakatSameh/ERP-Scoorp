@@ -224,7 +224,14 @@ export class WorkServecesSectionsComponent implements OnInit {
         localName: this.selectedCategory.localName,
         description: this.selectedCategory.description
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -235,6 +242,7 @@ export class WorkServecesSectionsComponent implements OnInit {
     this.serviceDepForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
+    this.attachments.clear();
   }
 
   updateCategory() {
@@ -417,5 +425,12 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+activities: any[] = [];
+getActivities(){
+  this.serDep.getWorkServiceDepartmentActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

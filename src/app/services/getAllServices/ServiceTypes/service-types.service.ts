@@ -83,4 +83,14 @@ export class ServiceTypesService {
     });
     return this.http.delete<void>(`${this.apiUrl}ServiceTypes/${id}`,{headers});
   }
+
+  getServiceTypesActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}ServiceTypes/GetActivities/${modelId}`, { headers });
+  }
 }

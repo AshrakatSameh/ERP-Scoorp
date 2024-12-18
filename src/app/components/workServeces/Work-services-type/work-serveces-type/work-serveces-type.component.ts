@@ -315,7 +315,7 @@ export class WorkServecesTypeComponent implements OnInit {
         name: this.selectedCategory.name,
         description: this.selectedCategory.description
       });
-
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -615,5 +615,12 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+activities: any[] = [];
+getActivities(){
+  this.servTypes.getServiceTypesActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }
