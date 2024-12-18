@@ -118,7 +118,7 @@ export class SalesComponent implements OnInit {
   }
 
   // buttons=['المعلومات الأساسية','المواقع و الفروع','المرفقات','المهام' ,'الحساب البنكي','الأشعارات والتذكير','التقارير','معلومات التواصل','بيانات الضريبه','الاستبيانات']
-  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات']
+  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات','الانشطه']
 
   selectedButton: number | null = null; // To track which button is clicked
 
@@ -510,6 +510,7 @@ export class SalesComponent implements OnInit {
           console.log(this.attachments.controls);
         });
       }
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('الرجاء اختيار العنصر');
@@ -928,9 +929,9 @@ async uploadAudio(audioBlob: Blob) {
 
 activities: any[] = [];
 getActivities(){
-  // this.salesService.getSaleOfferActivities(this.selectedCategory.id).subscribe((res)=>{
-  //   this.activities = res;
-  //   console.log(res)
-  // })
+  this.salesService.getSaleOfferActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

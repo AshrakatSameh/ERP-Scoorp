@@ -62,8 +62,7 @@ export class WorkServecesReqsComponent implements OnInit {
     this.getAllServiceDeps();
     this.getAllEmployees();
   }
-  buttons = ['التعليقات', 'المرفقات', 'وصف العمل']
-
+  buttons = ['التعليقات', 'المرفقات', 'وصف العمل' ,'الانشطه']
   selectedButton: number | null = null; // To track which button is clicked
 
   // Method to handle button click and show content
@@ -354,7 +353,7 @@ export class WorkServecesReqsComponent implements OnInit {
         reference: this.selectedCategory.reference,
         description: this.selectedCategory.description
       });
-
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('Please select a type to update.');
@@ -613,5 +612,13 @@ async uploadAudio(audioBlob: Blob) {
 
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+
+activities: any[] = [];
+getActivities(){
+  this.reqService.getServiceRequestsActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

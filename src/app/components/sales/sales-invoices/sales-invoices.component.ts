@@ -116,7 +116,7 @@ export class SalesInvoicesComponent implements OnInit {
 
   }
 
-  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات']
+  buttons = ['الأصناف', 'الملاحظات', 'المهام', 'مرفقات','الانشطه']
 
   selectedButton: number | null = null; // To track which button is clicked
 
@@ -488,6 +488,7 @@ export class SalesInvoicesComponent implements OnInit {
           console.log(this.attachmentFiles.controls);
         });
       }
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('الرجاء اختيار العنصر ');
@@ -905,5 +906,12 @@ async uploadAudio(audioBlob: Blob) {
   this.attachmentFiles.push(this.fb.control({ ...fileData, audioUrl }));
   // Trigger change detection
   // this.changeDetectorRef.detectChanges();
+}
+activities: any[] = [];
+getActivities(){
+  this.salesInvoiceService.getSalesInvoiceActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
 }
 }

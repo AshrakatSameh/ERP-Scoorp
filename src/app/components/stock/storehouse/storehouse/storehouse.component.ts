@@ -309,6 +309,7 @@ private removeDocumentClickListener(): void {
           console.log(this.attachments.controls);
         });
       }
+      this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('Please select a category to update.');
@@ -567,4 +568,11 @@ showDragDrop =true;
     // Trigger change detection
     // this.changeDetectorRef.detectChanges();
   }
+  activities: any[] = [];
+getActivities(){
+  this.storeHouseService.getWarehousesActivities(this.selectedCategory.id).subscribe((res)=>{
+    this.activities = res;
+    console.log(res)
+  })
+}
 }

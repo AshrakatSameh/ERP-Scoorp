@@ -103,7 +103,7 @@ export class ServiceRequestService {
     const headers = new HttpHeaders({
       tenant: tenantId || '' // Set tenantId header if available
     });
-    return this.http.put(`${this.apiUrl}ServiceRequests/GetActivities/${modelId}`, { headers });
+    return this.http.get(`${this.apiUrl}ServiceRequests/GetActivities/${modelId}`, { headers });
   }
   // Add Comment to Sales Invoice
   postServiceRequestsComment(data: any): Observable<any> {

@@ -76,5 +76,13 @@ export class WarehouseCatService {
     });
     return this.http.delete<void>(`${this.apiUrl}WarehouseCategories/DeleteCategory/${id}`,{headers});
   }
-
+  getWarehouseCategoriesActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}WarehouseCategories/GetActivities/${modelId}`, { headers });
+  }
 }

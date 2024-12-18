@@ -340,7 +340,7 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     const headers = new HttpHeaders({
       tenant: tenantId || '' // Set tenantId header if available
     });
-    return this.http.put(`${this.apiUrl}SalesInvoice/GetActivities/${modelId}`, { headers });
+    return this.http.get(`${this.apiUrl}SalesInvoice/GetActivities/${modelId}`, { headers });
   }
   // Add Comment to Sales Invoice
   postSalesInvoiceComment(data: any): Observable<any> {

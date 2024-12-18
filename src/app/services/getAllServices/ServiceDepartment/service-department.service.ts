@@ -76,4 +76,13 @@ export class ServiceDepartmentService {
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}WorkServiceDepartment/${id}`, formData, { headers });
   }
+  getWorkServiceDepartmentActivities(modelId:number): Observable<any>{
+    const tenantId = localStorage.getItem('tenant');
+    
+    // Create headers with tenant info
+    const headers = new HttpHeaders({
+      tenant: tenantId || '' // Set tenantId header if available
+    });
+    return this.http.get(`${this.apiUrl}WorkServiceDepartment/GetActivities/${modelId}`, { headers });
+  }
 }

@@ -76,8 +76,19 @@ export class DescriptionsComponent {
       this.cdr.detectChanges();
       return; // Stop submission if the name field is invalid
     }
+
+    const formData = this.JobForm.value; // Get the form data
       // Call the service to post the data
-      const formData = this.JobForm.value; // Get the form data
+      console.log(this.attachments)
+      this.attachments.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
+      }
+      });
+      console.log('FormData contents:',formData);
+      
       this.jobServices.creategetJobDes(formData).subscribe(
         response => {
           console.log('Job Des  created successfully!', response);
@@ -140,19 +151,21 @@ export class DescriptionsComponent {
     }
   // Method to handle file selection
   onFileSelected(event: Event): void {
+    this.toggleDragDrop();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const fileData = {
-        fileTitle: [file.name],
-        fileType: [file.type],
-        fileSize: [file.size],
-        fileUrl: [null],  // URL will be set after uploading
-        file: [file] 
-      };
-      // Add the selected file to the FormArray as a FormControl
-      this.attachments.push(this.fb.control(file));
 
+      // Add the selected file to the FormArray as a FormControl
+      const fileData = {
+        fileTitle: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        fileUrl: null, // Placeholder for URL after upload
+        file: file,
+      };
+      this.attachments.push(this.fb.control(fileData));
+      console.log(this.attachments)
       // Reset the input value to allow selecting the same file again
       input.value = '';
     }
@@ -189,12 +202,15 @@ export class DescriptionsComponent {
     formData.append('description', this.JobForm.get('description')?.value);
 
     // Append each attachment file
-    this.attachments.controls.forEach((control) => {
-      const file = control.value;
-      if (file) {
-        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+    console.log(this.attachments)
+      this.attachments.controls.forEach((control) => {
+      const fileData = control.value;
+      if (fileData && fileData.file instanceof File) {
+        // Append the actual file object
+        formData.append('attachmentFiles', fileData.file, fileData.fileTitle);
       }
-    });
+      });
+      console.log('FormData contents:',formData);
 
     const headers = new HttpHeaders({
       tenant: localStorage.getItem('tenant') || ''  // Add your tenant value here
@@ -204,7 +220,7 @@ export class DescriptionsComponent {
       .subscribe(response => {
         console.log('Response:', response);
         this.toast.success('تمت الإضافة بنجاح');
-         
+
         this.getAllJobDes();
         // Close the modal programmatically
         const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
@@ -261,7 +277,13 @@ export class DescriptionsComponent {
         localName: this.selectedCategory.localName,
         description: this.selectedCategory.description,
       });
-
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
@@ -273,6 +295,7 @@ export class DescriptionsComponent {
     this.JobForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
+    this.attachments.clear();
   }
 
 
