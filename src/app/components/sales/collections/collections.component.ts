@@ -16,6 +16,7 @@ import { ProjactService } from 'src/app/services/getAllServices/Projects/projact
 import { RepresentativeService } from 'src/app/services/getAllServices/Representative/representative.service';
 import { TeamsService } from 'src/app/services/getAllServices/Teams/teams.service';
 import { environment } from 'src/environments/environment.development';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-collections',
@@ -53,9 +54,10 @@ userId:any;
       private paymentService:PaymentMethodService, private clientService:ClientsService,
       private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
       private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
-      private contract:ContractService, private ngZone:NgZone,
+      private contract:ContractService, private ngZone:NgZone,private jwtHelper:JwtHelperService,
       private toast:ToastrService) { 
-        // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+      this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
     this.collectionForm= this.fb.group({
       code: ['', Validators.required || null],
       clientId: ['', Validators.required || null],

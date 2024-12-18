@@ -17,6 +17,7 @@ import { ContactsService } from 'src/app/services/getAllServices/Contacts/contac
 import { NationalityService } from 'src/app/services/getAllServices/Nationality/nationality.service';
 import { ProjectTypeService } from 'src/app/services/getAllServices/ProjectTypes/project-type.service';
 import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-projects',
@@ -48,9 +49,10 @@ export class ProjectsComponent implements OnInit {
     private teamServ: TeamsService, private contractService: ContractService, private equipService: EquipmentService,
     private cdr: ChangeDetectorRef, private contactS: ContactsService, private locationService: LocationService,
     private nationality: NationalityService, private projectTypeService: ProjectTypeService,
-    private costCenter: CostCenterService, private ngZone: NgZone
+    private costCenter: CostCenterService, private ngZone: NgZone,private jwtHelper:JwtHelperService
   ) {
-    this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+     this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],

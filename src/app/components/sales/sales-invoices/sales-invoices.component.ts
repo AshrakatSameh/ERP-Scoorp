@@ -15,6 +15,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { environment } from 'src/environments/environment.development';
 import { ToastrService } from 'ngx-toastr';
 import * as bootstrap from 'bootstrap';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-sales-invoices',
@@ -54,10 +55,11 @@ export class SalesInvoicesComponent implements OnInit {
     private teamService: TeamsService, private itemServices: ItemsService,private renderer: Renderer2,
     private costService: CostCenterService, private priceService: PriceListService,
     private http: HttpClient, private toast: ToastrService, private itemService: ItemsService,
-    private cdr: ChangeDetectorRef,private ngZone:NgZone
+    private cdr: ChangeDetectorRef,private ngZone:NgZone, private jwtHelper:JwtHelperService
 
   ) {
-    // this.userId = JSON.parse(localStorage.getItem("userData")!).user_id;
+    this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
+
 
     this.salesForm = this.fb.group({
       clientId:  ['', Validators.required],

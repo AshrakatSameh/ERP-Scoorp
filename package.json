@@ -26,6 +26,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@popperjs/core": "^2.11.6",
+    "angular-jwt": "^0.1.11",
     "bootstrap": "^5.3.3",
     "chosen-js": "^1.8.7",
     "jquery": "^3.7.1",
