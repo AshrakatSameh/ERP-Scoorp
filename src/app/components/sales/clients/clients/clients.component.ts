@@ -75,7 +75,10 @@ export class ClientsComponent implements OnInit {
       { key: 2, value: 'CashOrDeferred' }
     ];
   }
-
+  isCodeVisible = false;  
+  toggleCode(): void {
+    this.isCodeVisible = !this.isCodeVisible;  // Toggle the visibility
+  }
   buttons = ['المعلومات الأساسية', 'المواقع والفروع', 'المرفقات', 'المهام', 'الحساب البنكي',
     'الأشعارات والتذكير', 'التقارير', 'معلومات التواصل', 'بيانات للضريبه', 'الإستبيانات']
   selectedButton: number | null = null; // To track which button is clicked
