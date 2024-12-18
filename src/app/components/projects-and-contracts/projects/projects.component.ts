@@ -782,24 +782,8 @@ onFileSelected(event: Event): void {
         this.cdr.detectChanges();
         return; // Stop submission if the name field is invalid
       }
-      const assignControl = this.projectForm.get('assignedToId');
     
-      if (!assignControl || assignControl.invalid) {
-        console.log('Form is invalid because the assignedToId field is invalid.');
-        console.log('assignedToId field errors:', assignControl?.errors);
-        this.projectForm.markAllAsTouched();
-        this.cdr.detectChanges();
-        return; // Stop submission if the name field is invalid
-      }
-      const userControl = this.projectForm.get('userIds');
-    
-      if (!userControl || userControl.invalid) {
-        console.log('Form is invalid because the userIds field is invalid.');
-        console.log('userIds field errors:', userControl?.errors);
-        this.projectForm.markAllAsTouched();
-        this.cdr.detectChanges();
-        return; // Stop submission if the name field is invalid
-      }
+     
       // Call the update service method using the category's id
       this.projectService.updateProject(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {

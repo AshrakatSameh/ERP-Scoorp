@@ -305,6 +305,7 @@
                   <label for="field1 text-end"> اسم المشروع</label>
                   <input type="text" id="name" name="name" formControlName="name" class="form-control custom-input"
                     placeholder="اسم المشروع" />
+                    
                 </div>
               </div>
               <div class="col-md-6">
@@ -363,11 +364,6 @@
                 <div class="form-group">
                   <label for="field1 text-end">المستخدمين</label>
                   <div class="input-group">
-                    <!-- <select class="form-select form-control custom-input" formControlName="userIds">
-                      <option value="" disabled selected>قم باختيار المستخدم</option>
-                      <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
-
-                    </select> -->
                     <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
                       formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
                       (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
@@ -460,7 +456,7 @@
                     
                   </ul>
                   <!-- Select File Zone -->
-                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                  <div class="mb-3 mt-2" *ngIf="attachments && attachments.length > 0">
                     <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
                       <i class="fa fa-paperclip"></i> ملف إضافي
                     </button>
@@ -1299,11 +1295,10 @@
                 <div class="form-group">
                   <label for="field1 text-end">المستخدمين</label>
                   <div class="input-group">
-                    <select class="form-select form-control custom-input" formControlName="clientId">
-                      <option value="" disabled selected>قم باختيار المستخدم</option>
-                      <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
-
-                    </select>
+                    <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
+                      formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
+                      (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
+                    </ng-multiselect-dropdown>
                   </div>
                 </div>
               </div>
@@ -1388,7 +1383,7 @@
                     
                   </ul>
                   <!-- Select File Zone -->
-                  <div class="mb-3 mt-2" *ngIf="attachments.length>0">
+                  <div class="mb-3 mt-2" *ngIf="attachments && attachments.length > 0">
                     <button type="button" class="btn btn-primary" (click)="toggleDragDrop()">
                       <i class="fa fa-paperclip"></i> ملف إضافي
                     </button>
