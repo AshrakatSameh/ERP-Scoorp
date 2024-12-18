@@ -1272,7 +1272,7 @@
                 <div class="form-group">
                   <label for="field1 text-end">موكل إلي</label>
                   <div class="input-group">
-                    <select class="form-select form-control custom-input" formControlName="clientId">
+                    <select class="form-select form-control custom-input" formControlName="assignedToId">
                       <option value="" disabled selected>قم باختيار المستخدم</option>
                       <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
 
@@ -1284,8 +1284,8 @@
                 <div class="form-group">
                   <label for="field2 text-end">فريق</label>
                   <div class="input-group">
-                    <select class="form-select form-control custom-input" formControlName="clientId">
-                      <option value="" disabled selected>قم باختيار الفريق</option>
+                    <select class="form-select form-control custom-input" formControlName="teamId">
+                      <option disabled selected>قم باختيار الفريق</option>
                       <option *ngFor="let item of teamss" [value]="item.id">{{ item.name }}</option>
 
                     </select>
@@ -1299,11 +1299,19 @@
                 <div class="form-group">
                   <label for="field1 text-end">المستخدمين</label>
                   <div class="input-group">
-                    <select class="form-select form-control custom-input" formControlName="clientId">
+                    <!-- <select class="form-select form-control custom-input" formControlName="userIds">
                       <option value="" disabled selected>قم باختيار المستخدم</option>
                       <option *ngFor="let item of users" [value]="item.id">{{ item.userName }}</option>
 
-                    </select>
+                    </select> -->
+                    <ng-multiselect-dropdown style="width: 100%;" [settings]="dropdownSettings" [data]="users"
+                      formArrayName="userIds" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeselect($event)"
+                      (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeselectAll()">
+                    </ng-multiselect-dropdown>
+                  </div>
+                  <div *ngIf="projectForm.get('userIds')?.invalid && projectForm.get('userIds')?.touched"
+                    class="text-danger">
+                    المستخدم مطلوب.
                   </div>
                 </div>
               </div>
