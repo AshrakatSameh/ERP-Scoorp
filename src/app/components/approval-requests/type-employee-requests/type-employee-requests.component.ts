@@ -268,63 +268,7 @@ export class TypeEmployeeRequestsComponent implements OnInit {
     });
   }
   onSubmitAdd(): void {
-    // const formData = new FormData();
   
-    // // Append simple fields like 'name' and 'description'
-    // formData.append('name', this.EmpReqTypeForm.get('name')?.value || '');
-    // formData.append('description', this.EmpReqTypeForm.get('description')?.value || '');
-
-    // // Loop over ApprovalLevels to append nested data correctly
-    // this.ApprovalLevels.controls.forEach((levelControl, levelIndex) => {
-    //   const level = levelControl.get('Level')?.value;
-    //   formData.append(`approvalLevels[${levelIndex}].level`, level);
-    
-    //   const approverUserIds = levelControl.get('approverUserIds')?.value || [];
-    //   approverUserIds.forEach((user: any, userIdIndex: number) => {
-    //     formData.append(`approvalLevels[${levelIndex}].userIds`, user.id); // Match the key `userIds` used in Postman
-    //   });
-    // });
-    //     // Append attachment files
-    // this.attachments.controls.forEach((control) => {
-    //   const file = control.value;
-    //   if (file) {
-    //     formData.append('attachmentFiles', file);
-    //   }
-    // });
-  
-    // // Log the FormData contents for debugging (optional, FormData doesn't stringify easily, so we won't see the contents directly)
-    // console.log('FormData:', formData);
-  
-    // // Set headers with tenant information
-    // const headers = new HttpHeaders({
-    //   'tenant': localStorage.getItem('tenant') || ''  // Add your tenant value here
-    // });
-  
-    // // POST request with FormData
-    // this.http.post(this.apiUrl + 'EmployeeRequestTypes', formData, { headers })
-    //   .subscribe(
-    //     (response: any) => {
-    //       console.log('Response:', response);
-    //       this.toast.success('تم الإضافة بنجاح');
-    //       this.getAllEmpRequestTypes();
-    //       this.EmpReqTypeForm.reset();
-    //       const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
-    //       if (modalInstance) {
-    //         modalInstance.hide();
-    //       }
-    //       // Ensure proper cleanup after modal closure
-    //       setTimeout(() => {
-    //         document.body.classList.remove('modal-open');
-            
-    //         document.body.style.overflow = '';
-    //       }, 300);
-    //       this.attachments.clear();
-    //     },
-    //     (error: any) => {
-    //       console.error('Error:', error);
-    //       console.log(this.EmpReqTypeForm.value);
-    //     }
-    //   );
     const nameControl = this.EmpReqTypeForm.get('name');
   
     if (!nameControl || nameControl.invalid) {
@@ -367,14 +311,7 @@ export class TypeEmployeeRequestsComponent implements OnInit {
     //     formData.append('attachmentFiles', file);
     //   }
     // });
-  // Append each attachment file
-this.attachments.controls.forEach((control, index) => {
-  const file = control.value;
-  if (file) {
-    console.log(`Appending attachment ${index}:`, file.name);
-    formData.append(`AttachmentFiles`, file, file.name); // Key: 'AttachmentFiles'
-  }
-});
+
   
   
     // Set headers with tenant information
