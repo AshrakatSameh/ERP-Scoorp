@@ -91,7 +91,7 @@ export class ContractsComponent implements OnInit {
       contractTypeId:[''],
       costCenterId:[''],
       contactIds: fb.array([]),
-      attachments: this.fb.array([]),
+      attachedFiles: this.fb.array([]),
       locationLinks: fb.array([]),
     });
 
@@ -233,7 +233,7 @@ export class ContractsComponent implements OnInit {
         this.filteredContract = this.contracts;
         this.totalCount = data.totalCount; // Assuming response contains totalCount
         this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-        // console.log(this.contracts)
+        console.log(this.contracts)
       }, error => {
         console.error('Error fetching employees data:', error);
       });
@@ -279,7 +279,7 @@ export class ContractsComponent implements OnInit {
   fileNames: string[] = []; // Array to store file names
 
   get attachments(): FormArray {
-    return this.contractForm.get('attachments') as FormArray;
+    return this.contractForm.get('attachedFiles') as FormArray;
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
@@ -548,6 +548,7 @@ onCheckboxChange(category: any) {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory);
   if (this.selectedCategory) {
     this.contractForm.patchValue({
       name: this.selectedCategory.name,
@@ -560,6 +561,21 @@ openModalForSelected() {
       endDate: this.selectedCategory.endDate,
       code: this.selectedCategory.code,
     });
+    this.attachments.clear();
+      if (this.selectedCategory.attachedFiles?.length) {
+        this.selectedCategory.attachedFiles.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     // Retrive the Comments
     this.getComments();
     this.getActivities();
@@ -578,6 +594,7 @@ closeModal() {
 }
 
 updateCategory() {
+  console.log(this.contractForm.value)
   if (this.contractForm.valid) {
     const updatedCategory = { ...this.contractForm.value, id: this.selectedCategory.id };
 

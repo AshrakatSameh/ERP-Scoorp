@@ -388,6 +388,8 @@ export class ReceivedCovenantComponent implements OnInit {
      this.isModalOpen = false;
      this.selectedCategory =null;
      this.convenantForm.reset();
+     this.attachments.clear();
+     this.toggleDragDrop();
    }
  
    updateCategory() {
