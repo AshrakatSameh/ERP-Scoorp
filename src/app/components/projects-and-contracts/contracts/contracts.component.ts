@@ -20,6 +20,8 @@ import { ContactsService } from 'src/app/services/getAllServices/Contacts/contac
   styleUrls: ['./contracts.component.css']
 })
 export class ContractsComponent implements OnInit {
+  @ViewChild('myModal', { static: false }) modal!: ElementRef;
+
   dropdownSettings = {};
 
   isFirstButtonClicked = false;
@@ -349,7 +351,6 @@ export class ContractsComponent implements OnInit {
       this.attachments.at(index).patchValue({ file });
     }
   }
-  @ViewChild('myModal', { static: false }) modal!: ElementRef;
   ngAfterViewInit(): void {
     this.modal.nativeElement.addEventListener('hidden.bs.modal', () => {
       // Fallback cleanup in case Bootstrap doesn't properly clean up
@@ -424,13 +425,20 @@ export class ContractsComponent implements OnInit {
     formData.append('startDate', this.contractForm.get('startDate')?.value);
     formData.append('endDate', this.contractForm.get('endDate')?.value);
     formData.append('code', this.contractForm.get('code')?.value);
-
+    this.attachments.controls.forEach((control) => {
+      const file = control.value;
+      if (file) {
+        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+      }
+    });
+    console.log(this.attachments,this.contractForm.get('AttachmentFiles')?.value);
     const headers = new HttpHeaders({
       'tenant': localStorage.getItem('tenant')||''  // Add your tenant value here
     });
   
     this.http.post(this.apiUrl+'Contract/CreateContract', formData, { headers })
       .subscribe(response => {
+        this.closeModal();
         console.log('Response:', response);
         // alert('submit successfully');
         this.toast.success('تم الإضافة بنجاح');
@@ -446,7 +454,6 @@ export class ContractsComponent implements OnInit {
           
         //   document.body.style.overflow = '';
         // }, 300);
-        this.closeModal();
       }, error => {
         console.error('Error:', error);
         this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
@@ -561,7 +568,9 @@ openModalForSelected() {
       endDate: this.selectedCategory.endDate,
       code: this.selectedCategory.code,
     });
-    this.attachments.clear();
+    if(this.attachments != null && this.attachments.length > 0){
+      this.attachments.clear();
+    }
       if (this.selectedCategory.attachedFiles?.length) {
         this.selectedCategory.attachedFiles.forEach((attachment: any) => {
           const fileData = {
@@ -586,10 +595,14 @@ openModalForSelected() {
 }
 
 closeModal() {
-  this.contractForm.reset();
   this.isModalOpen = false;
+  const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
+    this.attachments.clear();
+  this.contractForm.reset();
   this.selectedCategory =null;
-  this.attachments.clear();
   console.log(this.attachments.length)
 }
 
