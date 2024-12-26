@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -71,13 +71,13 @@ export class SalesComponent implements OnInit {
     this.saleOfferForm = this.fb.group({
       clientId: ['', Validators.required ],
       representativeId: ['', Validators.required ],
-      teamId: [''],
+      teamId: ['', null],
       clientPurchaseOrder: [''],
-      costCenterId: [''],
-      warehouseId: [''],
+      costCenterId: ['', null],
+      warehouseId: ['', null],
       offerExpiryDate: [''],
       paymentPeriod: [''],
-      paymentType: [''],
+      paymentType: ['', null],
       items: this.fb.array([] , Validators.required ) ,
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
@@ -395,9 +395,9 @@ export class SalesComponent implements OnInit {
       (response) => {
         console.log('Response:', response);
         this.toast.success('تمت الإضافة بنجاح');
-  
+        this.getAllSaleOffers();
         // Reset the form but keep validators intact
-        this.saleOfferForm.reset();
+        
         this.saleOfferForm = this.initializeSaleOfferForm();
   
         this.items.clear();
@@ -489,7 +489,11 @@ export class SalesComponent implements OnInit {
       }
     );
   }
-
+  itemName: any;
+  getItemNameById(itemId: number): string { 
+    const item = this.itemss.find(i => i.itemId === itemId);
+    return item ? item.itemName : '';
+  }
   openModalForSelected() {
     if (this.selectedCategory) {
       this.saleOfferForm.patchValue({
@@ -502,6 +506,24 @@ export class SalesComponent implements OnInit {
         offerExpiryDate: this.selectedCategory.offerExpiryDate,
         paymentPeriod: this.selectedCategory.paymentPeriod,
         paymentType: this.selectedCategory.paymentType,
+      });
+      this.selectedCategory.items.forEach((item: any) => {
+        const itemName = this.getItemNameById(item.itemId);
+        if (!item.itemId) {
+          console.error('Invalid itemId:', item);
+          return;
+        }
+        const items = this.fb.group({
+          itemId: [item.itemId], // Bind itemId to the form
+          itemName: [itemName], // Bind the itemName for display purposes
+          quantity: [item.quantity], // Ensure quantity is valid
+          unitPrice: [item.unitPrice], // Ensure unitPrice is valid
+          salesTax: [item.salesTax],
+          discount: [item.discount],
+          unit: [item.unit],
+          notes: [item.notes],
+        });
+        this.items.push(items);
       });
       this.attachments.clear();
       if (this.selectedCategory.attachments?.length) {
@@ -516,7 +538,24 @@ export class SalesComponent implements OnInit {
       alert('الرجاء اختيار العنصر');
     }
   }
-
+// Method to add a new delivery note item
+updateItem() {
+  const newItem = this.fb.group({
+    itemId: [null],               // Default value, can be selected later
+    itemName: [''],               // To be filled based on selection
+    quantity: [0],       // Default quantity
+    unitPrice: [0],               // Default price
+    salesTax: [0],                // Default sales tax
+    discount: [0],                 // Default discount
+    unit: [''],                   // Default unit
+    notes: [''],                  // Default notes
+  });
+  
+  this.items.push(newItem);
+}
+onAddItemButtonClick() {
+  this.addItem();
+}
   closeModal() {
     this.isModalOpen = false;
     this.selectedCategory =null;
@@ -775,7 +814,17 @@ export class SalesComponent implements OnInit {
     this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
     console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
   }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const dropdownElement = document.querySelector('.dropdown-menu');
+  const iconElement = document.querySelector('.fa-right-left');
 
+  // Close dropdown if the click is outside both the dropdown and the icon
+  if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+    this.showDropdownCol = false;
+    console.log('Dropdown closed');
+  }
+}
   isColumnVisible(columnName: string): boolean {
     const column = this.columns.find(col => col.name === columnName);
     return column ? column.visible : false;

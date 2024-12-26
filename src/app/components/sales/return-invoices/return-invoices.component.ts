@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import * as bootstrap from 'bootstrap';
@@ -47,12 +47,12 @@ imgApiUrl= environment.imgApiUrl;
     private projectServ: ProjactService, private salesService: SalesService,private renderer: Renderer2,
     private http: HttpClient, private toast: ToastrService, private fb: FormBuilder,
     private payPeriodService: PaymentPeriodsService, private itemService: ItemsService,private ngZone:NgZone,
-    private jwtHelper: JwtHelperService) {
+    private jwtHelper: JwtHelperService, private cdr: ChangeDetectorRef,) {
     this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
     this.invoiceFrom = this.fb.group({
       returnInvoiceNumber: [''],
-      clientId:  ['', Validators.required || null],
-      representativeId:  ['', Validators.required || null],
+      clientId:  ['', Validators.required],
+      representativeId:  ['', Validators.required],
       teamId:  ['', Validators.required || null],
       code: [],
       costCenterId:  ['', Validators.required || null],
@@ -62,7 +62,7 @@ imgApiUrl= environment.imgApiUrl;
       paymentPeriodId:  ['', Validators.required || null],
       driver: [''],
 
-      items: fb.array([]) || null,
+      items: fb.array([], Validators.required) ,
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([])
 
@@ -306,6 +306,36 @@ imgApiUrl= environment.imgApiUrl;
   }
   apiUrl = environment.apiUrl;
   onSubmit() {
+    const clientControl = this.invoiceFrom.get('clientId');
+    const representativeControl = this.invoiceFrom.get('representativeId');
+    const itemsArray = this.invoiceFrom.get('items') as FormArray;
+    
+    // Validate clientId field
+    if (!clientControl || clientControl.invalid) {
+      console.log('Form is invalid because the client id field is invalid.');
+      console.log('Client field errors:', clientControl?.errors);
+      this.invoiceFrom.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    
+    // Validate representativeId field
+    if (!representativeControl || representativeControl.invalid) {
+      console.log('Form is invalid because the representative id field is invalid.');
+      console.log('Representative field errors:', representativeControl?.errors);
+      representativeControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+   
+    // Validate items array
+    if (!itemsArray || itemsArray.length === 0) {
+      console.log('Form is invalid because the items array is empty.');
+      itemsArray?.markAllAsTouched();
+      this.cdr.detectChanges();
+      // alert('The items array must have at least one item.');
+      return; // Stop submission
+    }
     const formData = new FormData();
     formData.append('clientId', this.invoiceFrom.get('clientId')?.value);
     formData.append('returnInvoiceNumber', this.invoiceFrom.get('returnInvoiceNumber')?.value);
@@ -332,7 +362,7 @@ imgApiUrl= environment.imgApiUrl;
     this.items.controls.forEach((item, index) => {
       const itemValue = item.value;
       formData.append(`Items[${index}].itemId`, itemValue.itemId);
-      formData.append(`Items[${index}].quantity`, itemValue.quantity);
+      formData.append(`Items[${index}].returnedQuantity`, itemValue.returnedQuantity);
       formData.append(`Items[${index}].unitPrice`, itemValue.unitPrice);
       formData.append(`Items[${index}].salesTax`, itemValue.salesTax);
       formData.append(`Items[${index}].discount`, itemValue.discount);
@@ -392,7 +422,7 @@ imgApiUrl= environment.imgApiUrl;
   tableData = [
     {
       itemId: null,
-      quantity: '',
+      returnedQuantity: '',
       unit: '',
       unitPrice: 0,
       salesTax: 0,
@@ -406,7 +436,7 @@ imgApiUrl= environment.imgApiUrl;
   addreturnInvoiceItem() {
     const item = this.fb.group({
       itemId: [0],
-      quantity: [0],
+      returnedQuantity: [0],
       unitPrice: [0],
       salesTax: [0],
       discount: [0],
@@ -513,7 +543,17 @@ imgApiUrl= environment.imgApiUrl;
     this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
     console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
   }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const dropdownElement = document.querySelector('.dropdown-menu');
+  const iconElement = document.querySelector('.fa-right-left');
 
+  // Close dropdown if the click is outside both the dropdown and the icon
+  if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+    this.showDropdownCol = false;
+    console.log('Dropdown closed');
+  }
+}
   isColumnVisible(columnName: string): boolean {
     const column = this.columns.find(col => col.name === columnName);
     return column ? column.visible : false;
@@ -763,7 +803,7 @@ getItemNameById(itemId: number): string {
       const returnItem = this.fb.group({
         itemId: [item.itemId],
         itemName: [itemName],
-        quantity: [item.quantity],
+        returnedQuantity: [item.returnedQuantity],
         unitPrice: [item.unitPrice],
         salesTax: [item.salesTax],
         discount: [item.discount],

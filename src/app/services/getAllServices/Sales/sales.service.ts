@@ -72,7 +72,17 @@ export class SalesService {
     formData.append('offerExpiryDate', updatedCategory.offerExpiryDate || '');
     formData.append('paymentPeriod', updatedCategory.paymentPeriod || '');
     formData.append('paymentType', updatedCategory.paymentType || '');
-    
+    const items = updatedCategory.items || [];
+    items.forEach((item: any, index: number) => {
+      formData.append(`Items[${index}].itemId`, item.itemId || '');
+      formData.append(`Items[${index}].itemName`, item.itemName || '');
+      formData.append(`Items[${index}].quantity`, item.quantity || '');
+      formData.append(`Items[${index}].unitPrice`, item.unitPrice || '');
+      formData.append(`Items[${index}].salesTax`, item.salesTax || '');
+      formData.append(`Items[${index}].discount`, item.discount || '');
+      formData.append(`Items[${index}].unit`, item.unit || '');
+      formData.append(`Items[${index}].notes`, item.notes || '');
+    });
     console.log("Form Service", updatedCategory.attachments);
       updatedCategory.attachments.forEach((attachment: any) => {
         if (attachment.file) {
@@ -283,7 +293,17 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     formData.append('invoiceType', updatedCategory.invoiceType || '');
     formData.append('costCenterId', updatedCategory.costCenterId || '');
     formData.append('driver', updatedCategory.driver || '');
-    
+    const items = updatedCategory.items || [];
+    items.forEach((item: any, index: number) => {
+      formData.append(`Items[${index}].itemId`, item.get('itemId')?.value || '');
+      formData.append(`Items[${index}].note`, item.get('description')?.value || '');
+      formData.append(`Items[${index}].unitPrice`, item.get('unitPrice')?.value || '');
+      formData.append(`Items[${index}].unit`, item.get('unit')?.value || '');
+      formData.append(`Items[${index}].tax`, item.get('tax')?.value || '');
+      formData.append(`Items[${index}].discount`, item.get('discount')?.value || '');
+      formData.append(`Items[${index}].soldQuantity`, item.get('soldQuantity')?.value || '');
+    });
+ 
     console.log("Form Service", updatedCategory.attachments);
       updatedCategory.attachments.forEach((attachment: any) => {
         if (attachment.file) {
@@ -628,7 +648,7 @@ updateStatusSaleOffer( requestId: number, requestStage: number): Observable<any>
     const items = updatedCategory.items || [];
     items.forEach((item: any, index: number) => {
       formData.append(`Items[${index}].itemId`, item.itemId || '');
-      formData.append(`Items[${index}].quantity`, item.quantity || '');
+      formData.append(`Items[${index}].returnedQuantity`, item.returnedQuantity || '');
       formData.append(`Items[${index}].unitPrice`, item.unitPrice || '');
       formData.append(`Items[${index}].tax`, item.tax || '');
       formData.append(`Items[${index}].discount`, item.discount || '');

@@ -131,7 +131,7 @@
 
                                                     <!-- Dropdown menu for selecting columns -->
                                                     <ul *ngIf="showDropdownCol" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
-                                                border-radius: 15px; display: block;">
+                                                border-radius: 15px; display: block;top: -111px;">
                                                         <li *ngFor="let column of columns">
                                                             <a class="dropdown-item">
                                                                 <div
@@ -501,7 +501,7 @@
 
                                                 </tr>
                                             </tbody>
-                                            <button type="button" (click)="addDeliveryNoteItem()">اضف صنف</button>
+                                            <button type="button" class="btn btn-primary" (click)="addDeliveryNoteItem()">اضف صنف</button>
 
                                         </table>
                                     </div>
@@ -1027,7 +1027,7 @@
 
 
                                             </tbody>
-                                            <button type="button" (click)="addDeliveryNoteItem()">اضف صنف</button>
+                                            <button type="button" class="btn btn-primary" (click)="addDeliveryNoteItem()">اضف صنف</button>
 
                                         </table>
                                     </div>

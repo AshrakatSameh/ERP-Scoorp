@@ -96,7 +96,10 @@ export class ContactsComponent implements OnInit {
       this.documentClickListener = null;
     }
   }
-  
+  isCodeVisible = false;  
+  toggleCode(): void {
+    this.isCodeVisible = !this.isCodeVisible;  // Toggle the visibility
+  }
 
   getAllContacts() {
     this.contactService.getAllContacts(this.pageNumber, this.pageSize)

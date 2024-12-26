@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -55,7 +55,7 @@ userId:any;
       private collectionService:CollectionsService, private fb:FormBuilder, private teamService:TeamsService,
       private http:HttpClient, private priceList: PriceListService,private renderer: Renderer2, private project: ProjactService,
       private contract:ContractService, private ngZone:NgZone,private jwtHelper:JwtHelperService,
-      private toast:ToastrService) { 
+      private toast:ToastrService, private cdr: ChangeDetectorRef) { 
       this.userId = this.jwtHelper.decodeToken(localStorage.getItem("authToken")!).UserId;
 
     this.collectionForm= this.fb.group({
@@ -83,11 +83,7 @@ userId:any;
           parentCommentId:[''],
           attachmentFiles: this.fb.array([])
         })
-    // this.paymentTypeList = Object.keys(PaymentType)
-    // .map((key, index) => ({
-    //   key: index,  // Use the index as the numeric key
-    //   value: PaymentType[key as keyof typeof PaymentType]  // Get the value from the enum
-    // }));
+   
   }
 
   ngOnInit(): void {
@@ -325,6 +321,35 @@ getAllProjects() {
    }
 apiUrl = environment.apiUrl
   onSubmitAdd() {
+    const clientControl = this.collectionForm.get('clientId');
+    const representativeControl = this.collectionForm.get('representativeId');
+    const paymentControl = this.collectionForm.get('paymentMethodId');
+    
+    // Validate clientId field
+    if (!clientControl || clientControl.invalid) {
+      console.log('Form is invalid because the client id field is invalid.');
+      console.log('Client field errors:', clientControl?.errors);
+      this.collectionForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    
+    // Validate representativeId field
+    if (!representativeControl || representativeControl.invalid) {
+      console.log('Form is invalid because the representative id field is invalid.');
+      console.log('Representative field errors:', representativeControl?.errors);
+      representativeControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+    if (!paymentControl || paymentControl.invalid) {
+      console.log('Form is invalid because the payment  field is invalid.');
+      console.log('payment  field errors:', paymentControl?.errors);
+      paymentControl?.markAsTouched();
+      this.cdr.detectChanges();
+      return; // Stop submission
+    }
+ 
     const formData = new FormData();
     formData.append('code', this.collectionForm.get('code')?.value);
     formData.append('clientId', this.collectionForm.get('clientId')?.value);
@@ -563,12 +588,23 @@ columns = [
 
 
 ];
+
 showDropdownCol= false;
 toggleDropdownCol() {
   this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
   console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
 }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const dropdownElement = document.querySelector('.dropdown-menu');
+  const iconElement = document.querySelector('.fa-right-left');
 
+  // Close dropdown if the click is outside both the dropdown and the icon
+  if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+    this.showDropdownCol = false;
+    console.log('Dropdown closed');
+  }
+}
 isColumnVisible(columnName: string): boolean {
   const column = this.columns.find(col => col.name === columnName);
   return column ? column.visible : false;

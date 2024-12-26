@@ -124,7 +124,7 @@
 
                           <!-- Dropdown menu for selecting columns -->
                           <ul *ngIf="showDropdownCol" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
-                        border-radius: 15px; display: block;">
+                        border-radius: 15px; display: block;top: -111px;">
                             <li *ngFor="let column of columns">
                               <a class="dropdown-item">
                                 <div class="d-flex justify-content-end align-items-center">
@@ -920,7 +920,7 @@
                           <td>
                             <i class="fas fa-trash" style="cursor: pointer;" (click)="removeItem(i)"></i>
                           </td>
-                          <td><input type="text" formControlName="note" placeholder="note" class="form-control"></td>
+                          <td><input type="text" formControlName="notes" placeholder="notes" class="form-control"></td>
                           <td><input type="number" formControlName="discount" placeholder="discount"
                               class="form-control"></td>
                           <td><input type="number" formControlName="salesTax" placeholder="salesTax"
@@ -930,10 +930,11 @@
                               class="form-control"></td>
                           <td><input type="number" formControlName="quantity" placeholder="Quantity"
                               class="form-control"></td>
-                          <td><select formControlName="id" class="form-control">
+                          <td><select formControlName="itemId" class="form-control">
                               <option *ngFor="let dropdownItem of itemss" [value]="dropdownItem.itemId">{{
                                 dropdownItem.name }}</option>
-                            </select></td>
+                            </select>
+                          </td>
                           <!-- <td>  <select (change)="onItemSelect($event, i)" [(ngModel)]="row.selectedItemId">
                           <option *ngFor="let item of items" [value]="item.id">{{ item.name }}</option>
                         </select></td> -->
@@ -942,7 +943,7 @@
 
                       </tbody>
                     </table>
-                    <button type="button" (click)="addItem()">اضف صنف</button>
+                    <button type="button" class="btn btn-primary" (click)="addItem()" >اضف صنف</button>
 
                   </div>
 

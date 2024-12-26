@@ -130,7 +130,7 @@
 
                           <!-- Dropdown menu for selecting columns -->
                           <ul *ngIf="showDropdownCol" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
-                                            border-radius: 15px; display: block;">
+                                            border-radius: 15px; display: block;top: -111px;">
                             <li *ngFor="let column of columns">
                               <a class="dropdown-item">
                                 <div class="d-flex justify-content-end align-items-center">
@@ -271,6 +271,12 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="invoiceFrom.get('clientId')?.touched && invoiceFrom.get('clientId')?.errors?.['required']"
+                  class="text-danger"
+                >
+                اسم العميل مطلوب.
+                </div>
                 </div>
               </div>
             </div>
@@ -286,6 +292,12 @@
 
                     </select>
                   </div>
+                  <div
+                  *ngIf="invoiceFrom.get('representativeId')?.touched && invoiceFrom.get('representativeId')?.errors?.['required']"
+                  class="text-danger"
+                >
+                اسم المندوب مطلوب.
+                </div>
                 </div>
               </div>
 
@@ -406,7 +418,12 @@
                 </div>
               </div>
             </div>
-
+            <div
+            *ngIf="invoiceFrom.get('items')?.touched && invoiceFrom.get('items')?.errors?.['required']"
+            class="text-danger"
+          >
+          مطلوب صنف واحد على الأقل.
+          </div>
             <div class="scroll-buttons-container">
               <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i" class="scroll-button"
                 type="button" (click)="showContent(i)">
@@ -425,13 +442,13 @@
                       <thead>
                         <tr class="firstcol">
                           <th class="firstcolleft"> </th>
-                          <th>Notes</th>
-                          <th>Unit</th>
-                          <th>Discount</th>
-                          <th>Sales Tax</th>
-                          <th>Unit Price</th>
-                          <th>Quantity</th>
-                          <th>Item ID</th>
+                          <th>ملاحظات</th>
+                          <th>الوحدة</th>
+                          <th>الخصم</th>
+                          <th>الضريبة</th>
+                          <th>سعر الوحدة</th>
+                          <th>الكمية المسترجعة</th>
+                          <th>الصنف</th>
                           <th>مسلسل</th>
 
                         </tr>
@@ -459,7 +476,7 @@
                             class="form-control"></td>
                           <td><input type="text" formControlName="unitPrice" placeholder="Unit Price"
                             class="form-control"></td>
-                          <td><input type="number" formControlName="quantity" placeholder="quantity"
+                          <td><input type="number" formControlName="returnedQuantity" placeholder="returnedQuantity"
                             class="form-control"></td>
                           <td><select formControlName="itemId" class="form-control">
                             <option *ngFor="let dropdownItem of itemList" [value]="dropdownItem.id">{{
@@ -937,13 +954,13 @@
                       <thead>
                         <tr class="firstcol">
                           <th class="firstcolleft"> </th>
-                          <th>Notes</th>
-                          <th>Unit</th>
-                          <th>Discount</th>
-                          <th>Sales Tax</th>
-                          <th>Unit Price</th>
-                          <th>Quantity</th>
-                          <th>Item ID</th>
+                          <th>ملاحظات</th>
+                          <th>الوحدة</th>
+                          <th>الخصم</th>
+                          <th>الضريبة</th>
+                          <th>سعر الوحدة</th>
+                          <th>الكمية المسترجعة</th>
+                          <th>الصنف</th>
                           <th>مسلسل</th>
 
                         </tr>
@@ -958,7 +975,7 @@
                           <td><input type="number" formControlName="discount" placeholder="Discount" class="form-control"></td>
                           <td><input type="number" formControlName="salesTax" placeholder="Sales Tax" class="form-control"></td>
                           <td><input type="number" formControlName="unitPrice" placeholder="Unit Price" class="form-control"></td>
-                          <td><input type="number" formControlName="quantity" placeholder="Quantity" class="form-control"></td>
+                          <td><input type="number" formControlName="returnedQuantity" placeholder="returnedQuantity" class="form-control"></td>
                           <td>
                             <select formControlName="itemId" class="form-control">
                               <option *ngFor="let dropdownItem of itemList" [value]="dropdownItem.id">

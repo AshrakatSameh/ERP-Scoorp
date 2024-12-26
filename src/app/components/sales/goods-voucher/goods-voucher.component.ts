@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from 'src/app/services/getAllServices/Clients/clients.service';
 import { CostCenterService } from 'src/app/services/getAllServices/CostCenter/cost-center.service';
@@ -1032,7 +1032,17 @@ resetUpdatedItems() {
     this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
     console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
   }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const dropdownElement = document.querySelector('.dropdown-menu');
+    const iconElement = document.querySelector('.fa-right-left');
   
+    // Close dropdown if the click is outside both the dropdown and the icon
+    if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+      this.showDropdownCol = false;
+      console.log('Dropdown closed');
+    }
+  }
   isColumnVisible(columnName: string): boolean {
     const column = this.columns.find(col => col.name === columnName);
     return column ? column.visible : false;

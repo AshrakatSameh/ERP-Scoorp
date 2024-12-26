@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
 import { data } from 'jquery';
@@ -45,22 +45,22 @@ export class ReceiveVoucherComponent implements OnInit {
   constructor(private salesService: SalesService, private fb: FormBuilder, private teamServ: TeamsService,
     private clientServ: ClientsService, private repServ: RepresentativeService, private costServ: CostCenterService,
     private wareSevice: WarehouseService, private locationService: LocationService, private toast: ToastrService,
-    private http: HttpClient, private itemService: ItemsService, private renderer:Renderer2,private ngZone:NgZone
+    private http: HttpClient, private itemService: ItemsService, private renderer:Renderer2,private ngZone:NgZone,
+     private cdr: ChangeDetectorRef
   ) {
     this.goodsForm = this.fb.group({
-      clientId:  [null],
-      representativeId:  [null],
-      // code: ['', Validators.required],
-      teamId:  [null],
-      costCenterId:  [null],
-      warehouseId:  [null],
+      clientId:  ['', Validators.required],
+      representativeId:  [''],
+      teamId:  [''],
+      costCenterId:  [''],
+      warehouseId:  [''],
       supplier: [''],
       locationLinkIds: this.fb.array([]),
 
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([]),
 
-      items: fb.array([]),
+      items: fb.array([], Validators.required),
 
     });
     this.receiptStatusList = Object.keys(this.receiptStatus).map(key => ({
@@ -291,7 +291,38 @@ export class ReceiveVoucherComponent implements OnInit {
       document.body.style.overflow = '';
     });
   }
+  initializeForm(): FormGroup{
+    return this.fb.group({
+      clientId:  ['', Validators.required],
+      representativeId:  [''],
+      teamId:  [''],
+      costCenterId:  [''],
+      warehouseId:  [''],
+      supplier: [''],
+      locationLinkIds: this.fb.array([]),
+
+      attachmentFiles: this.fb.array([]),
+      attachments: this.fb.array([]),
+
+      items: this.fb.array([], Validators.required),
+      });
+  }
   onSubmit() {
+    const clientControl = this.goodsForm.get('clientId');
+    const itemsArray = this.goodsForm.get('items') as FormArray;
+
+    if (!clientControl || clientControl.invalid) {
+      console.log('Form is invalid because the client id field is invalid.');
+      console.log('Client field errors:', clientControl?.errors);
+      this.goodsForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+    if (!itemsArray || itemsArray.length === 0) {
+      this.goodsForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
     const formData = new FormData();
     formData.append('clientId', this.goodsForm.get('clientId')?.value);
     formData.append('representativeId', this.goodsForm.get('representativeId')?.value);
@@ -329,20 +360,7 @@ export class ReceiveVoucherComponent implements OnInit {
         console.log('Response:', response);
         this.toast.success('تم الإضافة بنجاح')
         this.getAllGoodsReceipt();
-        this.goodsForm.reset({
-          // clientId:  [null],
-          // representativeId:  [null],
-          // teamId:  [null],
-          // costCenterId:  [null],
-          // warehouseId:  [null],
-          // supplier: [''],
-          // locationLinkIds: this.fb.array([]),
-          // attachmentFiles: this.fb.array([]),
-          // attachments: this.fb.array([]),
-    
-          // items: this.fb.array([]),
-    
-        });
+        this.goodsForm = this.initializeForm();
         const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
         if (modalInstance) {
           modalInstance.hide();
@@ -354,6 +372,7 @@ export class ReceiveVoucherComponent implements OnInit {
           document.body.style.overflow = '';
         }, 300);
         this.attachmentFiles.clear();
+        this.items.clear();
       }, error => {
         console.error('Error:', error);
         const errorMessage = error.error?.message || 'An unexpected error occurred.';
@@ -539,13 +558,32 @@ export class ReceiveVoucherComponent implements OnInit {
         clientId: this.selectedCategory.clientId,
         representativeId: this.selectedCategory.representativeId,
         teamId: this.selectedCategory.teamId,
-        // code: this.selectedCategory.code,
-        // purchaseOrderNumber: this.selectedCategory.purchaseOrderNumber,
         costCenterId: this.selectedCategory.costCenterId,
         warehouseId: this.selectedCategory.warehouseId,
         supplier: this.selectedCategory.supplier,
         locationLinkIds: this.selectedCategory.locationLinkIds,
       });
+      const itemsArray = this.goodsForm.get('items') as FormArray;
+    itemsArray.clear();
+
+    // Adding items to the form array
+    if (Array.isArray(this.selectedCategory.items)) {
+      this.selectedCategory.items.forEach((item: any) => {
+        const itemGroup = this.fb.group({
+          itemId: [item.itemId ?? '', Validators.required],
+          receivedQuantity: [item.soldQuantity ?? 0, Validators.required],
+          unitPrice: [item.unitPrice ?? 0, Validators.required],
+          salesTax: [item.tax ?? 0],
+          discount: [item.discount ?? 0],
+          unit: [item.unit ?? ''],
+          notes: [item.notes ?? '']
+        });
+        itemsArray.push(itemGroup);
+      });
+    } else {
+      console.error('items is not an array or is undefined:', this.selectedCategory.items);
+    }
+
       this.attachmentFiles.clear();
       if (this.selectedCategory.attachments?.length) {
         this.selectedCategory.attachments.forEach((attachment: any) => {
@@ -667,9 +705,15 @@ export class ReceiveVoucherComponent implements OnInit {
       this.toast.success('تم حذف جميع العناصر المحددة بنجاح.');
       this.getAllGoodsReceipt();
       this.closeConfirmationModal();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      if (this.filteredgoodReceipts.length === 0 && this.pageNumber > 1) {
+        // Move to the previous page if the current page is empty
+        this.pageNumber -= 1;  // Adjust the page number to the previous one
+        this.changePage(this.pageNumber)
+        this.getAllGoodsReceipt(); // Re-fetch items for the updated page
+      } else {
+        // If the page is not empty, just re-fetch the data
+        this.getAllGoodsReceipt();
+      }
     }
   }
   selectedForDelete: any[] = [];
@@ -734,7 +778,17 @@ export class ReceiveVoucherComponent implements OnInit {
     this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
     console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
   }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const dropdownElement = document.querySelector('.dropdown-menu');
+  const iconElement = document.querySelector('.fa-right-left');
 
+  // Close dropdown if the click is outside both the dropdown and the icon
+  if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+    this.showDropdownCol = false;
+    console.log('Dropdown closed');
+  }
+}
   isColumnVisible(columnName: string): boolean {
     const column = this.columns.find(col => col.name === columnName);
     return column ? column.visible : false;

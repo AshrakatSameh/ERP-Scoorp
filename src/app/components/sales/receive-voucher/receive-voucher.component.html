@@ -131,7 +131,7 @@
 
                                                     <!-- Dropdown menu for selecting columns -->
                                                     <ul *ngIf="showDropdownCol" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
-                                                border-radius: 15px; display: block;">
+                                                border-radius: 15px; display: block;top: -111px;">
                                                         <li *ngFor="let column of columns">
                                                             <a class="dropdown-item">
                                                                 <div
@@ -260,13 +260,7 @@
 
 
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="field4 text-end"> رقم الطلب</label>
-                                    <input type="text" id="code" disabled class="form-control"
-                                        placeholder="رقم الطلب" />
-                                </div>
-                            </div>
+                         
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">العميل</label>
@@ -279,6 +273,12 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="goodsForm.get('clientId')?.touched && goodsForm.get('clientId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم العميل مطلوب.
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -439,7 +439,12 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div
+                        *ngIf="goodsForm.get('items')?.touched && goodsForm.get('items')?.errors?.['required']"
+                        class="text-danger"
+                      >
+                      يجب إضافة صنف واحد على الأقل
+                      </div>
                         <!-- show buttons -->
                         <div class="scroll-buttons-container" dir="ltr">
                             <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i"
@@ -457,13 +462,13 @@
                                             <thead>
                                                 <tr class="firstcol">
                                                     <th>مسلسل</th>
-                                                    <th>Item ID</th>
-                                                    <th>Quantity</th>
-                                                    <th>Unit Price</th>
-                                                    <th>Sales Tax</th>
-                                                    <th>Discount</th>
-                                                    <th>Unit</th>
-                                                    <th>Notes</th>
+                                                    <th>الصنف</th>
+                                                    <th>الكمية المستلمة</th>
+                                                    <th>سعر الوحدة</th>
+                                                    <th>الضريبة</th>
+                                                    <th>الخصم</th>
+                                                    <th>الوحدة</th>
+                                                    <th>ملاحظات</th>
                                                     <th> </th>
 
 
@@ -502,7 +507,7 @@
 
                                                 </tr>
                                             </tbody>
-                                            <button type="button" (click)="addGoodsReceiptItem()">اضف صنف</button>
+                                            <button type="button" class="btn btn-primary" (click)="addGoodsReceiptItem()">اضف صنف</button>
 
                                         </table>
                                     </div>
@@ -821,52 +826,6 @@
     </div>
 </div>
 
-<!-- <div class="modal fade" [ngClass]="{'show': showPopup}" tabindex="-1" role="dialog" [ngStyle]="{'display': showPopup ? 'block' : 'none'}" aria-hidden="!showPopup">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Enter Updated Items</h5>
-          <button type="button" class="close" (click)="closePopup()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div *ngFor="let item of updatedItems; let i = index" class="mb-3">
-            <div class="row">
-              <div class="col-md-6">
-                  <label>الكمية المستلمة :</label>
-            <input class="form-control" placeholder="received Quantity" type="number" [(ngModel)]="item.receivedQuantity" required><br>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                  <label>المستودع</label> 
-                  <select [(ngModel)]="item.warehouseId" class="form-select form-control">
-                      <option *ngFor="let w of warehouses " [value]="w.id">{{w.name}}</option>
-                  </select>
-              </div>
-          </div>
-            
-          <div class="row">
-              <div class="col-md-6">
-                  <label>الصنف</label>
-                  <select [(ngModel)]="item.itemId" class="form-select form-control">
-                      <option *ngFor="let w of itemList " [value]="w.id">{{w.name}}</option>
-                  </select>
-              </div>
-          </div>
-            <button type="button" class="btn btn-danger" (click)="removeUpdatedItem(i)">إزالة عنصر</button>
-            <hr>
-          </div>
-          <button type="button" class="btn btn-secondary" (click)="addUpdatedItem()">إضافة جديدة</button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" (click)="submitUpdatedItems()">إضافة</button>
-          <button type="button" class="btn btn-secondary" (click)="closePopup()">إلغاء</button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
 <!-- Update modal -->
 <div class="modal" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpen}" style="display: block;"
@@ -903,6 +862,12 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="goodsForm.get('clientId')?.touched && goodsForm.get('clientId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم العميل مطلوب.
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -1001,7 +966,7 @@
                             <div class="col-md-9">
                                 <label for="location" class="form-label">الموقع</label>
                                 <div class="input-group">
-                                    <select class="form-select" id="location" formControlName="locationLinkIds">
+                                    <select class="form-select" id="location" formArrayName="locationLinkIds">
                                         <option selected>قم بإختيار الموقع</option>
                                         <option *ngFor="let item of locations" [value]="item.id">
                                             {{item.locationName}},{{item.locationAddress}},{{item.latitude}},{{item.longitude}}
@@ -1063,7 +1028,12 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div
+                        *ngIf="goodsForm.get('items')?.touched && goodsForm.get('items')?.errors?.['required']"
+                        class="text-danger"
+                      >
+                      يجب إضافة صنف واحد على الأقل
+                      </div>
                         <!-- show buttons -->
                         <div class="scroll-buttons-container" dir="ltr">
                             <button *ngFor="let btn of buttons; let i = index" [id]="'button-' + i"
@@ -1081,13 +1051,13 @@
                                             <thead>
                                                 <tr class="firstcol">
                                                     <th>مسلسل</th>
-                                                    <th>Item ID</th>
-                                                    <th>Received Quantity</th>
-                                                    <th>Unit Price</th>
-                                                    <th>Sales Tax</th>
-                                                    <th>Discount</th>
-                                                    <th>Unit</th>
-                                                    <th>Notes</th>
+                                                    <th>الصنف</th>
+                                                    <th>الكمية المستلمة</th>
+                                                    <th>سعر الوحدة</th>
+                                                    <th>الضريبة</th>
+                                                    <th>الخصم</th>
+                                                    <th>الوحدة</th>
+                                                    <th>ملاحظات</th>
                                                     <th> </th>
 
 
@@ -1126,7 +1096,7 @@
 
                                                 </tr>
                                             </tbody>
-                                            <button type="button" (click)="addGoodsReceiptItem()">اضف صنف</button>
+                                            <button type="button" class="btn btn-primary" (click)="addGoodsReceiptItem()">اضف صنف</button>
 
                                         </table>
                                     </div>

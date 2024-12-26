@@ -74,13 +74,8 @@ export class SalesInvoicesComponent implements OnInit {
       attachmentFiles: this.fb.array([]),
       attachments: this.fb.array([]),
 
-      items: this.fb.array([], Validators.required) 
-      // purchaseOrderNumber: ['', Validators.required],
-
-      // note:[],
-      // AttachmentFiles:[],
-      // saleOfferId:[],
-      // deliveryNoteId:[],
+      items: this.fb.array([], Validators.required) ,
+      salesInvoiceItems: this.fb.array([], Validators.required) 
 
     });
 
@@ -391,6 +386,7 @@ export class SalesInvoicesComponent implements OnInit {
       tenant: localStorage.getItem('tenant') || '',
     });
   
+    console.log(this.salesForm.value);
     this.http.post(this.apiUrl + 'SalesInvoice', formData, {
       headers,
       responseType: 'text',
@@ -467,33 +463,89 @@ export class SalesInvoicesComponent implements OnInit {
   
 
   openModalForSelected() {
-    console.log(this.selectedCategory)
+    console.log(this.selectedCategory);
+  
     if (this.selectedCategory) {
       this.salesForm.patchValue({
-        code: this.selectedCategory.code,
-        clientId: this.selectedCategory.clientId,
-        representativeId: this.selectedCategory.representativeId,
-        teamId: this.selectedCategory.teamId,
-        invoiceNumber: this.selectedCategory.invoiceNumber,
-        priceListId: this.selectedCategory.priceListId,
-        paymentPeriodId: this.selectedCategory.paymentPeriodId,
-        invoiceType: this.selectedCategory.invoiceType,
-        costCenterId: this.selectedCategory.costCenterId,
-        driver: this.selectedCategory.driver,
+        code: this.selectedCategory.code ?? '',
+        clientId: this.selectedCategory.clientId ?? '',
+        representativeId: this.selectedCategory.representativeId ?? '',
+        teamId: this.selectedCategory.teamId ?? '',
+        invoiceNumber: this.selectedCategory.invoiceNumber ?? '',
+        priceListId: this.selectedCategory.priceListId ?? '',
+        paymentPeriodId: this.selectedCategory.paymentPeriodId ?? '',
+        invoiceType: this.selectedCategory.invoiceType ?? '',
+        costCenterId: this.selectedCategory.costCenterId ?? '',
+        driver: this.selectedCategory.driver ?? '',
+        items : this.selectedCategory.salesInvoiceItems,
+        salesInvoiceItems: this.fb.array([]), // Initialize as empty FormArray
+
       });
+      this.selectedCategory.salesInvoiceItems.forEach((item: any) => {
+        if (!item.itemId) {
+          console.error('Invalid itemId:', item);
+          return;
+        }
+      const salesItem = this.fb.group({
+        itemId: [item.itemId ?? '', Validators.required],
+        soldQuantity: [item.soldQuantity ?? 0, Validators.required],
+        unitPrice: [item.unitPrice ?? 0, Validators.required],
+        tax: [item.tax ?? 0],
+        discount: [item.discount ?? 0],
+        unit: [item.unit ?? ''],
+        note: [item.notes ?? '']
+      });
+      this.Items.push(salesItem);
+    });
+      // Safely clear and iterate over attachmentFiles
       this.attachmentFiles.clear();
-      if (this.selectedCategory.attachmentFiles?.length) {
-        this.selectedCategory.attachmentFiles.forEach((attachment: any) => {
-          this.attachmentFiles.push(this.fb.group({ file: attachment })); // Existing attachment
-          console.log(this.attachmentFiles.controls);
-        });
-      }
+      const attachmentFiles = this.selectedCategory.attachmentFiles ?? [];
+      attachmentFiles.forEach((attachment: any) => {
+        this.attachmentFiles.push(this.fb.group({ file: attachment }));
+        console.log(this.attachmentFiles.controls);
+      });
+  
       this.getActivities();
       this.isModalOpen = true;
     } else {
       alert('الرجاء اختيار العنصر ');
     }
   }
+  get salesInvoiceItems(): FormArray {
+    return this.salesForm.get('salesInvoiceItems') as FormArray;
+  }
+  addSalesInvoiceItem() {
+    const newSalesItem = this.fb.group({
+      itemId: ['', Validators.required],
+      soldQuantity: [0, Validators.required],
+      unitPrice: [0, Validators.required],
+      tax: [0],
+      discount: [0],
+      unit: [''],
+      note: ['']
+    });
+    this.Items.push(newSalesItem);
+  }
+
+  // Method to add a new delivery note item
+updateItem() {
+  const newItem = this.fb.group({
+    itemId: [null],               // Default value, can be selected later
+    itemName: [''],               // To be filled based on selection
+    soldQuantity: [0],       // Default quantity
+    unitPrice: [0],               // Default price
+    tax: [0],                // Default sales tax
+    discount: [0],                 // Default discount
+    unit: [''],                   // Default unit
+    notes: [''],                  // Default notes
+  });
+  
+  this.Items.push(newItem);
+}
+onAddItemButtonClick() {
+  this.addDeliveryNoteItem();
+}
+
 
   closeModal() {
     this.isModalOpen = false;
@@ -544,6 +596,7 @@ export class SalesInvoicesComponent implements OnInit {
         // alert('The items array must have at least one item.');
         return; // Stop submission
       }
+      updatedCategory.items = this.selectedCategory.salesInvoiceItems;
       // Call the update service method using the category's id
       this.salesInvoiceService.updateSalesInvoice(this.selectedCategory.id, updatedCategory).subscribe(
         (response) => {

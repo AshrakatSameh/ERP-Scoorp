@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
@@ -40,8 +40,8 @@ export class ClientsComponent implements OnInit {
     private supervisorService: SupervisorService, private tagService: TagService, private http: HttpClient,
     private priceList: PriceListService, private payments: PaymentPeriodsService, private repre: RepresentativeService,
     private teamService: TeamsService, private costCenterService: CostCenterService, private toast: ToastrService,
-    private renderer:Renderer2,     private cdr: ChangeDetectorRef
-   , private ngZone:NgZone
+    private renderer:Renderer2,     private cdr: ChangeDetectorRef, 
+    private ngZone:NgZone
   ) {
     this.clientForm = this.fb.group({
       name: ['', Validators.required],
@@ -131,7 +131,16 @@ export class ClientsComponent implements OnInit {
     })
 
   }
+  paymentM: any[] = [];
+  getAllPaymentMethods() {
+    this.payments.getAllPaymentPeriods().subscribe(response => {
+      this.paymentPeriod = response.paymentPeriods;
+      //console.log(this.costCenters);
+    }, error => {
+      console.error('Error fetching price lists data:', error)
+    })
 
+  }
 
   representatives: any[] = [];
   getAllRepresentatives() {
@@ -590,7 +599,17 @@ toggleDropdownCol() {
   this.showDropdownCol = !this.showDropdownCol; // Toggle the dropdown visibility
   console.log('Dropdown visibility:', this.showDropdownCol); // Check if it’s toggling
 }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const dropdownElement = document.querySelector('.dropdown-menu');
+  const iconElement = document.querySelector('.fa-right-left');
 
+  // Close dropdown if the click is outside both the dropdown and the icon
+  if (dropdownElement && !dropdownElement.contains(event.target as Node) && iconElement && !iconElement.contains(event.target as Node)) {
+    this.showDropdownCol = false;
+    console.log('Dropdown closed');
+  }
+}
 isColumnVisible(columnName: string): boolean {
   const column = this.columns.find(col => col.name === columnName);
   return column ? column.visible : false;

@@ -131,7 +131,7 @@
 
                                                     <!-- Dropdown menu for selecting columns -->
                                                     <ul *ngIf="showDropdownCol" class="dropdown-menu" style="background: #f1f1f4; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 1000;
-                                                border-radius: 15px; display: block;">
+                                                border-radius: 15px; display: block;top: -111px;">
                                                         <li *ngFor="let column of columns">
                                                             <a class="dropdown-item">
                                                                 <div
@@ -270,6 +270,12 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="collectionForm.get('clientId')?.touched && collectionForm.get('clientId')?.errors?.['required']"
+                                    class="text-danger"
+                                  >
+                                  اسم العميل مطلوب.
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -287,6 +293,11 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="collectionForm.get('representativeId')?.touched && collectionForm.get('representativeId')?.errors?.['required']"
+                                    class="text-danger">
+                                    اسم المندوب مطلوب.
+                                  </div>
                                 </div>
                             </div>
 
@@ -315,6 +326,11 @@
 
                                         </select>
                                     </div>
+                                    <div
+                                    *ngIf="collectionForm.get('paymentMethodId')?.touched && collectionForm.get('paymentMethodId')?.errors?.['required']"
+                                    class="text-danger">
+                                    طريقة الدفع مطلوبة.
+                                  </div>
                                 </div>
                             </div>
                         </div>
