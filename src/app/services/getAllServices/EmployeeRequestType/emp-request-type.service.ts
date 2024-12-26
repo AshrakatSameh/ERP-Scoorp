@@ -63,17 +63,40 @@ export class EmpRequestTypeService {
         if (attachment.file) {
           // For new files, append the actual file object
           if (attachment.file instanceof File) {
-            formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
+            formData.append('attachments', attachment.file, attachment.fileTitle);
             console.log('Appending new file:', attachment.fileTitle);
           }
           if (attachment.file.fileUrl) {
             // For existing files, use a metadata representation (fileUrl or any reference)
-            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
+            formData.append('attachments', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
             console.log('Appending existing file reference:', attachment.file.fileTitle);
           }
         } 
       });
-      console.log(formData.get("attachmentFiles"))
+      updatedCategory.approvalLevels.forEach((levelControl: any, levelIndex: number) => {
+        const level = levelControl.Level || levelControl.get('Level')?.value;
+        formData.append(`approvalLevels[${levelIndex}].level`, level);
+    
+        const approverUserIds =
+          levelControl.approverUserIds || levelControl.get('approverUserIds')?.value || [];
+    
+        approverUserIds.forEach((user: any, userIdIndex: number) => {
+          // Append userId
+          formData.append(
+            `approvalLevels[${levelIndex}].userIds[${userIdIndex}]`,
+            user.id
+          );
+    
+          // Append userName if needed
+          // if (user.userName) {
+          //   formData.append(
+          //     `approvalLevels[${levelIndex}].userNames[${userIdIndex}]`,
+          //     user.userName
+          //   );
+          // }
+        });
+      });
+      console.log(formData.get("attachments"))
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}EmployeeRequestTypes/${id}`, formData, { headers });
   }

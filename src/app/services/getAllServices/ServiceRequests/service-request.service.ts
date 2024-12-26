@@ -62,7 +62,6 @@ export class ServiceRequestService {
     formData.append('completionDate', updatedCategory.completionDate || '');
     formData.append('reference', updatedCategory.reference || '');
     formData.append('description', updatedCategory.description || '');
-    
     console.log("Form Service", updatedCategory.attachments);
       updatedCategory.attachments.forEach((attachment: any) => {
         if (attachment.file) {
@@ -71,12 +70,12 @@ export class ServiceRequestService {
             formData.append('attachmentFiles', attachment.file, attachment.fileTitle);
             console.log('Appending new file:', attachment.fileTitle);
           }
-          if (attachment.file.fileUrl) {
-            // For existing files, use a metadata representation (fileUrl or any reference)
-            formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.file.fileUrl })], { type: 'application/json' }), attachment.file.fileTitle);
-            console.log('Appending existing file reference:', attachment.file.fileTitle);
-          }
         } 
+        if (attachment.fileUrl) {
+          // For existing files, use a metadata representation (fileUrl or any reference)
+          formData.append('attachmentFiles', new Blob([JSON.stringify({ fileUrl: attachment.fileUrl })], { type: 'application/json' }), attachment.fileTitle);
+          console.log('Appending existing file reference:', attachment.fileTitle);
+        }
       });
       console.log(formData.get("attachmentFiles"))
     // API call with PUT method using the FormData and headers

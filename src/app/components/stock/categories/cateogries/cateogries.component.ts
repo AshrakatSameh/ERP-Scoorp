@@ -80,9 +80,9 @@ export class CateogriesComponent {
     this.ItemsForm = this.fb.group({
       name: ['', Validators.required],
       localName: [''],
-      canBeSold: ['', Validators.required],
-      canBePurchased: ['', Validators.required],
-      canBeConsumed: ['', Validators.required],
+      canBeSold: [false, Validators.required],
+      canBePurchased: [false, Validators.required],
+      canBeConsumed: [false, Validators.required],
       itemCategoryId: ['', Validators.required],
       barcode: [],
       code: [],
@@ -597,7 +597,9 @@ export class CateogriesComponent {
 
   updateCategory() {
     const updatedCategory = { ...this.ItemsForm.value, id: this.selectedCategory.id };
-
+    updatedCategory.canBeSold = updatedCategory.canBeSold === 'true';
+    updatedCategory.canBePurchased = updatedCategory.canBePurchased === 'true';
+    updatedCategory.canBeConsumed = updatedCategory.canBeConsumed === 'true';
     // Call the update service method using the category's id
     this.itemCat.updateItemType(this.selectedCategory.id, updatedCategory).subscribe(
       (response) => {

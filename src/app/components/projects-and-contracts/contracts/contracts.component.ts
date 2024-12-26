@@ -20,6 +20,8 @@ import { ContactsService } from 'src/app/services/getAllServices/Contacts/contac
   styleUrls: ['./contracts.component.css']
 })
 export class ContractsComponent implements OnInit {
+  @ViewChild('myModal', { static: false }) modal!: ElementRef;
+
   dropdownSettings = {};
 
   isFirstButtonClicked = false;
@@ -91,7 +93,7 @@ export class ContractsComponent implements OnInit {
       contractTypeId:[''],
       costCenterId:[''],
       contactIds: fb.array([]),
-      attachments: this.fb.array([]),
+      attachedFiles: this.fb.array([]),
       locationLinks: fb.array([]),
     });
 
@@ -233,7 +235,7 @@ export class ContractsComponent implements OnInit {
         this.filteredContract = this.contracts;
         this.totalCount = data.totalCount; // Assuming response contains totalCount
         this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-        // console.log(this.contracts)
+        console.log(this.contracts)
       }, error => {
         console.error('Error fetching employees data:', error);
       });
@@ -279,7 +281,7 @@ export class ContractsComponent implements OnInit {
   fileNames: string[] = []; // Array to store file names
 
   get attachments(): FormArray {
-    return this.contractForm.get('attachments') as FormArray;
+    return this.contractForm.get('attachedFiles') as FormArray;
   }
     // Method to handle files dropped into the ngx-file-drop zone
     dropped(event: any): void {
@@ -349,7 +351,6 @@ export class ContractsComponent implements OnInit {
       this.attachments.at(index).patchValue({ file });
     }
   }
-  @ViewChild('myModal', { static: false }) modal!: ElementRef;
   ngAfterViewInit(): void {
     this.modal.nativeElement.addEventListener('hidden.bs.modal', () => {
       // Fallback cleanup in case Bootstrap doesn't properly clean up
@@ -424,13 +425,20 @@ export class ContractsComponent implements OnInit {
     formData.append('startDate', this.contractForm.get('startDate')?.value);
     formData.append('endDate', this.contractForm.get('endDate')?.value);
     formData.append('code', this.contractForm.get('code')?.value);
-
+    this.attachments.controls.forEach((control) => {
+      const file = control.value;
+      if (file) {
+        formData.append('AttachmentFiles', file); // Append each file under 'AttachmentFiles'
+      }
+    });
+    console.log(this.attachments,this.contractForm.get('AttachmentFiles')?.value);
     const headers = new HttpHeaders({
       'tenant': localStorage.getItem('tenant')||''  // Add your tenant value here
     });
   
     this.http.post(this.apiUrl+'Contract/CreateContract', formData, { headers })
       .subscribe(response => {
+        this.closeModal();
         console.log('Response:', response);
         // alert('submit successfully');
         this.toast.success('تم الإضافة بنجاح');
@@ -446,7 +454,6 @@ export class ContractsComponent implements OnInit {
           
         //   document.body.style.overflow = '';
         // }, 300);
-        this.closeModal();
       }, error => {
         console.error('Error:', error);
         this.toast.error('حدث خطأ ، تأكد من البيانات و حاول مرة أخرى');
@@ -548,6 +555,7 @@ onCheckboxChange(category: any) {
 }
 
 openModalForSelected() {
+  console.log(this.selectedCategory);
   if (this.selectedCategory) {
     this.contractForm.patchValue({
       name: this.selectedCategory.name,
@@ -560,6 +568,23 @@ openModalForSelected() {
       endDate: this.selectedCategory.endDate,
       code: this.selectedCategory.code,
     });
+    if(this.attachments != null && this.attachments.length > 0){
+      this.attachments.clear();
+    }
+      if (this.selectedCategory.attachedFiles?.length) {
+        this.selectedCategory.attachedFiles.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
     // Retrive the Comments
     this.getComments();
     this.getActivities();
@@ -570,14 +595,19 @@ openModalForSelected() {
 }
 
 closeModal() {
-  this.contractForm.reset();
   this.isModalOpen = false;
+  const modalInstance = bootstrap.Modal.getInstance(this.modal.nativeElement);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
+    this.attachments.clear();
+  this.contractForm.reset();
   this.selectedCategory =null;
-  this.attachments.clear();
   console.log(this.attachments.length)
 }
 
 updateCategory() {
+  console.log(this.contractForm.value)
   if (this.contractForm.valid) {
     const updatedCategory = { ...this.contractForm.value, id: this.selectedCategory.id };
 

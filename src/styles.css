@@ -92,3 +92,6 @@ div .dropdown-menu{
    color: rgba(101, 0, 0, 0.473);
    font-size: 18px;
  }
+ th,td{
+   text-align: center;
+ }

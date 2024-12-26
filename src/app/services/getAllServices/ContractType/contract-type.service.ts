@@ -64,6 +64,7 @@ export class ContractTypeService {
     formData.append('name', updatedCategory.name || '');
     formData.append('localName', updatedCategory.localName || '');
     formData.append('description', updatedCategory.description || '');
+    formData.append('colorId', updatedCategory.colorId || 0);
  
     // API call with PUT method using the FormData and headers
     return this.http.put(`${this.apiUrl}ContractTypes/UpdateContractType/${id}`, formData, { headers });

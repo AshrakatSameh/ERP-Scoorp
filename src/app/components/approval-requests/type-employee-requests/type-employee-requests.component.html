@@ -512,24 +512,57 @@ class="modal overlay" tabindex="-1" role="dialog" [ngClass]="{'show': isModalOpe
               <div class="form-group">
                 <div class="row">
                   <div formArrayName="approvalLevels">
-                    <div *ngFor="let level of ApprovalLevels.controls; let i = index" [formGroupName]="i">
-                      <label>المستوى {{ i + 1 }}</label>
-                  
-                      <!-- Level Input -->
-                      <input type="number" class="form-control" placeholder="level.level" formControlName="Level" readonly />
-                  
-                      <!-- Approver User IDs Dropdown -->
-                      <ng-multiselect-dropdown
-                        [settings]="dropdownSettingsList[i]"
-                        [data]="users"
-                        formControlName="approverUserIds"
-                      ></ng-multiselect-dropdown>
-                  
-                      <!-- Remove Button -->
-                      <button type="button" class="btn btn-danger" (click)="removeApprovalLevel(i)">
-                        إزالة المستوى
-                      </button>
-                    </div>
+                    <div
+                        *ngFor="
+                          let level of ApprovalLevels.controls;
+                          let i = index
+                        "
+                        [formGroupName]="i"
+                        class="approval-level"
+                      >
+                        <h4>المستوى {{ i + 1 }}</h4>
+
+                        <label [for]="'level-' + i">المستوى:</label>
+                        <input
+                          class="form-control form-select"
+                          [id]="'level-' + i"
+                          formControlName="Level"
+                          type="number"
+                          readonly
+                        />
+
+                        <label
+                          [for]="'approverUserIds-' + i"
+                        >
+                          معرفات المستخدمين الموافقين:
+                        </label>
+                        <ng-multiselect-dropdown
+                          class="col-md-12"
+                          [settings]="dropdownSettingsList[i]"
+                          [data]="users"
+                          [formControlName]="'approverUserIds'">
+                          >
+                        </ng-multiselect-dropdown>
+
+                        <div
+                          *ngIf="
+                            level.get('approverUserIds')?.invalid &&
+                            level.get('approverUserIds')?.touched
+                          "
+                          class="text-danger"
+                        >
+                          من فضلك اختر مستخدمين للموافقة.
+                        </div>
+
+                        <button
+                          type="button"
+                          class="btn btn-danger mt-2"
+                          (click)="removeApprovalLevel(i)"
+                        >
+                          إزالة مستوى الموافقة
+                        </button>
+                      </div>
+                    
                   
                     <!-- Add Approval Level -->
                     <button type="button" class="btn btn-primary mt-3" (click)="addApprovalLevel()">
