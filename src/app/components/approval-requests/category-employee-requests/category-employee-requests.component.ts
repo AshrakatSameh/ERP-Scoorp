@@ -266,6 +266,7 @@ export class CategoryEmployeeRequestsComponent implements OnInit {
     this.EmpReqCategoryForm.reset();
     this.isModalOpen = false;
     this.selectedCategory =null;
+    this.attachments.clear();
   }
 
   updateCategory() {

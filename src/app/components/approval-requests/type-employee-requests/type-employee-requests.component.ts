@@ -291,9 +291,14 @@ export class TypeEmployeeRequestsComponent implements OnInit {
       formData.append(`approvalLevels[${levelIndex}].level`, level);
     
       const approverUserIds = levelControl.get('approverUserIds')?.value || [];
-      approverUserIds.forEach((user: any, userIdIndex: number) => {
-        formData.append(`approvalLevels[${levelIndex}].userIds`, user.id); // Match the key `userIds` used in Postman
+        approverUserIds.forEach((user: any, userIdIndex: number) => {
+          // Append userId
+          formData.append(`approvalLevels[${levelIndex}].userIds[${userIdIndex}]`, user.id);
+
+          // Append userName (ensure it's not null)
+          // formData.append(`approvalLevels[${levelIndex}].userNames[${userIdIndex}]`, user.userName ?? 'Unknown');
       });
+
     });
     this.attachments.controls.forEach((control) => {
       const fileData = control.value;
@@ -303,7 +308,9 @@ export class TypeEmployeeRequestsComponent implements OnInit {
       }
     });
   
-  
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+  });
     // Set headers with tenant information
     const headers = new HttpHeaders({
       tenant: localStorage.getItem('tenant') || '', // Add your tenant value here
@@ -360,30 +367,85 @@ export class TypeEmployeeRequestsComponent implements OnInit {
   }
 
   openModalForSelected() {
+    console.log(this.selectedCategory)
     if (this.selectedCategory) {
       this.EmpReqTypeForm.patchValue({
         name: this.selectedCategory.name,
         description: this.selectedCategory.description,
+        approvalLevels: this.selectedCategory.approvalLevels
       });
+      this.attachments.clear();
+      if (this.selectedCategory.attachments?.length) {
+        this.selectedCategory.attachments.forEach((attachment: any) => {
+          const fileData = {
+            fileTitle: attachment.fileTitle,
+            fileType: attachment.fileType,
+            fileSize: attachment.fileSize,
+            fileUrl: attachment.fileUrl, // Placeholder for URL after upload
+            file: attachment,
+          };
+          this.attachments.push(this.fb.control(fileData));
+          // this.attachments.push(this.fb.group({ file: attachment })); // Existing attachment
+          console.log(this.attachments.controls);
+        });
+      }
       this.populateApprovalLevels(this.selectedCategory.approvalLevels || []);
-
+      
+      // Get the selected approval level index
+  //     const selectedApprovalIndex = this.selectedCategory.approvalLevels?.length - 1 || 0;
+  
+  //     // Ensure ApprovalLevels is initialized
+  //     if (!this.ApprovalLevels) {
+  //       return;
+  //     }
+  
+  //     // Get the FormArray for the selected approval level
+  //     const approverUserIdsFormArray = this.getApproverUserIds(selectedApprovalIndex);
+  // console.log("User IDs FormArray:", approverUserIdsFormArray)
+  //     // Ensure `approverUserIds` is an array of objects with userId and userName properties
+  //     const approverUserIdsFromCategory: { userId: string; userName?: string | null }[] = 
+  //       this.selectedCategory.approvalLevels[selectedApprovalIndex]?.approvalUsers || [];
+  
+  //     // Ensure the FormArray has the correct structure and push user IDs
+  //     // approverUserIdsFromCategory.forEach((user: { userId: string; userName?: string | null }) => {
+  //     //   approverUserIdsFormArray.push(this.fb.control(user.userId));  // Push userId directly
+  //     // });
+  
+  //     // Log the FormArray to check if user IDs were successfully pushed
+  //     console.log('Approver User IDs FormArray:', approverUserIdsFormArray.value);
+  
       this.isModalOpen = true;
     } else {
       alert('الرجاء تحديد العنصر');
     }
   }
-
+  
   populateApprovalLevels(levels: any[]) {
     const approvalLevelsArray = this.EmpReqTypeForm.get('approvalLevels') as FormArray;
     approvalLevelsArray.clear(); // Clear existing data
-
-    levels.forEach((level: any) => {
+    
+    levels.forEach((level: any, index: number) => {
+      const approverUserIds = level.approverUserIds || []; // Default to an empty array if undefined or null
+  
       approvalLevelsArray.push(
         this.fb.group({
           Level: [level.Level || '', Validators.required],
-          approverUserIds: [level.approverUserIds || [], Validators.required],
+          approverUserIds: [
+            // Map userId to users array
+            this.users.filter(user => approverUserIds.some((id: any) => id === user.id)) || [],
+            Validators.required,
+          ],
         })
       );
+      this.dropdownSettingsList[index] = {
+        singleSelection: false,
+        idField: 'id',
+        textField: 'userName',
+        selectAllText: 'Select All',
+        unSelectAllText: 'Unselect All',
+        itemsShowLimit: 3,
+        allowSearchFilter: true,
+      };
     });
   }
   closeModal() {
